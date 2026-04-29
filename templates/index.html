@@ -1,0 +1,2271 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oficina Suspensul - Sistema de Gerenciamento</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* --- Variáveis e Reset --- */
+        :root {
+            --primary: #ffe54c; /* Amarelo */
+            --bg-main: #000000; /* Preto absoluto */
+            --bg-sidebar: #111111;
+            --bg-card: #111111; /* Preto ligeiramente mais claro para contraste */
+            --bg-input: #1a1a1a;
+            --text-main: #ffffff;
+            --text-muted: #a0a0a0;
+            --border-radius: 8px;
+            --font-family: 'Outfit', sans-serif;
+            --transition: all 0.2s ease;
+            --sidebar-width: 260px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            outline: none;
+            border: none; /* Sem bordas conforme solicitado */
+            font-family: var(--font-family);
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+            font-size: 15px;
+        }
+
+        /* --- Scrollbar --- */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-main); }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        /* --- Utilitários --- */
+        .btn {
+            padding: 10px 20px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: #000;
+        }
+        .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+
+        .btn-secondary {
+            background-color: var(--bg-input);
+            color: var(--text-main);
+        }
+        .btn-secondary:hover { background-color: #252525; }
+
+        .btn-icon {
+            padding: 8px;
+            background: transparent;
+            color: var(--text-muted);
+        }
+        .btn-icon:hover { color: var(--primary); background-color: rgba(255,229,76,0.1); }
+        .btn-icon.no-hover:hover { color: var(--text-muted); background-color: transparent; }
+
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus,
+        textarea:-webkit-autofill,
+        select:-webkit-autofill {
+            -webkit-text-fill-color: var(--text-main) !important;
+            -webkit-box-shadow: 0 0 0 1000px var(--bg-input) inset !important;
+            box-shadow: 0 0 0 1000px var(--bg-input) inset !important;
+            caret-color: var(--text-main);
+            transition: background-color 5000s ease-in-out 0s;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            background-color: var(--bg-input);
+            color: var(--text-main);
+            border-radius: var(--border-radius);
+            font-size: 14px;
+        }
+        input:focus, select:focus, textarea:focus {
+            box-shadow: 0 0 0 2px rgba(255, 229, 76, 0.2);
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            padding: 20px;
+            border-radius: var(--border-radius);
+        }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-sidebar);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            flex-shrink: 0;
+            z-index: 100;
+        }
+
+        .brand {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            list-style: none;
+        }
+
+        .nav-section {
+            padding: 14px 0 4px 0;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            opacity: 0.8;
+            pointer-events: none;
+            text-align: left;
+        }
+        .nav-section:first-child { padding-top: 4px; }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            cursor: pointer;
+            font-weight: 400;
+        }
+
+        .nav-link i { width: 18px; height: 18px; }
+
+        .nav-link:hover {
+            background-color: #252525;
+            color: var(--text-main);
+        }
+
+        .nav-link.active {
+            background-color: var(--primary);
+            color: #000;
+            font-weight: 500;
+        }
+
+        /* --- Main Content --- */
+        .main-wrapper {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        header {
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            background-color: var(--bg-card);
+        }
+
+        .page-title { font-size: 20px; font-weight: 600; }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 32px;
+            overflow-y: auto;
+            display: none; /* Escondido por padrão, controlado pelo JS */
+        }
+
+        .main-content.active-content { display: block; }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            gap: 15px;
+        }
+
+        .search-filter-bar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .calendar-period-trigger {
+            background-color: var(--bg-input);
+            color: var(--text-main);
+            min-width: 190px;
+            justify-content: space-between;
+        }
+        .calendar-period-trigger:hover { background-color: #252525; }
+
+        .month-picker-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .month-option, .year-option {
+            background-color: var(--bg-input);
+            color: var(--text-main);
+            padding: 12px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            font-weight: 500;
+        }
+        .month-option:hover, .year-option:hover { background-color: #252525; }
+        .month-option.active, .year-option.active {
+            background-color: var(--primary);
+            color: #000;
+        }
+
+        .year-picker-row {
+            display: grid;
+            grid-template-columns: 40px 1fr 40px;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .custom-picker-trigger {
+            width: 100%;
+            background-color: var(--bg-input);
+            color: var(--text-muted);
+            justify-content: space-between;
+            padding: 12px 15px;
+            font-weight: 400;
+        }
+        .custom-picker-trigger:hover { background-color: #252525; }
+        .custom-picker-trigger i,
+        .custom-picker-trigger svg {
+            width: 20px !important;
+            height: 20px !important;
+            min-width: 20px;
+            min-height: 20px;
+            color: var(--text-muted);
+        }
+
+        .appointment-date-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+        .appointment-date-option {
+            background-color: var(--bg-input);
+            color: var(--text-main);
+            border: none;
+            border-radius: var(--border-radius);
+            min-height: 42px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+        .appointment-date-option:hover { background-color: #252525; }
+        .appointment-date-option.active {
+            background-color: var(--primary);
+            color: #000;
+        }
+        .appointment-date-option.empty {
+            background: transparent;
+            cursor: default;
+        }
+
+        .appointment-time-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        .appointment-time-option {
+            background-color: var(--bg-input);
+            color: var(--text-main);
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+        .appointment-time-option:hover { background-color: #252525; }
+        .appointment-time-option.active {
+            background-color: var(--primary);
+            color: #000;
+        }
+
+        .os-status-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        .os-status-option {
+            background-color: var(--bg-input);
+            color: var(--text-main);
+            padding: 14px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+            text-align: center;
+        }
+        .os-status-option:hover { background-color: #252525; }
+        .os-status-option.active {
+            background-color: var(--primary);
+            color: #000;
+        }
+
+        /* --- Tabelas --- */
+        .table-container {
+            background-color: var(--bg-card);
+            border-radius: var(--border-radius);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        th {
+            text-align: center;
+            padding: 15px 20px;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+td {
+    padding: 15px 20px;
+    color: var(--text-main);
+    font-size: 14px;
+    vertical-align: middle;
+    text-align: center;
+    min-height: 70px;
+    height: 70px;
+}
+
+tr:not(:last-child) td {
+    border-bottom: 1px solid #1a1a1a; /* Linha sutil de separação, não é 'border' externa */
+}
+
+        tr:hover td { background-color: rgba(255,255,255,0.02); }
+
+        .clients-table thead th {
+            background-color: var(--primary);
+            color: #000;
+            font-weight: 700;
+        }
+        .clients-table tbody td {
+            color: var(--text-muted);
+        }
+        .clients-table tbody tr:nth-child(even) td {
+            background-color: rgba(255,255,255,0.025);
+        }
+        .suppliers-table thead th {
+            background-color: var(--primary);
+            color: #000;
+            font-weight: 700;
+        }
+        .suppliers-table tbody td {
+            color: var(--text-muted);
+        }
+        .suppliers-table tbody tr:nth-child(even) td {
+            background-color: rgba(255,255,255,0.025);
+        }
+        .vehicles-table thead th {
+            background-color: var(--primary);
+            color: #000;
+            font-weight: 700;
+        }
+        .vehicles-table tbody td {
+            color: var(--text-muted);
+        }
+        .vehicles-table tbody tr:nth-child(even) td {
+            background-color: rgba(255,255,255,0.025);
+        }
+        .os-table thead th {
+            background-color: var(--primary);
+            color: #000;
+            font-weight: 700;
+        }
+        .os-table tbody td {
+            color: var(--text-muted);
+        }
+        .os-table tbody tr:nth-child(even) td {
+            background-color: rgba(255,255,255,0.025);
+        }
+        .expenses-table thead th {
+            background-color: var(--primary);
+            color: #000;
+            font-weight: 700;
+        }
+        .expenses-table tbody td {
+            color: var(--text-muted);
+        }
+        .expenses-table tbody tr:nth-child(even) td {
+            background-color: rgba(255,255,255,0.025);
+        }
+        .financial-table thead th {
+            background-color: var(--primary);
+            color: #000;
+            font-weight: 700;
+        }
+        .financial-table tbody td {
+            color: var(--text-muted);
+        }
+        .financial-table tbody tr:nth-child(even) td {
+            background-color: rgba(255,255,255,0.025);
+        }
+        .table-header-icon {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .table-header-icon i,
+        .table-header-icon svg {
+            width: 20px !important;
+            height: 20px !important;
+            min-width: 20px;
+            min-height: 20px;
+        }
+
+        .vehicle-img-table {
+            width: 40px; height: 40px;
+            border-radius: 6px;
+            object-fit: cover;
+            background-color: #222;
+            display: block;
+            margin: 0 auto;
+        }
+        .vehicle-no-img {
+            width: 40px; height: 40px;
+            border-radius: 6px;
+            background-color: #222;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #555;
+            margin: 0 auto;
+        }
+        .vehicle-no-img i,
+        .vehicle-no-img svg {
+            width: 20px !important;
+            height: 20px !important;
+            min-width: 20px;
+            min-height: 20px;
+        }
+
+        .actions-cell {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+        }
+        .actions-cell .btn-icon i,
+        .actions-cell .btn-icon svg {
+            width: 20px !important;
+            height: 20px !important;
+            min-width: 20px;
+            min-height: 20px;
+        }
+
+        /* Status Badges */
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .badge-agendado { background-color: #3498db; color: #fff; }
+        .badge-concluido { background-color: #2ecc71; color: #fff; }
+        .badge-cancelado { background-color: #e74c3c; color: #fff; }
+        .badge-pendente { background-color: #f39c12; color: #fff; }
+        .badge-paga { background-color: #2ecc71; color: #fff; }
+
+        /* --- Calendário (Simples) --- */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+        }
+        .calendar-day-head {
+            text-align: center;
+            color: #000;
+            font-weight: 600;
+            padding: 8px 0;
+            background-color: var(--primary);
+            border-radius: var(--border-radius);
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+        .calendar-day {
+            background-color: #242424;
+            min-height: 100px;
+            border-radius: var(--border-radius);
+            padding: 10px;
+            transition: var(--transition);
+            position: relative;
+        }
+        .calendar-day:hover:not(.empty):not(.today) { background-color: #1a1a1a; cursor: pointer;}
+        .calendar-day.today {
+            background-color: var(--primary);
+            color: #000;
+        }
+        .calendar-day.today .day-number { color: #000; }
+        .calendar-day.today:hover { cursor: pointer; opacity: 0.9; }
+        .calendar-day.empty { background: transparent; }
+        .calendar-day .day-number { font-weight: 600; margin-bottom: 5px; display: block; }
+        .calendar-event-tag {
+            background-color: #3b82f6;
+            color: #fff;
+            font-size: 10px;
+            padding: 6px 8px;
+            border-radius: 2px;
+            margin: 3px 3px 0 0;
+            display: inline-block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .calendar-day.today .calendar-event-tag {
+            background-color: #2563eb;
+            color: #fff;
+        }
+
+        /* --- Modais --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 1200;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(3px);
+        }
+        .modal-overlay.active { display: flex; opacity: 1; }
+
+        .modal {
+            background-color: var(--bg-card);
+            width: 90%;
+            max-width: 600px;
+            border-radius: var(--border-radius);
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+        .modal-overlay.active .modal { transform: scale(1); }
+
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #1a1a1a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-title { font-size: 18px; font-weight: 600; }
+        
+        .modal-body { padding: 25px; }
+        
+        .modal-footer {
+            padding: 15px 25px;
+            border-top: 1px solid #1a1a1a;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; color: var(--text-muted); margin-bottom: 8px; font-size: 13px; }
+        .form-row { display: flex; gap: 15px; }
+        .form-row .form-group { flex: 1; }
+
+        .input-icon-right {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            color: var(--text-muted);
+        }
+
+        /* --- OS Template (Impressão A4) --- */
+        #os-print-template {
+            background: white;
+            color: black;
+            width: 210mm; /* A4 Width */
+            min-height: 297mm; /* A4 Height */
+            padding: 20mm;
+            margin: 0 auto;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            display: none; /* Escondido na tela normal */
+        }
+
+        #os-print-template * { border: none; color: black; }
+
+        .print-header { display: flex; justify-content: space-between; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #eee !important; }
+        .print-logo-area { display: flex; align-items: center; gap: 15px; }
+        .print-logo-placeholder { width: 60px; height: 60px; background: #ddd; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+        .print-oficina-dados { font-size: 12px; line-height: 1.4; }
+        .print-os-info { text-align: right; }
+        .print-os-title { font-size: 20px; font-weight: bold; margin-bottom: 5px; }
+
+        .print-dados-secao { display: flex; gap: 30px; margin-bottom: 30px; font-size: 13px; }
+        .print-dados-col { flex: 1; padding: 15px; background: #f9f9f9; }
+        .print-secao-title { font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid #eee !important; padding-bottom: 5px; text-transform: uppercase; font-size: 11px;}
+
+        .print-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 13px;}
+        .print-table th { background: #eee; padding: 8px; font-weight: bold; text-align: left; border: 1px solid #ddd !important;}
+        .print-table td { padding: 8px; border: 1px solid #ddd !important;}
+        
+        .print-totais { width: 100%; display: flex; justify-content: flex-end; margin-bottom: 40px;}
+        .print-totais-tabela { width: 40%; border-collapse: collapse; font-size: 13px;}
+        .print-totais-tabela td { padding: 8px; border: 1px solid #ddd !important;}
+        .print-total-geral { font-weight: bold; font-size: 16px; background: #f0f0f0;}
+
+        .print-assinaturas { display: flex; gap: 50px; margin-top: 50px; justify-content: space-between; text-align: center; font-size: 12px;}
+        .print-assinatura-box { flex: 1; }
+        .print-linha-assinatura { border-top: 1px solid black !important; margin-bottom: 5px; margin-top: 40px;}
+
+        .print-termos { margin-top: 30px; font-size: 11px; color: #555; text-align: justify; line-height: 1.4;}
+
+        /* --- Financeiro Cards --- */
+        .financeiro-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .fin-card-title { color: var(--text-muted); font-size: 13px; margin-bottom: 10px; text-transform: uppercase;}
+        .fin-card-value { font-size: 28px; font-weight: 700; color: var(--text-main);}
+        .fin-card-value.positvo { color: #2ecc71; }
+        .fin-card-value.negativo { color: #e74c3c; }
+
+        /* --- Configurações --- */
+        .config-container { max-width: 600px; }
+        .logo-upload-area {
+            width: 120px; height: 120px;
+            background-color: var(--bg-input);
+            border-radius: var(--border-radius);
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+
+        /* --- Sidebar Toggle --- */
+        .sidebar { overflow: hidden; transition: width 0.12s ease; }
+        .sidebar-inner { min-width: 220px; }
+        .brand span, .nav-link span, .nav-section { transition: opacity 0.15s ease; }
+        .sidebar-close {
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .sidebar-toggle {
+            position: fixed;
+            top: 14px;
+            left: 32px;
+            z-index: 1100;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #242424;
+            color: var(--text-main);
+            border: 1px solid #222;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .sidebar-toggle:hover { background: #242424; }
+        .sidebar-toggle i { width: 20px; height: 20px; }
+
+        @media (min-width: 1025px) {
+            body.sidebar-closed { --sidebar-width: 76px; }
+            body.sidebar-closed .brand span,
+            body.sidebar-closed .nav-link span,
+            body.sidebar-closed .nav-section { opacity: 0; }
+        }
+
+        @media (max-width: 1024px) {
+            .main-content { padding: 24px; }
+            .sidebar-toggle { left: 24px; }
+            header { padding: 0 24px; }
+            body.sidebar-closed .sidebar {
+                width: 0 !important;
+                border: none !important;
+            }
+            body:not(.sidebar-closed) .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                z-index: 1050;
+                box-shadow: 0 0 24px rgba(0,0,0,0.6);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content { padding: 15px; }
+            .sidebar-toggle { left: 15px; }
+            header { padding: 0 15px; }
+            .form-row { flex-direction: column; gap: 0; }
+            .calendar-grid { grid-template-columns: repeat(7, 1fr); gap: 2px; }
+            .calendar-day { min-height: 50px; padding: 2px; }
+            .calendar-day .day-number { font-size: 12px; }
+            .calendar-event-tag { display: inline-block; }
+            .calendar-day-head { font-size: 12px; }
+        }
+
+        @media print {
+            body * { visibility: hidden; background: white !important; color: black !important; }
+            #os-print-template, #os-print-template * { visibility: visible; }
+            #os-print-template {
+                display: block !important;
+                position: absolute;
+                left: 0; top: 0;
+                width: 100%;
+                margin: 0;
+                padding: 10mm;
+            }
+            .sidebar-toggle { display: none; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <button class="sidebar-toggle" type="button" onclick="toggleSidebar()" aria-label="Abrir menu">
+        <i data-lucide="menu"></i>
+    </button>
+
+    <aside class="sidebar">
+        <div class="sidebar-inner">
+            <div class="brand" style="justify-content: space-between;">
+                <span>Suspensul</span>
+                <button class="sidebar-close" type="button" onclick="toggleSidebar()" aria-label="Fechar menu">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-section"><span>Operacional</span></li>
+                <li><a onclick="showPage('agendamentos')" class="nav-link active" id="link-agendamentos"><i data-lucide="calendar-days"></i> <span>Agendamentos</span></a></li>
+                <li><a onclick="showPage('os')" class="nav-link" id="link-os"><i data-lucide="file-text"></i> <span>Notas Fiscais</span></a></li>
+                <li><a onclick="showPage('orcamento')" class="nav-link" id="link-orcamento"><i data-lucide="clipboard-list"></i> <span>Fazer Orçamento</span></a></li>
+
+                <li class="nav-section"><span>Cadastros</span></li>
+                <li><a onclick="showPage('clientes')" class="nav-link" id="link-clientes"><i data-lucide="users"></i> <span>Clientes</span></a></li>
+                <li><a onclick="showPage('fornecedores')" class="nav-link" id="link-fornecedores"><i data-lucide="truck"></i> <span>Fornecedores</span></a></li>
+                <li><a onclick="showPage('veiculos')" class="nav-link" id="link-veiculos"><i data-lucide="car"></i> <span>Veículos</span></a></li>
+
+                <li class="nav-section"><span>Financeiro</span></li>
+                <li><a onclick="showPage('despesas')" class="nav-link" id="link-despesas"><i data-lucide="trending-down"></i> <span>Despesas</span></a></li>
+                <li><a onclick="showPage('financeiro')" class="nav-link" id="link-financeiro"><i data-lucide="dollar-sign"></i> <span>Financeiro</span></a></li>
+
+                <li class="nav-section"><span>Sistema</span></li>
+                <li><a onclick="showPage('configuracoes')" class="nav-link" id="link-configuracoes"><i data-lucide="settings"></i> <span>Configurações</span></a></li>
+            </ul>
+        </div>
+    </aside>
+
+    <main class="main-wrapper">
+        <header>
+            <div class="page-title" id="header-title">Agendamentos</div>
+            <div class="user-info" style="display: flex; align-items: center; gap: 10px; color: var(--text-muted)">
+                <span>Admin Oficina</span>
+                <div style="width: 35px; height: 35px; background: var(--bg-input); border-radius: 50%; display: flex; align-items: center; justify-content: center">
+                    <i data-lucide="user" style="width: 18px"></i>
+                </div>
+            </div>
+        </header>
+
+        <div id="page-agendamentos" class="main-content active-content">
+            <div class="page-header">
+                <div class="search-filter-bar">
+                    <button class="btn calendar-period-trigger" onclick="openCalendarPeriodModal()">
+                        <span id="calendar-period-label">Mês - Ano</span>
+                        <i data-lucide="chevron-down"></i>
+                    </button>
+                </div>
+                <button class="btn btn-primary" onclick="openModal('modal-novo-agendamento')">
+                    <i data-lucide="plus"></i> Novo Agendamento
+                </button>
+            </div>
+            
+            <div class="card">
+                <div class="calendar-grid" id="calendar-grid">
+                    <!-- Preenchido dinamicamente pelo JS -->
+                </div>
+            </div>
+        </div>
+
+        <div id="page-clientes" class="main-content">
+            <div class="page-header">
+                <input type="text" placeholder="Pesquisar cliente por nome ou CPF..." style="max-width: 300px;">
+                <button class="btn btn-primary" onclick="openModal('modal-cliente')">
+                    <i data-lucide="plus"></i> Novo Cliente
+                </button>
+            </div>
+            <div class="table-container">
+                <table class="clients-table">
+                    <thead>
+                        <tr>
+                            <th><span class="table-header-icon"><i data-lucide="user"></i> Nome Completo</span></th>
+                            <th><span class="table-header-icon"><i data-lucide="id-card"></i> CPF</span></th>
+                            <th><span class="table-header-icon"><i data-lucide="message-circle"></i> Whatsapp</span></th>
+                            <th><span class="table-header-icon"><i data-lucide="circle-dot"></i> Status</span></th>
+                            <th><span class="table-header-icon"><i data-lucide="settings"></i> Ações</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>João Silva Sauro</td>
+                            <td>123.456.789-00</td>
+                            <td>(47) 99999-8888</td>
+                            <td><span class="badge badge-paga">Ativo</span></td>
+                            <td class="actions-cell">
+                                <button class="btn-icon" onclick="openModal('modal-cliente')"><i data-lucide="pencil"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Maria Oliveira</td>
+                            <td>987.654.321-11</td>
+                            <td>(47) 98888-7777</td>
+                            <td><span class="badge badge-paga">Ativo</span></td>
+                            <td class="actions-cell">
+                                <button class="btn-icon" onclick="openModal('modal-cliente')"><i data-lucide="pencil"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="page-fornecedores" class="main-content">
+            <div class="page-header">
+                <input type="text" placeholder="Pesquisar fornecedor..." style="max-width: 300px;">
+                <button class="btn btn-primary" onclick="openModal('modal-fornecedor')">
+                    <i data-lucide="plus"></i> Novo Fornecedor
+                </button>
+            </div>
+            <div class="table-container">
+                <table class="suppliers-table">
+                    <thead>
+                        <tr>
+                            <th><span class="table-header-icon"><i data-lucide="building-2"></i> Nome/Razão Social</span></th>
+                            <th><span class="table-header-icon"><i data-lucide="id-card"></i> CNPJ</span></th>
+                            <th><span class="table-header-icon"><i data-lucide="message-circle"></i> Whatsapp</span></th>
+                            <th><span class="table-header-icon"><i data-lucide="circle-dot"></i> Status</span></th>
+                            <th><span class="table-header-icon"><i data-lucide="settings"></i> Ações</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Distribuidora de Peças Sul</td>
+                            <td>12.345.678/0001-99</td>
+                            <td>(41) 3333-4444</td>
+                            <td><span class="badge badge-paga">Ativo</span></td>
+                            <td class="actions-cell">
+                                <button class="btn-icon"><i data-lucide="pencil"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="page-veiculos" class="main-content">
+            <div class="page-header">
+                <input type="text" placeholder="Pesquisar placa..." style="max-width: 300px;">
+                <button class="btn btn-primary" onclick="openModal('modal-veiculo')">
+                    <i data-lucide="plus"></i> Novo Veículo
+                </button>
+            </div>
+            <div class="table-container">
+                <table class="vehicles-table">
+                    <thead>
+                        <tr>
+                            <th><span class="table-header-icon"><i data-lucide="image"></i> Imagem</span></th>
+                            <th><span class="table-header-icon"><i data-lucide="hash"></i> Placa</span></th>
+                            <th><span class="table-header-icon"><i data-lucide="car"></i> Marca/Modelo</span></th>
+                            <th><span class="table-header-icon"><i data-lucide="calendar"></i> Ano</span></th>
+                            <th><span class="table-header-icon"><i data-lucide="gauge"></i> Km</span></th>
+                            <th><span class="table-header-icon"><i data-lucide="cog"></i> Motorização</span></th>
+                            <th><span class="table-header-icon"><i data-lucide="circle-dot"></i> Status</span></th>
+                            <th><span class="table-header-icon"><i data-lucide="settings"></i> Ações</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><div class="vehicle-no-img"><i data-lucide="image-off"></i></div></td>
+                            <td><strong>ABC1D23</strong></td>
+                            <td>VW Gol G6</td>
+                            <td>2015</td>
+                            <td>85.000</td>
+                            <td>1.0 Total Flex</td>
+                            <td class="actions-cell">
+                                <button class="btn-icon" onclick="openModal('modal-veiculo')"><i data-lucide="pencil"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="page-os" class="main-content">
+            <div class="page-header">
+                <div class="search-filter-bar">
+                    <input type="text" placeholder="Buscar OS (Cliente, Placa)..." style="width: 250px;">
+                    <button class="btn calendar-period-trigger" style="min-width: 150px;" onclick="openOSStatusModal()">
+                        <span id="os-status-label">Todos Status</span>
+                        <i data-lucide="chevron-down"></i>
+                    </button>
+                </div>
+                <button class="btn btn-primary" onclick="openModal('modal-nova-os')">
+                    <i data-lucide="plus"></i> Nova Nota Fiscal
+                </button>
+            </div>
+            <div class="table-container">
+                <table class="os-table">
+                    <thead>
+                        <tr>
+                            <th><span class="table-header-icon"><i data-lucide="hash"></i> Nº Nota</span></th>
+                            <th><span class="table-header-icon"><i data-lucide="user"></i> Cliente</span></th>
+                            <th><span class="table-header-icon"><i data-lucide="car"></i> Veículo</span></th>
+                            <th><span class="table-header-icon"><i data-lucide="hash"></i> Placa</span></th>
+                            <th><span class="table-header-icon"><i data-lucide="calendar"></i> Data</span></th>
+                            <th><span class="table-header-icon"><i data-lucide="dollar-sign"></i> Pagamento</span></th>
+                            <th><span class="table-header-icon"><i data-lucide="settings"></i> Ações</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>1001</strong></td>
+                            <td>João Silva</td>
+                            <td>VW Gol G6</td>
+                            <td>ABC1D23</td>
+                            <td>04/11/2024</td>
+                            <td><span class="badge badge-pendente">Pendente</span></td>
+                            <td class="actions-cell">
+                                <button class="btn-icon" title="Visualizar A4" onclick="printOS()"><i data-lucide="file-text"></i></button>
+                                <button class="btn-icon" title="Imprimir Cupom"><i data-lucide="printer"></i></button>
+                                <button class="btn-icon" title="Enviar Whatsapp e Marcar Paga" style="color: #2ecc71"><i data-lucide="message-circle"></i></button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="page-orcamento" class="main-content">
+            <div class="card">
+                <div class="form-row">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Veículo cadastrado</label>
+                        <div style="display:flex;gap:10px;align-items:stretch;">
+                            <div style="position:relative;flex:1;">
+                                <input type="text" id="orcamento-veiculo-busca" placeholder="Buscar por placa..." autocomplete="off">
+                                <i data-lucide="search" class="input-icon-right"></i>
+                            </div>
+                            <button type="button" class="btn btn-primary" title="Cadastrar novo veículo" onclick="openModal('modal-veiculo')" style="padding:0;width:42px;flex:0 0 42px;display:inline-flex;align-items:center;justify-content:center;"><i data-lucide="plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Fornecedores</label>
+                    <div id="orcamento-fornecedores" style="display:flex;flex-direction:column;gap:10px;margin-top:10px;"></div>
+                </div>
+
+                <div class="form-group">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                        <label style="margin:0;">Peças/Produtos</label>
+                        <button type="button" class="btn btn-secondary" onclick="adicionarPecaOrcamento()"><i data-lucide="plus"></i> Peças/Produtos</button>
+                    </div>
+                    <div id="orcamento-pecas"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Mensagem</label>
+                    <textarea id="orcamento-mensagem" rows="5">Opa, bom dia!
+
+Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo</textarea>
+                </div>
+
+                <div style="display:flex;justify-content:flex-end;gap:12px;">
+                    <button type="button" class="btn btn-secondary" onclick="gerarAnexoOrcamento()"><i data-lucide="file-text"></i> Gerar Anexo</button>
+                    <button type="button" class="btn btn-primary" onclick="enviarOrcamentoWhatsapp()"><i data-lucide="message-circle"></i> Enviar no Whatsapp</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-despesas" class="main-content">
+            <div class="page-header">
+                <div class="search-filter-bar">
+                    <button class="btn calendar-period-trigger" onclick="openDespesasPeriodModal()">
+                        <span id="despesas-period-label">Mês - Ano</span>
+                        <i data-lucide="chevron-down"></i>
+                    </button>
+                </div>
+                <button class="btn btn-primary" onclick="openModal('modal-despesa')">
+                    <i data-lucide="plus"></i> Nova Despesa
+                </button>
+            </div>
+            <div class="table-container">
+                <table class="expenses-table">
+                    <thead>
+                        <tr>
+                            <th><span class="table-header-icon"><i data-lucide="file-text"></i> Descrição</span></th>
+                            <th><span class="table-header-icon"><i data-lucide="calendar"></i> Data</span></th>
+                            <th><span class="table-header-icon"><i data-lucide="dollar-sign"></i> Valor</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Aluguel Oficina</td>
+                            <td>01/11/2024</td>
+                            <td>R$ 2.500,00</td>
+                        </tr>
+                        <tr>
+                            <td>Conta de Luz</td>
+                            <td>05/11/2024</td>
+                            <td>R$ 350,00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="page-financeiro" class="main-content">
+            <div class="page-header">
+                <div class="search-filter-bar">
+                    <button class="btn calendar-period-trigger" onclick="openFinancialPeriodModal()">
+                        <span id="financial-period-label">Mês - Ano</span>
+                        <i data-lucide="chevron-down"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="financeiro-cards">
+                <div class="card">
+                    <div class="fin-card-title">Nº Veículos</div>
+                    <div class="fin-card-value">12</div>
+                </div>
+                <div class="card">
+                    <div class="fin-card-title">Valor Gasto (Peças)</div>
+                    <div class="fin-card-value negativo">R$ 3.200</div>
+                </div>
+                <div class="card">
+                    <div class="fin-card-title">Recebido (Notas Fiscais)</div>
+                    <div class="fin-card-value positvo">R$ 8.500</div>
+                </div>
+                <div class="card">
+                    <div class="fin-card-title">Despesas Fixas</div>
+                    <div class="fin-card-value negativo">R$ 2.850</div>
+                </div>
+                <div class="card" style="border: 1px solid rgba(255,229,76,0.3) !important">
+                    <div class="fin-card-title" style="color: var(--primary)">Lucro Líquido</div>
+                    <div class="fin-card-value positvo" style="color: var(--primary)">R$ 2.450</div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table class="financial-table">
+                    <thead>
+                        <tr>
+                            <th><span class="table-header-icon"><i data-lucide="hash"></i> Nº Nota</span></th>
+                            <th><span class="table-header-icon"><i data-lucide="package"></i> Vlr. Peças (Custo)</span></th>
+                            <th><span class="table-header-icon"><i data-lucide="tag"></i> Vlr. Peças (Venda)</span></th>
+                            <th><span class="table-header-icon"><i data-lucide="wrench"></i> Mão de Obra</span></th>
+                            <th><span class="table-header-icon"><i data-lucide="receipt"></i> Total Nota</span></th>
+                            <th><span class="table-header-icon"><i data-lucide="trending-up"></i> Lucro Nota</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1000</td>
+                            <td>R$ 150,00</td>
+                            <td>R$ 250,00</td>
+                            <td>R$ 200,00</td>
+                            <td>R$ 450,00</td>
+                            <td class="positvo">R$ 300,00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="page-configuracoes" class="main-content">
+            <div class="card config-container">
+                <div class="form-group">
+                    <label>Logo da Oficina (para Notas)</label>
+                    <div class="logo-upload-area">
+                        <i data-lucide="image" style="width: 30px; height: 30px;"></i>
+                        <span>Upload Logo</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Nome da Oficina</label>
+                    <input type="text" value="Oficina Suspensul">
+                </div>
+                <div class="form-group">
+                    <label>CNPJ</label>
+                    <input type="text" value="00.000.000/0001-00">
+                </div>
+                <div class="form-group">
+                    <label>Endereço Completo</label>
+                    <input type="text" value="Rua das Molas, 123 - Mafra/SC">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>E-mail</label>
+                        <input type="email" value="contato@suspensul.com.br">
+                    </div>
+                    <div class="form-group">
+                        <label>Whatsapp</label>
+                        <input type="text" value="(47) 99999-0000">
+                    </div>
+                </div>
+                <div style="margin-top: 20px; text-align: right;">
+                    <button class="btn btn-primary"><i data-lucide="save"></i> Salvar Configurações</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <div class="modal-overlay" id="modal-seletor-calendario">
+        <div class="modal" style="max-width: 480px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Selecionar mês e ano</h3>
+                <button class="btn-icon" onclick="closeModal('modal-seletor-calendario')"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="year-picker-row">
+                    <button class="btn-icon" onclick="changePickerYear(-1)"><i data-lucide="chevron-left"></i></button>
+                    <div class="year-option active" id="calendar-picker-year">2024</div>
+                    <button class="btn-icon" onclick="changePickerYear(1)"><i data-lucide="chevron-right"></i></button>
+                </div>
+                <div class="month-picker-grid" id="calendar-month-picker"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('modal-seletor-calendario')">Cancelar</button>
+                <button class="btn btn-primary" onclick="applyCalendarPeriod()">Aplicar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-seletor-financeiro">
+        <div class="modal" style="max-width: 480px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Selecionar mês e ano</h3>
+                <button class="btn-icon" onclick="closeModal('modal-seletor-financeiro')"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="year-picker-row">
+                    <button class="btn-icon" onclick="changeFinancialPickerYear(-1)"><i data-lucide="chevron-left"></i></button>
+                    <div class="year-option active" id="financial-picker-year">2024</div>
+                    <button class="btn-icon" onclick="changeFinancialPickerYear(1)"><i data-lucide="chevron-right"></i></button>
+                </div>
+                <div class="month-picker-grid" id="financial-month-picker"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('modal-seletor-financeiro')">Cancelar</button>
+                <button class="btn btn-primary" onclick="applyFinancialPeriod()">Aplicar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-seletor-despesas">
+        <div class="modal" style="max-width: 480px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Selecionar mês e ano</h3>
+                <button class="btn-icon" onclick="closeModal('modal-seletor-despesas')"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="year-picker-row">
+                    <button class="btn-icon" onclick="changeDespesasPickerYear(-1)"><i data-lucide="chevron-left"></i></button>
+                    <div class="year-option active" id="despesas-picker-year">2024</div>
+                    <button class="btn-icon" onclick="changeDespesasPickerYear(1)"><i data-lucide="chevron-right"></i></button>
+                </div>
+                <div class="month-picker-grid" id="despesas-month-picker"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('modal-seletor-despesas')">Cancelar</button>
+                <button class="btn btn-primary" onclick="applyDespesasPeriod()">Aplicar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-seletor-os-status">
+        <div class="modal" style="max-width: 360px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Filtrar por Status</h3>
+                <button class="btn-icon" onclick="closeModal('modal-seletor-os-status')"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="os-status-grid" id="os-status-picker"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('modal-seletor-os-status')">Cancelar</button>
+                <button class="btn btn-primary" onclick="applyOSStatus()">Aplicar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-novo-agendamento">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Novo Agendamento</h3>
+                <button class="btn-icon" onclick="closeModal('modal-novo-agendamento')"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Buscar Cliente (Nome/CPF)</label>
+                    <div style="display:flex;gap:8px;align-items:stretch;">
+                        <div style="position: relative; flex:1;">
+                            <input type="text" placeholder="Digite para pesquisar...">
+                            <i data-lucide="search" class="input-icon-right"></i>
+                        </div>
+                        <button type="button" class="btn btn-primary" title="Cadastrar novo cliente" onclick="openModal('modal-cliente')" style="padding:0;width:42px;flex:0 0 42px;align-self:stretch;display:inline-flex;align-items:center;justify-content:center;"><i data-lucide="plus"></i></button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Buscar Veículo (Placa)</label>
+                    <div style="display:flex;gap:8px;align-items:stretch;">
+                        <div style="position: relative; flex:1;">
+                            <input type="text" placeholder="Ex: ABC1D23">
+                            <i data-lucide="search" class="input-icon-right"></i>
+                        </div>
+                        <button type="button" class="btn btn-primary" title="Cadastrar novo veículo" onclick="openModal('modal-veiculo')" style="padding:0;width:42px;flex:0 0 42px;align-self:stretch;display:inline-flex;align-items:center;justify-content:center;"><i data-lucide="plus"></i></button>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Data</label>
+                        <button class="btn custom-picker-trigger" type="button" onclick="openAppointmentDateModal()">
+                            <span id="appointment-date-label">Selecionar data</span>
+                            <i data-lucide="calendar-days"></i>
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <label>Horário</label>
+                        <button class="btn custom-picker-trigger" type="button" onclick="openAppointmentTimeModal()">
+                            <span id="appointment-time-label">Selecionar horário</span>
+                            <i data-lucide="clock"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Observações / Motivo</label>
+                    <textarea rows="3" placeholder="Ex: Barulho na suspensão dianteira..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('modal-novo-agendamento')">Cancelar</button>
+                <button class="btn btn-primary">Agendar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-seletor-data-agendamento">
+        <div class="modal" style="max-width: 520px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Selecionar data</h3>
+                <button class="btn-icon" onclick="closeModal('modal-seletor-data-agendamento')"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="year-picker-row">
+                    <button class="btn-icon" onclick="changeAppointmentPickerMonth(-1)"><i data-lucide="chevron-left"></i></button>
+                    <div class="year-option active" id="appointment-date-month-label">Mês - Ano</div>
+                    <button class="btn-icon" onclick="changeAppointmentPickerMonth(1)"><i data-lucide="chevron-right"></i></button>
+                </div>
+                <div class="appointment-date-grid" id="appointment-date-picker"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('modal-seletor-data-agendamento')">Cancelar</button>
+                <button class="btn btn-primary" onclick="applyAppointmentDate()">Aplicar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-seletor-horario-agendamento">
+        <div class="modal" style="max-width: 420px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Selecionar horário</h3>
+                <button class="btn-icon" onclick="closeModal('modal-seletor-horario-agendamento')"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="appointment-time-grid" id="appointment-time-picker"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('modal-seletor-horario-agendamento')">Cancelar</button>
+                <button class="btn btn-primary" onclick="applyAppointmentTime()">Aplicar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-agendamentos-dia">
+        <div class="modal" style="max-width: 640px;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-agendamentos-dia-titulo">Agendamentos do Dia</h3>
+                <button class="btn-icon" onclick="closeModal('modal-agendamentos-dia')"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <div id="lista-agendamentos-dia" style="display:flex;flex-direction:column;gap:10px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-detalhe-agendamento">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Detalhes do Agendamento</h3>
+                <button class="btn-icon" onclick="closeModal('modal-detalhe-agendamento')"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Cliente</label>
+                    <input type="text" value="João Silva Sauro" id="detalhe-cliente" disabled>
+                </div>
+                <div class="form-group">
+                    <label>Veículo</label>
+                    <input type="text" value="VW Gol - ABC1D23" disabled>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Data</label>
+                        <input type="date" value="2024-11-04" disabled id="detalhe-data">
+                    </div>
+                    <div class="form-group">
+                        <label>Horário</label>
+                        <input type="time" value="09:00" disabled id="detalhe-hora">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Observações</label>
+                    <textarea rows="3" disabled>Revisão básica, troca de óleo e filtros.</textarea>
+                </div>
+            </div>
+            <div class="modal-footer" style="justify-content: space-between;">
+                <button class="btn btn-secondary" style="color: var(--primary)" onclick="openModal('modal-reagendar')"><i data-lucide="calendar-days"></i> Reagendar</button>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-secondary" id="btn-editar-agendamento" onclick="habilitarEdicaoAgendamento()">Editar</button>
+                    <button class="btn btn-primary" style="display: none;" id="btn-salvar-agendamento">Salvar Alterações</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-reagendar">
+        <div class="modal" style="max-width: 400px; border: 1px solid var(--primary) !important;">
+            <div class="modal-header">
+                <h3 class="modal-title">Selecionar Nova Data</h3>
+                <button class="btn-icon" onclick="closeModal('modal-reagendar')"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Nova Data</label>
+                    <input type="date">
+                </div>
+                <div class="form-group">
+                    <label>Novo Horário</label>
+                    <input type="time">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" style="width: 100%; justify-content: center;">Confirmar Reagendamento</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-cliente">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Cadastro de Cliente</h3>
+                <button class="btn-icon" onclick="closeModal('modal-cliente')"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Nome Completo</label>
+                    <input type="text" placeholder="Nome do cliente">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>CPF</label>
+                        <input type="text" placeholder="000.000.000-00">
+                    </div>
+                    <div class="form-group">
+                        <label>Whatsapp</label>
+                        <input type="text" placeholder="(00) 00000-0000">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('modal-cliente')">Cancelar</button>
+                <button class="btn btn-primary">Cadastrar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-fornecedor">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Cadastro de Fornecedor</h3>
+                <button class="btn-icon" onclick="closeModal('modal-fornecedor')"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Nome / Razão Social</label>
+                    <input type="text" placeholder="Ex: Distribuidora de Peças Sul">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>CNPJ</label>
+                        <input type="text" placeholder="00.000.000/0001-00">
+                    </div>
+                    <div class="form-group">
+                        <label>Whatsapp</label>
+                        <input type="text" placeholder="(00) 00000-0000">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('modal-fornecedor')">Cancelar</button>
+                <button class="btn btn-primary">Cadastrar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-veiculo">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <h3 class="modal-title">Cadastro de Veículo</h3>
+                <button class="btn-icon" onclick="closeModal('modal-veiculo')"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Placa</label>
+                        <input type="text" placeholder="Ex: ABC1D23">
+                    </div>
+                    <div class="form-group">
+                        <label>Marca</label>
+                        <input type="text" placeholder="Ex: VW">
+                    </div>
+                    <div class="form-group">
+                        <label>Modelo</label>
+                        <input type="text" placeholder="Ex: Gol">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Ano</label>
+                        <input type="number">
+                    </div>
+                    <div class="form-group">
+                        <label>KM Atual</label>
+                        <input type="number">
+                    </div>
+                    <div class="form-group">
+                        <label>Motorização</label>
+                        <input type="text" placeholder="Ex: 1.0 turbo">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Imagens do Veículo (até 3)</label>
+                    <div class="vehicle-image-uploads" style="display:flex;gap:12px;margin-top:10px;">
+                        <div class="vehicle-img-slot" data-slot="1" style="flex:1;aspect-ratio:1/1;border:none;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--bg-input);overflow:hidden;position:relative;transition:background .15s;">
+                            <i data-lucide="image-plus" style="color:#888;width:28px;height:28px;"></i>
+                            <input type="file" accept="image/*" data-img-idx="1" style="display:none;">
+                        </div>
+                        <div class="vehicle-img-slot" data-slot="2" style="flex:1;aspect-ratio:1/1;border:none;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--bg-input);overflow:hidden;position:relative;transition:background .15s;">
+                            <i data-lucide="image-plus" style="color:#888;width:28px;height:28px;"></i>
+                            <input type="file" accept="image/*" data-img-idx="2" style="display:none;">
+                        </div>
+                        <div class="vehicle-img-slot" data-slot="3" style="flex:1;aspect-ratio:1/1;border:none;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--bg-input);overflow:hidden;position:relative;transition:background .15s;">
+                            <i data-lucide="image-plus" style="color:#888;width:28px;height:28px;"></i>
+                            <input type="file" accept="image/*" data-img-idx="3" style="display:none;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('modal-veiculo')">Cancelar</button>
+                <button class="btn btn-primary">Cadastrar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-veiculo-imagens">
+        <div class="modal" style="max-width: 640px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Imagens do Veículo</h3>
+                <button class="btn-icon" onclick="closeModal('modal-veiculo-imagens')"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <div id="veiculo-carrossel" style="position:relative;width:100%;aspect-ratio:16/10;background:#111;border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center;">
+                    <img id="veiculo-carrossel-img" src="" alt="" style="max-width:100%;max-height:100%;object-fit:contain;">
+                    <button type="button" class="btn-icon" onclick="carrosselVeiculoNav(-1)" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.6);color:#fff;border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;"><i data-lucide="chevron-left"></i></button>
+                    <button type="button" class="btn-icon" onclick="carrosselVeiculoNav(1)" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.6);color:#fff;border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;"><i data-lucide="chevron-right"></i></button>
+                    <div id="veiculo-carrossel-counter" style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.6);color:#fff;padding:4px 10px;border-radius:12px;font-size:12px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-nova-os">
+        <div class="modal modal-lg" style="max-width: 1000px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Nova Nota Fiscal</h3>
+                <button class="btn-icon" onclick="closeModal('modal-nova-os')"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Cliente (Busca)</label>
+                        <div style="display:flex;gap:8px;align-items:stretch;">
+                            <div style="position: relative; flex:1;">
+                                <input type="text" placeholder="Nome ou CPF...">
+                                <i data-lucide="search" class="input-icon-right"></i>
+                            </div>
+                            <button type="button" class="btn btn-primary" title="Cadastrar novo cliente" onclick="openModal('modal-cliente')" style="padding:0;width:42px;flex:0 0 42px;align-self:stretch;display:inline-flex;align-items:center;justify-content:center;"><i data-lucide="plus"></i></button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Veículo (Placa)</label>
+                        <div style="display:flex;gap:8px;align-items:stretch;">
+                            <div style="position: relative; flex:1;">
+                                <input type="text" placeholder="ABC1D23">
+                                <i data-lucide="search" class="input-icon-right"></i>
+                            </div>
+                            <button type="button" class="btn btn-primary" title="Cadastrar novo veículo" onclick="openModal('modal-veiculo')" style="padding:0;width:42px;flex:0 0 42px;align-self:stretch;display:inline-flex;align-items:center;justify-content:center;"><i data-lucide="plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-row peca-row" style="margin-bottom: 5px;align-items:flex-end;">
+                    <div class="form-group" style="flex: 2;">
+                        <label>Peça / Produto</label>
+                        <input type="text" class="peca-descricao" placeholder="Ex: Amortecedor Dianteiro">
+                    </div>
+                    <div class="form-group" style="flex: 1.5;">
+                        <label>Fornecedor</label>
+                        <button type="button" class="btn custom-picker-trigger peca-fornecedor-btn" onclick="abrirSeletorFornecedor(this)">
+                            <span class="peca-fornecedor-label" style="color: var(--text-muted);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left;">Selecione...</span>
+                            <i data-lucide="chevron-down"></i>
+                        </button>
+                        <input type="hidden" class="peca-fornecedor-id">
+                    </div>
+                    <div class="form-group" style="flex: 0 0 70px;">
+                        <label>Qtd</label>
+                        <input type="number" class="peca-qtd" placeholder="0">
+                    </div>
+                    <div class="form-group" style="flex: 0 0 100px;">
+                        <label>Custo</label>
+                        <input type="number" class="peca-custo" placeholder="R$ 0,00" id="os-custo-peca">
+                    </div>
+                    <div class="form-group" style="flex: 0 0 80px;">
+                        <label>Lucro %</label>
+                        <input type="number" class="peca-lucro" placeholder="0%" id="os-lucro-peca" oninput="calcularVendaOS()">
+                    </div>
+                    <div class="form-group" style="flex: 0 0 100px;">
+                        <label>Venda</label>
+                        <input type="number" class="peca-venda" placeholder="R$ 0,00" id="os-venda-peca" readonly>
+                    </div>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <button class="btn btn-secondary" style="width: 100%; justify-content: center; font-weight: 400; font-size: 14px; color: var(--text-muted);"><i data-lucide="plus"></i> Adicionar Peça / Produto</button>
+                </div>
+
+                <div class="form-group">
+                    <label>Valor Mão de Obra (R$)</label>
+                    <input type="number" placeholder="0,00" id="os-mao-obra">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('modal-nova-os')">Cancelar</button>
+                <button class="btn btn-primary">Criar Nota Fiscal</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-seletor-fornecedor">
+        <div class="modal" style="max-width: 480px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Selecionar Fornecedor</h3>
+                <button class="btn-icon" onclick="closeModal('modal-seletor-fornecedor')"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <input type="text" id="seletor-fornecedor-busca" placeholder="Pesquisar fornecedor...">
+                </div>
+                <div id="seletor-fornecedor-lista" style="max-height: 360px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="limparFornecedorSelecionado()">Limpar seleção</button>
+                <button class="btn btn-secondary" onclick="closeModal('modal-seletor-fornecedor')">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-despesa">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Nova Despesa</h3>
+                <button class="btn-icon" onclick="closeModal('modal-despesa')"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Descrição da Despesa</label>
+                    <input type="text" placeholder="Ex: Conta de Luz">
+                </div>
+                <div class="form-group">
+                    <label>Valor (R$)</label>
+                    <input type="number" placeholder="0,00">
+                </div>
+                <p style="font-size: 12px; color: var(--text-muted)">A data será preenchida automaticamente com o dia atual.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('modal-despesa')">Cancelar</button>
+                <button class="btn btn-primary">Salvar Despesa</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="os-print-template">
+        <div class="print-header">
+            <div class="print-logo-area">
+                <div class="print-logo-placeholder">LOGO</div>
+                <div class="print-oficina-dados">
+                    <strong>Oficina Suspensul</strong><br>
+                    CNPJ: 00.000.000/0001-00<br>
+                    Rua das Molas, 123 - Mafra/SC<br>
+                    contato@suspensul.com.br | (47) 99999-0000
+                </div>
+            </div>
+            <div class="print-os-info">
+                <div class="print-os-title">Ordem de Serviço</div>
+                Nº NOTA: <strong>1001</strong><br>
+                Emissão: 04/11/2024
+            </div>
+        </div>
+
+        <div class="print-dados-secao">
+            <div class="print-dados-col">
+                <div class="print-secao-title">Dados do Cliente</div>
+                <strong>Nome:</strong> João Silva Sauro<br>
+                <strong>CPF:</strong> 123.456.789-00<br>
+                <strong>Whatsapp:</strong> (47) 99999-8888
+            </div>
+            <div class="print-dados-col">
+                <div class="print-secao-title">Dados do Veículo</div>
+                <strong>Placa:</strong> ABC1D23<br>
+                <strong>Veículo:</strong> VW Gol G6 - 2015<br>
+                <strong>KM:</strong> 85.000 | <strong>Motor:</strong> 1.0<br>
+                <strong>Chassi:</strong> 9BWZZZ...
+            </div>
+        </div>
+
+        <div class="print-secao-title">Produtos / Peças Aplicadas</div>
+        <table class="print-table">
+            <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Descrição do Produto/Peça</th>
+                    <th>Qtd</th>
+                    <th>Vlr. Unit</th>
+                    <th>Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>cx100</td>
+                    <td>Amortecedor Dianteiro Cofap</td>
+                    <td>2</td>
+                    <td>R$ 250,00</td>
+                    <td>R$ 500,00</td>
+                </tr>
+                <tr>
+                    <td>kt50</td>
+                    <td>Kit Batente/Coifa</td>
+                    <td>2</td>
+                    <td>R$ 60,00</td>
+                    <td>R$ 120,00</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="print-secao-title">Serviços / Mão de Obra</div>
+        <table class="print-table">
+            <thead>
+                <tr>
+                    <th>Descrição do Serviço</th>
+                    <th style="width: 120px; text-align: right;">Valor</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Substituição de amortecedores dianteiros e alinhamento</td>
+                    <td style="text-align: right;">R$ 300,00</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="print-totais">
+            <table class="print-totais-tabela">
+                <tr>
+                    <td>Total Peças</td>
+                    <td style="text-align: right;">R$ 620,00</td>
+                </tr>
+                <tr>
+                    <td>Total Mão de Obra</td>
+                    <td style="text-align: right;">R$ 300,00</td>
+                </tr>
+                <tr class="print-total-geral">
+                    <td>TOTAL GERAL</td>
+                    <td style="text-align: right;">R$ 920,00</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="print-termos">
+            O cliente acima identificado declara estar ciente e concorda com a descrição de peças, valores de produtos e serviços/mão de obra acima detalhados, autorizando a realização dos mesmos no veículo descrito. As peças substituídas ficam à disposição do cliente por 2 dias. Garantia de 90 dias para serviços e conforme fabricante para peças.
+        </div>
+
+        <div class="print-assinaturas">
+            <div class="print-assinatura-box">
+                <div class="print-linha-assinatura"></div>
+                Oficina Suspensul
+            </div>
+            <div class="print-assinatura-box">
+                <div class="print-linha-assinatura"></div>
+                Assinatura do Cliente
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // Inicializa Lucide Icons
+        lucide.createIcons();
+
+        // --- Sidebar Toggle ---
+        function toggleSidebar() {
+            document.body.classList.toggle('sidebar-closed');
+        }
+        // Default fechado em telas <=1024px
+        (function initSidebar() {
+            if (window.matchMedia('(max-width: 1024px)').matches) {
+                document.body.classList.add('sidebar-closed');
+            }
+        })();
+
+        // --- Calendário Dinâmico ---
+        const mesesCalendario = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+        let calendarioAnoSelecionado = new Date().getFullYear();
+        let calendarioMesSelecionado = new Date().getMonth();
+        let pickerAnoSelecionado = calendarioAnoSelecionado;
+        let pickerMesSelecionado = calendarioMesSelecionado;
+
+        // Agendamentos vivem em window.agendamentosExemplo, populado por app.js a partir da API
+        window.agendamentosExemplo = window.agendamentosExemplo || {};
+        const agendamentosExemplo = window.agendamentosExemplo;
+
+        function renderCalendar(year, month) {
+            const grid = document.getElementById('calendar-grid');
+            if (!grid) return;
+
+            const hoje = new Date();
+            const isCurrentMonth = (year === hoje.getFullYear() && month === hoje.getMonth());
+            const todayDate = hoje.getDate();
+
+            const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+
+            let html = '';
+
+            // Cabeçalhos dos dias da semana (amarelo)
+            diasSemana.forEach(dia => {
+                html += `<div class="calendar-day-head">${dia}</div>`;
+            });
+
+            // Primeiro dia do mês e total de dias
+            const firstDay = new Date(year, month, 1).getDay(); // 0=Dom
+            const totalDays = new Date(year, month + 1, 0).getDate();
+
+            // Células vazias antes do dia 1
+            for (let i = 0; i < firstDay; i++) {
+                html += `<div class="calendar-day empty"></div>`;
+            }
+
+            // Dias do mês
+            for (let d = 1; d <= totalDays; d++) {
+                const dateKey = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+                const isToday = isCurrentMonth && d === todayDate;
+                const agendamentos = agendamentosExemplo[dateKey] || [];
+
+                let dayClass = 'calendar-day';
+                if (isToday) dayClass += ' today';
+
+                let eventsHtml = '';
+                agendamentos.forEach(ag => {
+                    eventsHtml += `<span class="calendar-event-tag">${ag.hora}</span>`;
+                });
+
+                const onclickAttr = agendamentos.length > 0 
+                    ? ` onclick="openModal('modal-detalhe-agendamento')"` 
+                    : '';
+
+                html += `<div class="${dayClass}"${onclickAttr}><span class="day-number">${d}</span>${eventsHtml}</div>`;
+            }
+
+            grid.innerHTML = html;
+
+            calendarioAnoSelecionado = year;
+            calendarioMesSelecionado = month;
+            updateCalendarPeriodLabel();
+        }
+
+        function updateCalendarPeriodLabel() {
+            const label = document.getElementById('calendar-period-label');
+            if (label) label.innerText = `${mesesCalendario[calendarioMesSelecionado]} - ${calendarioAnoSelecionado}`;
+        }
+
+        function openCalendarPeriodModal() {
+            pickerAnoSelecionado = calendarioAnoSelecionado;
+            pickerMesSelecionado = calendarioMesSelecionado;
+            renderCalendarPeriodPicker();
+            openModal('modal-seletor-calendario');
+        }
+
+        function renderCalendarPeriodPicker() {
+            const yearEl = document.getElementById('calendar-picker-year');
+            const monthGrid = document.getElementById('calendar-month-picker');
+            if (!yearEl || !monthGrid) return;
+
+            yearEl.innerText = pickerAnoSelecionado;
+            monthGrid.innerHTML = '';
+
+            mesesCalendario.forEach((mes, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'month-option' + (index === pickerMesSelecionado ? ' active' : '');
+                btn.type = 'button';
+                btn.innerText = mes;
+                btn.onclick = () => {
+                    pickerMesSelecionado = index;
+                    renderCalendarPeriodPicker();
+                };
+                monthGrid.appendChild(btn);
+            });
+
+            lucide.createIcons();
+        }
+
+        function changePickerYear(direction) {
+            pickerAnoSelecionado += direction;
+            renderCalendarPeriodPicker();
+        }
+
+        function applyCalendarPeriod() {
+            window.renderCalendar(pickerAnoSelecionado, pickerMesSelecionado);
+            closeModal('modal-seletor-calendario');
+        }
+
+        let financeiroAnoSelecionado = new Date().getFullYear();
+        let financeiroMesSelecionado = new Date().getMonth();
+        let financeiroPickerAno = new Date().getFullYear();
+        let financeiroPickerMes = new Date().getMonth();
+
+        function openFinancialPeriodModal() {
+            financeiroPickerAno = financeiroAnoSelecionado;
+            financeiroPickerMes = financeiroMesSelecionado;
+            renderFinancialPeriodPicker();
+            openModal('modal-seletor-financeiro');
+        }
+
+        function renderFinancialPeriodPicker() {
+            const yearEl = document.getElementById('financial-picker-year');
+            const monthGrid = document.getElementById('financial-month-picker');
+            if (!yearEl || !monthGrid) return;
+
+            yearEl.innerText = financeiroPickerAno;
+            monthGrid.innerHTML = '';
+
+            mesesCalendario.forEach((mes, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'month-option' + (index === financeiroPickerMes ? ' active' : '');
+                btn.type = 'button';
+                btn.innerText = mes;
+                btn.onclick = () => {
+                    financeiroPickerMes = index;
+                    renderFinancialPeriodPicker();
+                };
+                monthGrid.appendChild(btn);
+            });
+
+            lucide.createIcons();
+        }
+
+        function changeFinancialPickerYear(direction) {
+            financeiroPickerAno += direction;
+            renderFinancialPeriodPicker();
+        }
+
+        function applyFinancialPeriod() {
+            financeiroAnoSelecionado = financeiroPickerAno;
+            financeiroMesSelecionado = financeiroPickerMes;
+            const label = document.getElementById('financial-period-label');
+            if (label) label.innerText = `${mesesCalendario[financeiroMesSelecionado]} - ${financeiroAnoSelecionado}`;
+            closeModal('modal-seletor-financeiro');
+        }
+
+        let despesasAnoSelecionado = new Date().getFullYear();
+        let despesasMesSelecionado = new Date().getMonth();
+        let despesasPickerAno = new Date().getFullYear();
+        let despesasPickerMes = new Date().getMonth();
+
+        function openDespesasPeriodModal() {
+            despesasPickerAno = despesasAnoSelecionado;
+            despesasPickerMes = despesasMesSelecionado;
+            renderDespesasPeriodPicker();
+            openModal('modal-seletor-despesas');
+        }
+
+        function renderDespesasPeriodPicker() {
+            const yearEl = document.getElementById('despesas-picker-year');
+            const monthGrid = document.getElementById('despesas-month-picker');
+            if (!yearEl || !monthGrid) return;
+
+            yearEl.innerText = despesasPickerAno;
+            monthGrid.innerHTML = '';
+
+            mesesCalendario.forEach((mes, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'month-option' + (index === despesasPickerMes ? ' active' : '');
+                btn.type = 'button';
+                btn.innerText = mes;
+                btn.onclick = () => {
+                    despesasPickerMes = index;
+                    renderDespesasPeriodPicker();
+                };
+                monthGrid.appendChild(btn);
+            });
+
+            lucide.createIcons();
+        }
+
+        function changeDespesasPickerYear(direction) {
+            despesasPickerAno += direction;
+            renderDespesasPeriodPicker();
+        }
+
+        function applyDespesasPeriod() {
+            despesasAnoSelecionado = despesasPickerAno;
+            despesasMesSelecionado = despesasPickerMes;
+            const label = document.getElementById('despesas-period-label');
+            if (label) label.innerText = `${mesesCalendario[despesasMesSelecionado]} - ${despesasAnoSelecionado}`;
+            closeModal('modal-seletor-despesas');
+        }
+
+        let osStatusSelecionado = 'Todos Status';
+        const osStatusOptions = ['Todos Status', 'Pendente', 'Paga'];
+
+        function openOSStatusModal() {
+            renderOSStatusPicker();
+            openModal('modal-seletor-os-status');
+        }
+
+        function renderOSStatusPicker() {
+            const grid = document.getElementById('os-status-picker');
+            if (!grid) return;
+
+            grid.innerHTML = '';
+
+            osStatusOptions.forEach(status => {
+                const btn = document.createElement('button');
+                btn.className = 'os-status-option' + (status === osStatusSelecionado ? ' active' : '');
+                btn.type = 'button';
+                btn.innerText = status;
+                btn.onclick = () => {
+                    osStatusSelecionado = status;
+                    renderOSStatusPicker();
+                };
+                grid.appendChild(btn);
+            });
+
+            lucide.createIcons();
+        }
+
+        function applyOSStatus() {
+            const label = document.getElementById('os-status-label');
+            if (label) label.innerText = osStatusSelecionado;
+            closeModal('modal-seletor-os-status');
+        }
+
+        let agendamentoDataSelecionada = null;
+        let agendamentoHorarioSelecionado = '';
+        let appointmentPickerYear = new Date().getFullYear();
+        let appointmentPickerMonth = new Date().getMonth();
+        let appointmentPickerDay = new Date().getDate();
+
+        function formatAppointmentDate(date) {
+            return `${String(date.getDate()).padStart(2,'0')}/${String(date.getMonth()+1).padStart(2,'0')}/${date.getFullYear()}`;
+        }
+
+        function openAppointmentDateModal() {
+            const baseDate = agendamentoDataSelecionada || new Date();
+            appointmentPickerYear = baseDate.getFullYear();
+            appointmentPickerMonth = baseDate.getMonth();
+            appointmentPickerDay = baseDate.getDate();
+            renderAppointmentDatePicker();
+            openModal('modal-seletor-data-agendamento');
+        }
+
+        function renderAppointmentDatePicker() {
+            const label = document.getElementById('appointment-date-month-label');
+            const grid = document.getElementById('appointment-date-picker');
+            if (!label || !grid) return;
+
+            label.innerText = `${mesesCalendario[appointmentPickerMonth]} - ${appointmentPickerYear}`;
+            grid.innerHTML = '';
+
+            const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+            diasSemana.forEach(dia => {
+                const head = document.createElement('div');
+                head.className = 'calendar-day-head';
+                head.innerText = dia;
+                grid.appendChild(head);
+            });
+
+            const firstDay = new Date(appointmentPickerYear, appointmentPickerMonth, 1).getDay();
+            const totalDays = new Date(appointmentPickerYear, appointmentPickerMonth + 1, 0).getDate();
+
+            for (let i = 0; i < firstDay; i++) {
+                const empty = document.createElement('div');
+                empty.className = 'appointment-date-option empty';
+                grid.appendChild(empty);
+            }
+
+            for (let d = 1; d <= totalDays; d++) {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'appointment-date-option' + (d === appointmentPickerDay ? ' active' : '');
+                btn.innerText = d;
+                btn.onclick = () => {
+                    appointmentPickerDay = d;
+                    renderAppointmentDatePicker();
+                };
+                grid.appendChild(btn);
+            }
+
+            lucide.createIcons();
+        }
+
+        function changeAppointmentPickerMonth(direction) {
+            const nextDate = new Date(appointmentPickerYear, appointmentPickerMonth + direction, 1);
+            appointmentPickerYear = nextDate.getFullYear();
+            appointmentPickerMonth = nextDate.getMonth();
+            const totalDays = new Date(appointmentPickerYear, appointmentPickerMonth + 1, 0).getDate();
+            if (appointmentPickerDay > totalDays) appointmentPickerDay = totalDays;
+            renderAppointmentDatePicker();
+        }
+
+        function applyAppointmentDate() {
+            agendamentoDataSelecionada = new Date(appointmentPickerYear, appointmentPickerMonth, appointmentPickerDay);
+            const label = document.getElementById('appointment-date-label');
+            if (label) label.innerText = formatAppointmentDate(agendamentoDataSelecionada);
+            closeModal('modal-seletor-data-agendamento');
+        }
+
+        function openAppointmentTimeModal() {
+            renderAppointmentTimePicker();
+            openModal('modal-seletor-horario-agendamento');
+        }
+
+        function renderAppointmentTimePicker() {
+            const grid = document.getElementById('appointment-time-picker');
+            if (!grid) return;
+
+            const horarios = ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00'];
+            grid.innerHTML = '';
+
+            horarios.forEach(horario => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'appointment-time-option' + (horario === agendamentoHorarioSelecionado ? ' active' : '');
+                btn.innerText = horario;
+                btn.onclick = () => {
+                    agendamentoHorarioSelecionado = horario;
+                    renderAppointmentTimePicker();
+                };
+                grid.appendChild(btn);
+            });
+        }
+
+        function applyAppointmentTime() {
+            if (!agendamentoHorarioSelecionado) return;
+            const label = document.getElementById('appointment-time-label');
+            if (label) label.innerText = agendamentoHorarioSelecionado;
+            closeModal('modal-seletor-horario-agendamento');
+        }
+
+        // Renderiza o calendário com o mês atual
+        (function() {
+            const now = new Date();
+
+            renderCalendar(now.getFullYear(), now.getMonth());
+        })();
+
+        // --- Navegação entre Páginas ---
+        function showPage(pageId) {
+            // Esconde todas as páginas
+            const contents = document.querySelectorAll('.main-content');
+            contents.forEach(content => content.classList.remove('active-content'));
+
+            // Remove classe active do menu
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => link.classList.remove('active'));
+
+            // Mostra a página selecionada
+            document.getElementById('page-' + pageId).classList.add('active-content');
+            
+            // Ativa o link no menu
+            document.getElementById('link-' + pageId).classList.add('active');
+
+            // Atualiza título do Header
+            const titles = {
+                'agendamentos': 'Agendamentos',
+                'clientes': 'Gerenciamento de Clientes',
+                'fornecedores': 'Fornecedores',
+                'veiculos': 'Frota de Veículos',
+                'os': 'Notas Fiscais',
+                'orcamento': 'Fazer Orçamento',
+                'despesas': 'Controle de Despesas',
+                'financeiro': 'Painel Financeiro',
+                'configuracoes': 'Configurações do Sistema'
+            };
+            document.getElementById('header-title').innerText = titles[pageId];
+        }
+
+        // --- Controle de Modais ---
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            
+            // Reset especifico para o modal de detalhes de agendamento se fechar
+            if(modalId === 'modal-detalhe-agendamento'){
+                desabilitarEdicaoAgendamento(); 
+            }
+        }
+
+        // Fecha modal ao clicar fora (na overlay)
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal-overlay')) {
+                event.target.classList.remove('active');
+                if(event.target.id === 'modal-detalhe-agendamento'){
+                    desabilitarEdicaoAgendamento();
+                }
+            }
+        }
+
+        // --- Lógica Específica Agendamento ---
+        function habilitarEdicaoAgendamento() {
+            document.getElementById('detalhe-data').disabled = false;
+            document.getElementById('detalhe-hora').disabled = false;
+            document.getElementById('btn-editar-agendamento').style.display = 'none';
+            document.getElementById('btn-salvar-agendamento').style.display = 'inline-flex';
+        }
+
+        function desabilitarEdicaoAgendamento() {
+            document.getElementById('detalhe-data').disabled = true;
+            document.getElementById('detalhe-hora').disabled = true;
+            document.getElementById('btn-editar-agendamento').style.display = 'inline-flex';
+            document.getElementById('btn-salvar-agendamento').style.display = 'none';
+        }
+
+        // --- Lógica Específica Nova OS ---
+        function calcularVendaOS() {
+            const custo = parseFloat(document.getElementById('os-custo-peca').value) || 0;
+            const lucroPorcent = parseFloat(document.getElementById('os-lucro-peca').value) || 0;
+            const vendaInput = document.getElementById('os-venda-peca');
+
+            if (custo > 0) {
+                const valorVenda = custo * (1 + (lucroPorcent / 100));
+                vendaInput.value = valorVenda.toFixed(2);
+            } else {
+                vendaInput.value = '';
+            }
+        }
+
+        // --- Função Imprimir OS ---
+        function printOS(osId) {
+            if (osId) {
+                window.open('/os/' + osId + '/imprimir', '_blank');
+            } else {
+                window.print();
+            }
+        }
+        function imprimirCupom(osId) {
+            window.open('/os/' + osId + '/imprimir?formato=cupom', '_blank');
+        }
+        function visualizarOS(osId) {
+            window.open('/os/' + osId + '/imprimir?preview=1', '_blank');
+        }
+        window.visualizarOS = visualizarOS;
+    </script>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
