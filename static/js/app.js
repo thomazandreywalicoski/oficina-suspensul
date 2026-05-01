@@ -742,7 +742,7 @@
         const busca = document.getElementById('seletor-fornecedor-busca');
         if (busca) { busca.value = ''; busca.oninput = () => renderListaSeletorFornecedor(busca.value); }
         renderListaSeletorFornecedor('');
-        document.getElementById('modal-seletor-fornecedor').classList.add('active');
+        window.openModal('modal-seletor-fornecedor');
     };
 
     function selecionarFornecedor(id, nome) {
@@ -757,7 +757,7 @@
             label.style.overflow = 'hidden';
             label.style.textOverflow = 'ellipsis';
         }
-        document.getElementById('modal-seletor-fornecedor').classList.remove('active');
+        window.closeModal('modal-seletor-fornecedor');
     }
 
     window.limparFornecedorSelecionado = function() {
@@ -766,17 +766,17 @@
         const label = _fornecedorPickerTarget.querySelector('.peca-fornecedor-label');
         if (hidden) hidden.value = '';
         if (label) { label.textContent = 'Selecione...'; label.style.color = 'var(--text-muted)'; }
-        document.getElementById('modal-seletor-fornecedor').classList.remove('active');
+        window.closeModal('modal-seletor-fornecedor');
     };
 
     function setupModalNovaOS() {
         const m = document.getElementById('modal-nova-os');
         if (!m) return;
 
-        // Botão "Adicionar Peça"
+        // Botão "Adicionar Peça" - abre modal de peça
         const btnAddPeca = m.querySelector('.btn-secondary');
         if (btnAddPeca) {
-            btnAddPeca.onclick = adicionarLinhaPeca;
+            btnAddPeca.onclick = () => window.openPecaOSModal();
         }
 
         // Pré-carrega fornecedores quando o modal abre
@@ -797,9 +797,9 @@
         }
 
         // Busca cliente
-        const inputs = m.querySelectorAll('input[type="text"]');
-        const inputCliente = inputs[0];
-        const inputVeiculo = inputs[1];
+        const inputCliente = m.querySelector('input[placeholder="Nome ou CPF..."]');
+        const inputVeiculo = m.querySelector('input[placeholder="ABC1D23"]');
+        if (!inputCliente || !inputVeiculo) return;
 
         let dropdown1 = criarDropdown(inputCliente, async (q) => {
             const arr = await api('GET', '/api/clientes?q=' + encodeURIComponent(q));
@@ -1048,26 +1048,18 @@
     }
 
     function coletarPecasOS() {
-        const m = document.getElementById('modal-nova-os');
-        const linhas = m.querySelectorAll('.peca-row');
-        const pecas = [];
-        linhas.forEach(linha => {
-            const desc = linha.querySelector('.peca-descricao')?.value?.trim();
-            const fornecedor_id = linha.querySelector('.peca-fornecedor-id')?.value || null;
-            const qtd = parseInt(linha.querySelector('.peca-qtd')?.value || 0, 10);
-            const custo = parseFloat(linha.querySelector('.peca-custo')?.value || 0);
-            const lucro = parseFloat(linha.querySelector('.peca-lucro')?.value || 0);
-            const desconto = parseFloat(linha.querySelector('.peca-desconto')?.value || 0);
-            const venda = parseFloat(linha.querySelector('.peca-venda')?.value || 0);
-            const valorComLucro = custo * (1 + lucro/100);
-            if (desc && qtd > 0) {
-                pecas.push({
-                    descricao: desc, fornecedor_id: fornecedor_id || null, quantidade: qtd,
-                    valor_custo: custo, lucro_percentual: lucro, desconto_percentual: desconto, valor_venda: venda || (valorComLucro * (1 - desconto/100)),
-                });
-            }
-        });
-        return pecas;
+        const arr = window.pecasOS || [];
+        return arr.map(p => ({
+            descricao: p.nome,
+            fornecedor_id: p.fornecedor_id || null,
+            quantidade: p.qtd,
+            valor_custo: p.custo,
+            lucro_percentual: p.lucro,
+            desconto_percentual: p.desconto,
+            valor_venda_sem_desconto: p.vendaSemDesconto,
+            valor_desconto: p.valorDesconto,
+            valor_venda: p.venda,
+        }));
     }
 
     async function salvarNovaOS() {
@@ -1096,9 +1088,9 @@
         const m = document.getElementById('modal-nova-os');
         if (!m) return;
         m.querySelectorAll('input').forEach(i => i.value = '');
-        // Remove linhas extras de peças
-        const linhas = m.querySelectorAll('.form-row[style*="margin-bottom: 5px"]');
-        linhas.forEach((l, i) => { if (i > 0) l.remove(); });
+        // Limpa lista de peças
+        if (window.pecasOS) { window.pecasOS.length = 0; }
+        if (window.renderPecasOSLista) window.renderPecasOSLista();
     }
 
     // ===================== AGENDAMENTOS =====================

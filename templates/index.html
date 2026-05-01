@@ -684,6 +684,18 @@ tr:not(:last-child) td {
         .fin-card-value { font-size: 28px; font-weight: 700; color: var(--text-main);}
         .fin-card-value.positvo { color: #2ecc71; }
         .fin-card-value.negativo { color: #e74c3c; }
+        .financeiro-cards .card {
+            border: none !important;
+        }
+        .financeiro-cards .card .fin-card-title,
+        .financeiro-cards .card .fin-card-value {
+            color: #fff !important;
+        }
+        .financeiro-card-veiculos { background-color: #7f8c8d; }
+        .financeiro-card-gasto { background-color: #e67e22; }
+        .financeiro-card-recebido { background-color: #3498db; }
+        .financeiro-card-despesas { background-color: #e74c3c; }
+        .financeiro-card-lucro { background-color: #2ecc71; }
 
         /* --- Configurações --- */
         .config-container { max-width: 600px; }
@@ -1154,25 +1166,25 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
             </div>
 
             <div class="financeiro-cards">
-                <div class="card">
+                <div class="card financeiro-card-veiculos">
                     <div class="fin-card-title">Nº Veículos</div>
                     <div class="fin-card-value">12</div>
                 </div>
-                <div class="card">
+                <div class="card financeiro-card-gasto">
                     <div class="fin-card-title">Valor Gasto (Peças)</div>
                     <div class="fin-card-value negativo">R$ 3.200</div>
                 </div>
-                <div class="card">
+                <div class="card financeiro-card-recebido">
                     <div class="fin-card-title">Recebido (Comprovantes)</div>
                     <div class="fin-card-value positvo">R$ 8.500</div>
                 </div>
-                <div class="card">
+                <div class="card financeiro-card-despesas">
                     <div class="fin-card-title">Despesas Fixas</div>
                     <div class="fin-card-value negativo">R$ 2.850</div>
                 </div>
-                <div class="card" style="border: 1px solid rgba(255,229,76,0.3) !important">
-                    <div class="fin-card-title" style="color: var(--primary)">Lucro Líquido</div>
-                    <div class="fin-card-value positvo" style="color: var(--primary)">R$ 2.450</div>
+                <div class="card financeiro-card-lucro">
+                    <div class="fin-card-title">Lucro Líquido</div>
+                    <div class="fin-card-value positvo">R$ 2.450</div>
                 </div>
             </div>
 
@@ -1651,42 +1663,10 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
                     </div>
                 </div>
                 
-                <div class="form-row peca-row" style="margin-bottom: 5px;align-items:flex-end;">
-                    <div class="form-group" style="flex: 2;">
-                        <label>Peça / Produto</label>
-                        <input type="text" class="peca-descricao" placeholder="Ex: Amortecedor Dianteiro">
-                    </div>
-                    <div class="form-group" style="flex: 1.5;">
-                        <label>Fornecedor</label>
-                        <button type="button" class="btn custom-picker-trigger peca-fornecedor-btn" onclick="abrirSeletorFornecedor(this)">
-                            <span class="peca-fornecedor-label" style="color: var(--text-muted);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left;">Selecione...</span>
-                            <i data-lucide="chevron-down"></i>
-                        </button>
-                        <input type="hidden" class="peca-fornecedor-id">
-                    </div>
-                    <div class="form-group" style="flex: 0 0 70px;">
-                        <label>Qtd</label>
-                        <input type="number" class="peca-qtd" placeholder="0">
-                    </div>
-                    <div class="form-group" style="flex: 0 0 100px;">
-                        <label>Custo</label>
-                        <input type="number" class="peca-custo" placeholder="R$ 0,00" id="os-custo-peca">
-                    </div>
-                    <div class="form-group" style="flex: 0 0 80px;">
-                        <label>Lucro %</label>
-                        <input type="number" class="peca-lucro" placeholder="0%" id="os-lucro-peca" oninput="calcularVendaOS()">
-                    </div>
-                    <div class="form-group" style="flex: 0 0 95px;">
-                        <label>Desconto</label>
-                        <input type="number" class="peca-desconto" placeholder="0%" id="os-desconto-peca" oninput="calcularVendaOS()">
-                    </div>
-                    <div class="form-group" style="flex: 0 0 100px;">
-                        <label>Venda</label>
-                        <input type="number" class="peca-venda" placeholder="R$ 0,00" id="os-venda-peca" readonly>
-                    </div>
-                </div>
-                <div style="margin-bottom: 20px;">
-                    <button class="btn btn-secondary" style="width: 100%; justify-content: center; font-weight: 400; font-size: 14px; color: var(--text-muted);"><i data-lucide="plus"></i> Adicionar Peça / Produto</button>
+                <div class="form-group">
+                    <label>Peças / Produtos</label>
+                    <div id="os-pecas-lista" style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;"></div>
+                    <button type="button" class="btn btn-secondary" onclick="openPecaOSModal()" style="width: 100%; justify-content: center; font-weight: 400; font-size: 14px; color: var(--text-muted);"><i data-lucide="plus"></i> Adicionar Peça / Produto</button>
                 </div>
 
                 <div class="form-group">
@@ -1720,6 +1700,68 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
         </div>
     </div>
 
+    <div class="modal-overlay" id="modal-peca-os">
+        <div class="modal" style="max-width: 640px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Adicionar Peça / Produto</h3>
+                <button class="btn-icon" onclick="closeModal('modal-peca-os')"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Nome da Peça / Produto</label>
+                    <input type="text" id="peca-os-nome" placeholder="Ex: Amortecedor Dianteiro">
+                </div>
+                <div class="form-group peca-row">
+                    <label>Fornecedor</label>
+                    <div style="display:flex;gap:8px;align-items:stretch;">
+                        <button type="button" class="btn custom-picker-trigger" id="peca-os-fornecedor-btn" onclick="abrirSeletorFornecedor(this)" style="flex:1;">
+                            <span class="peca-fornecedor-label" style="color: var(--text-muted);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left;">Selecione...</span>
+                            <i data-lucide="chevron-down"></i>
+                        </button>
+                        <button type="button" class="btn" title="Cadastrar novo fornecedor" onclick="openNovoFornecedorDaPeca()" style="padding:0;width:42px;flex:0 0 42px;display:inline-flex;align-items:center;justify-content:center;background:var(--primary);color:#000;">
+                            <i data-lucide="plus"></i>
+                        </button>
+                    </div>
+                    <input type="hidden" class="peca-fornecedor-id" id="peca-os-fornecedor-id">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Quantidade</label>
+                        <input type="number" id="peca-os-qtd" placeholder="0" oninput="calcularVendaPecaOS()">
+                    </div>
+                    <div class="form-group">
+                        <label>Valor de Compra (un.)</label>
+                        <input type="number" step="0.01" id="peca-os-custo" placeholder="R$ 0,00" oninput="calcularVendaPecaOS()">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Lucro Desejado (un.) %</label>
+                        <input type="number" step="0.01" id="peca-os-lucro" value="20" oninput="calcularVendaPecaOS()">
+                    </div>
+                    <div class="form-group">
+                        <label>Valor de Venda (un., sem desconto)</label>
+                        <input type="text" id="peca-os-venda-sem-desconto" readonly style="background-color: #e39f13; color: #fff; font-weight: 600;">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Desconto (un.) %</label>
+                        <input type="number" step="0.01" id="peca-os-desconto" value="5" oninput="calcularVendaPecaOS()">
+                    </div>
+                    <div class="form-group">
+                        <label>Valor de Venda Final (un.)</label>
+                        <input type="text" id="peca-os-venda" readonly style="background-color: #22c55e; color: #fff; font-weight: 600;">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('modal-peca-os')">Cancelar</button>
+                <button class="btn btn-primary" onclick="adicionarPecaOS()">Adicionar</button>
+            </div>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="modal-despesa">
         <div class="modal">
             <div class="modal-header">
@@ -1731,11 +1773,19 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
                     <label>Descrição da Despesa</label>
                     <input type="text" placeholder="Ex: Conta de Luz">
                 </div>
-                <div class="form-group">
-                    <label>Valor (R$)</label>
-                    <input type="number" placeholder="0,00">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Valor (R$)</label>
+                        <input type="number" placeholder="0,00">
+                    </div>
+                    <div class="form-group">
+                        <label>Data</label>
+                        <button class="btn custom-picker-trigger" type="button" onclick="openDespesaDateModal()">
+                            <span id="despesa-date-label">Selecionar data</span>
+                            <i data-lucide="calendar-days"></i>
+                        </button>
+                    </div>
                 </div>
-                <p style="font-size: 12px; color: var(--text-muted)">A data será preenchida automaticamente com o dia atual.</p>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeModal('modal-despesa')">Cancelar</button>
@@ -1744,6 +1794,26 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
         </div>
     </div>
 
+    <div class="modal-overlay" id="modal-seletor-data-despesa">
+        <div class="modal" style="max-width: 520px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Selecionar data</h3>
+                <button class="btn-icon" onclick="closeModal('modal-seletor-data-despesa')"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="year-picker-row">
+                    <button class="btn-icon" onclick="changeDespesaPickerMonth(-1)"><i data-lucide="chevron-left"></i></button>
+                    <div class="year-option active" id="despesa-date-month-label">Mês - Ano</div>
+                    <button class="btn-icon" onclick="changeDespesaPickerMonth(1)"><i data-lucide="chevron-right"></i></button>
+                </div>
+                <div class="appointment-date-grid" id="despesa-date-picker"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('modal-seletor-data-despesa')">Cancelar</button>
+                <button class="btn btn-primary" onclick="applyDespesaDate()">Aplicar</button>
+            </div>
+        </div>
+    </div>
 
     <div id="os-print-template">
         <div class="print-header">
@@ -1996,6 +2066,7 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
         let financeiroMesSelecionado = new Date().getMonth();
         let financeiroPickerAno = new Date().getFullYear();
         let financeiroPickerMes = new Date().getMonth();
+        (function(){ const l = document.getElementById('financial-period-label'); if(l) l.innerText = `${mesesCalendario[financeiroMesSelecionado]} - ${financeiroAnoSelecionado}`; })();
 
         function openFinancialPeriodModal() {
             financeiroPickerAno = financeiroAnoSelecionado;
@@ -2044,6 +2115,7 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
         let despesasMesSelecionado = new Date().getMonth();
         let despesasPickerAno = new Date().getFullYear();
         let despesasPickerMes = new Date().getMonth();
+        (function(){ const l = document.getElementById('despesas-period-label'); if(l) l.innerText = `${mesesCalendario[despesasMesSelecionado]} - ${despesasAnoSelecionado}`; })();
 
         function openDespesasPeriodModal() {
             despesasPickerAno = despesasAnoSelecionado;
@@ -2198,9 +2270,75 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
             closeModal('modal-seletor-data-agendamento');
         }
 
-        function openAppointmentTimeModal() {
-            renderAppointmentTimePicker();
-            openModal('modal-seletor-horario-agendamento');
+        // --- Seletor de Data: Despesa ---
+        let despesaDataSelecionada = null;
+        let despesaPickerYear = new Date().getFullYear();
+        let despesaPickerMonth = new Date().getMonth();
+        let despesaPickerDay = new Date().getDate();
+
+        function openDespesaDateModal() {
+            const baseDate = despesaDataSelecionada || new Date();
+            despesaPickerYear = baseDate.getFullYear();
+            despesaPickerMonth = baseDate.getMonth();
+            despesaPickerDay = baseDate.getDate();
+            renderDespesaDatePicker();
+            openModal('modal-seletor-data-despesa');
+        }
+
+        function renderDespesaDatePicker() {
+            const label = document.getElementById('despesa-date-month-label');
+            const grid = document.getElementById('despesa-date-picker');
+            if (!label || !grid) return;
+
+            label.innerText = `${mesesCalendario[despesaPickerMonth]} - ${despesaPickerYear}`;
+            grid.innerHTML = '';
+
+            const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+            diasSemana.forEach(dia => {
+                const head = document.createElement('div');
+                head.className = 'calendar-day-head';
+                head.innerText = dia;
+                grid.appendChild(head);
+            });
+
+            const firstDay = new Date(despesaPickerYear, despesaPickerMonth, 1).getDay();
+            const totalDays = new Date(despesaPickerYear, despesaPickerMonth + 1, 0).getDate();
+
+            for (let i = 0; i < firstDay; i++) {
+                const empty = document.createElement('div');
+                empty.className = 'appointment-date-option empty';
+                grid.appendChild(empty);
+            }
+
+            for (let d = 1; d <= totalDays; d++) {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'appointment-date-option' + (d === despesaPickerDay ? ' active' : '');
+                btn.innerText = d;
+                btn.onclick = () => {
+                    despesaPickerDay = d;
+                    renderDespesaDatePicker();
+                };
+                grid.appendChild(btn);
+            }
+
+            lucide.createIcons();
+        }
+
+        function changeDespesaPickerMonth(direction) {
+            const nextDate = new Date(despesaPickerYear, despesaPickerMonth + direction, 1);
+            despesaPickerYear = nextDate.getFullYear();
+            despesaPickerMonth = nextDate.getMonth();
+            const totalDays = new Date(despesaPickerYear, despesaPickerMonth + 1, 0).getDate();
+            if (despesaPickerDay > totalDays) despesaPickerDay = totalDays;
+            renderDespesaDatePicker();
+        }
+
+        function applyDespesaDate() {
+            despesaDataSelecionada = new Date(despesaPickerYear, despesaPickerMonth, despesaPickerDay);
+            const label = document.getElementById('despesa-date-label');
+            if (label) label.innerText = formatAppointmentDate(despesaDataSelecionada);
+            closeModal('modal-seletor-data-despesa');
         }
 
         function renderAppointmentTimePicker() {
@@ -2269,12 +2407,24 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
         }
 
         // --- Controle de Modais ---
+        let modalZIndex = 1200;
         function openModal(modalId) {
-            document.getElementById(modalId).classList.add('active');
+            const el = document.getElementById(modalId);
+            modalZIndex += 1;
+            el.style.zIndex = modalZIndex;
+            el.classList.add('active');
+        }
+
+        function openNovoFornecedorDaPeca() {
+            openModal('modal-fornecedor');
         }
 
         function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
+            const el = document.getElementById(modalId);
+            el.classList.remove('active');
+            el.style.zIndex = '';
+            
+            modalZIndex = Math.max(1200, modalZIndex - 1);
             
             // Reset especifico para o modal de detalhes de agendamento se fechar
             if(modalId === 'modal-detalhe-agendamento'){
@@ -2338,6 +2488,123 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
             window.open('/os/' + osId + '/imprimir?preview=1', '_blank');
         }
         window.visualizarOS = visualizarOS;
+
+        // --- Peças do Comprovante (lista) ---
+        let pecasOS = [];
+
+        function formatBRL(v) {
+            return 'R$ ' + (Number(v) || 0).toFixed(2).replace('.', ',');
+        }
+
+        function truncarNomePeca(nome) {
+            const texto = String(nome || '');
+            return texto.length > 25 ? texto.slice(0, 25) + '...' : texto;
+        }
+
+        function calcularPrecoVenda(custo, lucroPct, descontoPct) {
+            const lucro = (Number(lucroPct) || 0) / 100;
+            const desconto = (Number(descontoPct) || 0) / 100;
+            if (desconto >= 1) return 0;
+            const precoSemDesconto = (Number(custo) || 0) * (1 + lucro) / (1 - desconto);
+            const valorDesconto = precoSemDesconto * desconto;
+            const precoComDesconto = precoSemDesconto - valorDesconto;
+            return { precoSemDesconto, valorDesconto, precoComDesconto };
+        }
+
+        function calcularVendaPecaOS() {
+            const custo = parseFloat(document.getElementById('peca-os-custo').value) || 0;
+            const lucro = parseFloat(document.getElementById('peca-os-lucro').value) || 0;
+            const desconto = parseFloat(document.getElementById('peca-os-desconto').value) || 0;
+            const valores = calcularPrecoVenda(custo, lucro, desconto);
+            document.getElementById('peca-os-venda-sem-desconto').value = custo > 0 ? formatBRL(valores.precoSemDesconto) : '';
+            document.getElementById('peca-os-venda').value = custo > 0 ? formatBRL(valores.precoComDesconto) : '';
+        }
+
+        function openPecaOSModal() {
+            document.getElementById('peca-os-nome').value = '';
+            document.getElementById('peca-os-qtd').value = '';
+            document.getElementById('peca-os-custo').value = '';
+            document.getElementById('peca-os-lucro').value = '20';
+            document.getElementById('peca-os-desconto').value = '5';
+            document.getElementById('peca-os-venda-sem-desconto').value = '';
+            document.getElementById('peca-os-venda').value = '';
+            document.getElementById('peca-os-fornecedor-id').value = '';
+            const lbl = document.querySelector('#peca-os-fornecedor-btn .peca-fornecedor-label');
+            if (lbl) { lbl.textContent = 'Selecione...'; lbl.style.color = 'var(--text-muted)'; }
+            openModal('modal-peca-os');
+        }
+
+        function adicionarPecaOS() {
+            const nome = document.getElementById('peca-os-nome').value.trim();
+            const qtd = parseInt(document.getElementById('peca-os-qtd').value, 10) || 0;
+            const custo = parseFloat(document.getElementById('peca-os-custo').value) || 0;
+            const lucro = parseFloat(document.getElementById('peca-os-lucro').value) || 0;
+            const desconto = parseFloat(document.getElementById('peca-os-desconto').value) || 0;
+            const fornecedorId = document.getElementById('peca-os-fornecedor-id').value || null;
+            const fornecedorLabel = document.querySelector('#peca-os-fornecedor-btn .peca-fornecedor-label')?.textContent || '';
+
+            if (!nome) { alert('Informe o nome da peça/produto.'); return; }
+            if (qtd <= 0) { alert('Informe a quantidade.'); return; }
+            if (custo <= 0) { alert('Informe o valor de compra.'); return; }
+
+            const valores = calcularPrecoVenda(custo, lucro, desconto);
+            pecasOS.push({
+                nome, qtd, custo, lucro, desconto,
+                vendaSemDesconto: valores.precoSemDesconto,
+                valorDesconto: valores.valorDesconto,
+                venda: valores.precoComDesconto,
+                fornecedor_id: fornecedorId,
+                fornecedor_nome: fornecedorLabel === 'Selecione...' ? '' : fornecedorLabel
+            });
+            renderPecasOSLista();
+            closeModal('modal-peca-os');
+        }
+
+        function removerPecaOS(idx) {
+            pecasOS.splice(idx, 1);
+            renderPecasOSLista();
+        }
+
+        function renderPecasOSLista() {
+            const cont = document.getElementById('os-pecas-lista');
+            if (!cont) return;
+            cont.innerHTML = `
+                <div style="background:var(--bg-input);border-radius:8px;overflow:hidden;">
+                    <div style="display:grid;grid-template-columns:minmax(180px,2fr) 56px 110px 130px 110px 110px 90px;gap:10px;align-items:center;padding:12px;background:var(--primary);color:#000;font-size:12px;font-weight:700;text-transform:uppercase;border-bottom:1px solid rgba(0,0,0,0.08);text-align:center;">
+                        <div style="text-align:center;">Produto</div>
+                        <div style="text-align:center;">Qtd</div>
+                        <div style="text-align:center;">Compra</div>
+                        <div style="text-align:center;">Sem desconto</div>
+                        <div style="text-align:center;">Desconto</div>
+                        <div style="text-align:center;">Venda</div>
+                        <div style="text-align:center;">Ações</div>
+                    </div>
+                    ${pecasOS.map((p, i) => `
+                        <div style="display:grid;grid-template-columns:minmax(180px,2fr) 56px 110px 130px 110px 110px 90px;gap:10px;align-items:center;padding:12px;border-top:1px solid rgba(255,255,255,0.04);">
+                            <div style="text-align:center;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500;color:var(--text-main);" title="${p.nome}">${truncarNomePeca(p.nome)}</div>
+                            <div style="text-align:center;color:var(--text-main);font-weight:600;">${p.qtd}</div>
+                            <div style="text-align:center;color:var(--text-main);font-weight:600;">${formatBRL(p.custo)}</div>
+                            <div style="text-align:center;color:var(--text-main);font-weight:600;">${formatBRL(p.vendaSemDesconto)}</div>
+                            <div style="text-align:center;color:var(--text-main);font-weight:600;">${formatBRL(p.valorDesconto)}</div>
+                            <div style="text-align:center;color:#22c55e;font-weight:700;">${formatBRL(p.venda)}</div>
+                            <button type="button" class="btn-icon" onclick="removerPecaOS(${i})" title="Remover" style="color:#e74c3c;justify-self:center;"><i data-lucide="trash-2"></i></button>
+                        </div>
+                    `).join('')}
+                    ${pecasOS.length === 0 ? `
+                        <div style="height:68px;display:flex;align-items:center;justify-content:center;padding:0 12px;color:var(--text-muted);font-size:13px;text-align:center;border-top:1px solid rgba(255,255,255,0.04);">Nenhum produto adicionado</div>
+                    ` : ''}
+                </div>
+            `;
+            lucide.createIcons();
+        }
+        
+        window.pecasOS = pecasOS;
+        window.openPecaOSModal = openPecaOSModal;
+        window.openNovoFornecedorDaPeca = openNovoFornecedorDaPeca;
+        window.adicionarPecaOS = adicionarPecaOS;
+        window.removerPecaOS = removerPecaOS;
+        window.calcularVendaPecaOS = calcularVendaPecaOS;
+        window.renderPecasOSLista = renderPecasOSLista;
     </script>
     <script src="/static/js/app.js"></script>
 </body>
