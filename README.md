@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+# oficina-suspensul
+Sistema de gerenciamento da Oficina Suspensul
+=======
 # Oficina Suspensul - Sistema de Gerenciamento
 
 Sistema completo de gerenciamento para oficina mecânica, com agendamentos, clientes, fornecedores, veículos, ordens de serviço, despesas e financeiro.
@@ -138,3 +142,4 @@ python app.py
 ```
 
 A aplicação ficará em <http://localhost:5000>.
+>>>>>>> 216908d (Initial commit)

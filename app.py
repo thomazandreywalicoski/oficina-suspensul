@@ -66,6 +66,15 @@ def run_migrations():
                 print(f"FK fornecedor_id já existe ou falhou: {fe}")
             conn.commit()
             print("Migração: coluna fornecedor_id adicionada em ordens_servico_pecas")
+        cur.execute("""SELECT COUNT(*) FROM information_schema.COLUMNS
+                       WHERE TABLE_SCHEMA = DATABASE()
+                         AND TABLE_NAME = 'ordens_servico_pecas'
+                         AND COLUMN_NAME = 'desconto_percentual'""")
+        (existe,) = cur.fetchone()
+        if not existe:
+            cur.execute("ALTER TABLE ordens_servico_pecas ADD COLUMN desconto_percentual DECIMAL(6,2) NOT NULL DEFAULT 0 AFTER lucro_percentual")
+            conn.commit()
+            print("Migração: coluna desconto_percentual adicionada em ordens_servico_pecas")
         # Migração: imagem2, imagem3 em veiculos
         for col in ('imagem2', 'imagem3'):
             cur.execute("""SELECT COUNT(*) FROM information_schema.COLUMNS
@@ -476,11 +485,11 @@ def criar_os():
                  d.get('data_emissao') or date.today().isoformat(),
                  d.get('valor_mao_obra', 0), d.get('observacoes')), commit=True)
     for p in d.get('pecas', []):
-        query("""INSERT INTO ordens_servico_pecas (ordem_id, codigo, descricao, fornecedor_id, quantidade, valor_custo, lucro_percentual, valor_venda)
-                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)""",
+        query("""INSERT INTO ordens_servico_pecas (ordem_id, codigo, descricao, fornecedor_id, quantidade, valor_custo, lucro_percentual, desconto_percentual, valor_venda)
+                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""",
               (oid, p.get('codigo'), p['descricao'], p.get('fornecedor_id') or None,
                p.get('quantidade', 1),
-               p.get('valor_custo', 0), p.get('lucro_percentual', 0), p.get('valor_venda', 0)), commit=True)
+               p.get('valor_custo', 0), p.get('lucro_percentual', 0), p.get('desconto_percentual', 0), p.get('valor_venda', 0)), commit=True)
     return jsonify({'id': oid, 'numero': numero}), 201
 
 @app.route('/api/os/<int:oid>/status', methods=['PUT'])

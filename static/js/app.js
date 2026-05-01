@@ -669,7 +669,7 @@
                     <button class="btn-icon" title="Enviar WhatsApp" onclick="enviarWhatsapp(${o.id})" style="color:#25d366"><i data-lucide="message-circle"></i></button>
                     <button class="btn-icon" title="${o.status === 'Paga' ? 'Marcar Pendente' : 'Marcar Paga'}" onclick="alternarStatusOS(${o.id}, '${o.status}')" style="color:${o.status === 'Paga' ? '#f39c12' : '#2ecc71'}"><i data-lucide="${o.status === 'Paga' ? 'rotate-ccw' : 'check'}"></i></button>
                 </td>
-            </tr>`).join('') : `<tr><td colspan="7" style="text-align:center;color:#777">Nenhuma ordem de serviço.</td></tr>`;
+            </tr>`).join('') : `<tr><td colspan="7" style="text-align:center;color:#777">Nenhum comprovante.</td></tr>`;
         refreshIcons();
     }
 
@@ -685,7 +685,7 @@
     window.toggleOS = async function(id) {
         const o = state.os.find(x => x.id === id);
         const acao = o && o.ativo ? 'desativar' : 'ativar';
-        if (!confirm(`Deseja ${acao} esta ordem de serviço?`)) return;
+        if (!confirm(`Deseja ${acao} este comprovante?`)) return;
         try {
             const r = await api('PATCH', `/api/os/${id}/toggle-ativo`);
             await carregarOS();
@@ -703,7 +703,7 @@
         }
         const fone = (cliente && cliente.whatsapp || '').replace(/\D/g, '');
         const url = `${window.location.origin}/os/${id}/imprimir`;
-        const msg = encodeURIComponent(`Olá ${o.nome_completo}, segue sua Nota Fiscal Nº ${String(o.numero).padStart(6,'0')}: ${url}`);
+        const msg = encodeURIComponent(`Olá ${o.nome_completo}, segue seu Comprovante Nº ${String(o.numero).padStart(6,'0')}: ${url}`);
         const wpp = fone ? `https://wa.me/55${fone}?text=${msg}` : `https://wa.me/?text=${msg}`;
         window.open(wpp, '_blank');
     };
@@ -1022,14 +1022,18 @@
 
         const custoIn = nova.querySelector('.peca-custo');
         const lucroIn = nova.querySelector('.peca-lucro');
+        const descontoIn = nova.querySelector('.peca-desconto');
         const vendaIn = nova.querySelector('.peca-venda');
         const recalc = () => {
             const c = parseFloat(custoIn.value) || 0;
             const l = parseFloat(lucroIn.value) || 0;
-            vendaIn.value = c > 0 ? (c * (1 + l/100)).toFixed(2) : '';
+            const d = parseFloat(descontoIn.value) || 0;
+            const valorComLucro = c * (1 + l/100);
+            vendaIn.value = c > 0 ? (valorComLucro * (1 - d/100)).toFixed(2) : '';
         };
         custoIn.addEventListener('input', recalc);
         lucroIn.addEventListener('input', recalc);
+        descontoIn.addEventListener('input', recalc);
 
         adicionarBotaoLixeira(nova);
 
@@ -1053,11 +1057,13 @@
             const qtd = parseInt(linha.querySelector('.peca-qtd')?.value || 0, 10);
             const custo = parseFloat(linha.querySelector('.peca-custo')?.value || 0);
             const lucro = parseFloat(linha.querySelector('.peca-lucro')?.value || 0);
+            const desconto = parseFloat(linha.querySelector('.peca-desconto')?.value || 0);
             const venda = parseFloat(linha.querySelector('.peca-venda')?.value || 0);
+            const valorComLucro = custo * (1 + lucro/100);
             if (desc && qtd > 0) {
                 pecas.push({
                     descricao: desc, fornecedor_id: fornecedor_id || null, quantidade: qtd,
-                    valor_custo: custo, lucro_percentual: lucro, valor_venda: venda || (custo * (1 + lucro/100)),
+                    valor_custo: custo, lucro_percentual: lucro, desconto_percentual: desconto, valor_venda: venda || (valorComLucro * (1 - desconto/100)),
                 });
             }
         });
@@ -1077,7 +1083,7 @@
                 valor_mao_obra: maoObra,
                 pecas: pecas,
             });
-            showToast('Nota Nº ' + String(r.numero).padStart(6,'0') + ' criada');
+            showToast('Comprovante Nº ' + String(r.numero).padStart(6,'0') + ' criado');
             window.closeModal('modal-nova-os');
             resetarModalNovaOS();
             await carregarOS();

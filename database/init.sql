@@ -88,6 +88,7 @@ CREATE TABLE IF NOT EXISTS ordens_servico_pecas (
     quantidade INT NOT NULL DEFAULT 1,
     valor_custo DECIMAL(10,2) NOT NULL DEFAULT 0,
     lucro_percentual DECIMAL(6,2) NOT NULL DEFAULT 0,
+    desconto_percentual DECIMAL(6,2) NOT NULL DEFAULT 0,
     valor_venda DECIMAL(10,2) NOT NULL DEFAULT 0,
     FOREIGN KEY (ordem_id) REFERENCES ordens_servico(id) ON DELETE CASCADE,
     FOREIGN KEY (fornecedor_id) REFERENCES fornecedores(id) ON DELETE SET NULL

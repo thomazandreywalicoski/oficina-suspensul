@@ -698,9 +698,51 @@ tr:not(:last-child) td {
         }
 
         /* --- Sidebar Toggle --- */
-        .sidebar { overflow: hidden; transition: width 0.12s ease; }
-        .sidebar-inner { min-width: 220px; }
-        .brand span, .nav-link span, .nav-section { transition: opacity 0.15s ease; }
+        .sidebar { overflow: hidden; transition: width 0.14s ease, padding 0.14s ease, transform 0.14s ease; will-change: width, transform; }
+        .sidebar-inner { min-width: calc(var(--sidebar-width) - 40px); }
+        .brand span, .nav-link span, .nav-section { transition: none; }
+        body.sidebar-closed .sidebar {
+            width: 80px;
+            padding: 20px 10px;
+        }
+        body.sidebar-closed .sidebar-inner { min-width: 60px; }
+        body.sidebar-closed .brand {
+            justify-content: center !important;
+            margin-bottom: 40px;
+        }
+        body.sidebar-closed .brand span,
+        body.sidebar-closed .nav-link span,
+        body.sidebar-closed .sidebar-close { display: none; }
+        body.sidebar-closed .nav-section {
+            padding: 0;
+            height: 0;
+            pointer-events: none;
+            border-top: 1px solid #2a2a2a;
+            margin: 8px 10px;
+        }
+        body.sidebar-closed .nav-section span { display: none; }
+        body.sidebar-closed .nav-menu li.nav-section:first-child {
+            border-top: none;
+            margin-top: 0;
+        }
+        body.sidebar-closed .nav-link {
+            justify-content: center;
+            padding: 12px 0;
+        }
+        body.sidebar-closed .brand { display: none; }
+        body.sidebar-closed .sidebar-toggle {
+            display: flex;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            margin: 0;
+        }
+        body.sidebar-closed .sidebar-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            padding-top: 70px;
+        }
         .sidebar-close {
             background: transparent;
             color: var(--text-muted);
@@ -728,21 +770,49 @@ tr:not(:last-child) td {
         }
         .sidebar-toggle:hover { background: #242424; }
         .sidebar-toggle i { width: 20px; height: 20px; }
-
-        @media (min-width: 1025px) {
-            body.sidebar-closed { --sidebar-width: 76px; }
-            body.sidebar-closed .brand span,
-            body.sidebar-closed .nav-link span,
-            body.sidebar-closed .nav-section { opacity: 0; }
-        }
+        body:not(.sidebar-closed) .sidebar-toggle,
+        body.sidebar-opening .sidebar-toggle { display: none; }
 
         @media (max-width: 1024px) {
             .main-content { padding: 24px; }
             .sidebar-toggle { left: 24px; }
             header { padding: 0 24px; }
+            .page-title { margin-left: 60px; }
+        }
+
+        @media (max-width: 768px) {
+            .main-content { padding: 15px; }
+            .sidebar-toggle { left: 15px; }
+            body.sidebar-closed .sidebar-toggle {
+                display: flex;
+                top: 14px;
+                left: 15px;
+            }
+            header { padding: 0 15px; }
+            .page-title { margin-left: 60px; }
+            .form-row { flex-direction: column; gap: 0; }
+            .calendar-grid { grid-template-columns: repeat(7, 1fr); gap: 2px; }
+            .calendar-day { min-height: 50px; padding: 2px; }
+            .calendar-day .day-number { font-size: 12px; }
+            .calendar-event-tag { display: inline-block; }
+            .calendar-day-head { font-size: 12px; }
             body.sidebar-closed .sidebar {
-                width: 0 !important;
-                border: none !important;
+                transform: translateX(-100%);
+                margin-left: calc(var(--sidebar-width) * -1);
+                width: var(--sidebar-width);
+                padding: 20px;
+            }
+            body.sidebar-closed .sidebar-inner {
+                min-width: calc(var(--sidebar-width) - 40px);
+                padding-top: 0;
+            }
+            body.sidebar-closed .brand span,
+            body.sidebar-closed .nav-link span,
+            body.sidebar-closed .sidebar-close { display: inline-flex; }
+            body.sidebar-closed .nav-section { display: block; }
+            body.sidebar-closed .nav-link {
+                justify-content: flex-start;
+                padding: 12px 15px;
             }
             body:not(.sidebar-closed) .sidebar {
                 position: fixed;
@@ -752,18 +822,6 @@ tr:not(:last-child) td {
                 z-index: 1050;
                 box-shadow: 0 0 24px rgba(0,0,0,0.6);
             }
-        }
-
-        @media (max-width: 768px) {
-            .main-content { padding: 15px; }
-            .sidebar-toggle { left: 15px; }
-            header { padding: 0 15px; }
-            .form-row { flex-direction: column; gap: 0; }
-            .calendar-grid { grid-template-columns: repeat(7, 1fr); gap: 2px; }
-            .calendar-day { min-height: 50px; padding: 2px; }
-            .calendar-day .day-number { font-size: 12px; }
-            .calendar-event-tag { display: inline-block; }
-            .calendar-day-head { font-size: 12px; }
         }
 
         @media print {
@@ -799,7 +857,7 @@ tr:not(:last-child) td {
             <ul class="nav-menu">
                 <li class="nav-section"><span>Operacional</span></li>
                 <li><a onclick="showPage('agendamentos')" class="nav-link active" id="link-agendamentos"><i data-lucide="calendar-days"></i> <span>Agendamentos</span></a></li>
-                <li><a onclick="showPage('os')" class="nav-link" id="link-os"><i data-lucide="file-text"></i> <span>Notas Fiscais</span></a></li>
+                <li><a onclick="showPage('os')" class="nav-link" id="link-os"><i data-lucide="file-text"></i> <span>Comprovantes</span></a></li>
                 <li><a onclick="showPage('orcamento')" class="nav-link" id="link-orcamento"><i data-lucide="clipboard-list"></i> <span>Fazer Orçamento</span></a></li>
 
                 <li class="nav-section"><span>Cadastros</span></li>
@@ -964,21 +1022,21 @@ tr:not(:last-child) td {
         <div id="page-os" class="main-content">
             <div class="page-header">
                 <div class="search-filter-bar">
-                    <input type="text" placeholder="Buscar OS (Cliente, Placa)..." style="width: 250px;">
+                    <input type="text" placeholder="Buscar Comprovante (Cliente, Placa)..." style="width: 250px;">
                     <button class="btn calendar-period-trigger" style="min-width: 150px;" onclick="openOSStatusModal()">
                         <span id="os-status-label">Todos Status</span>
                         <i data-lucide="chevron-down"></i>
                     </button>
                 </div>
                 <button class="btn btn-primary" onclick="openModal('modal-nova-os')">
-                    <i data-lucide="plus"></i> Nova Nota Fiscal
+                    <i data-lucide="plus"></i> Novo Comprovante
                 </button>
             </div>
             <div class="table-container">
                 <table class="os-table">
                     <thead>
                         <tr>
-                            <th><span class="table-header-icon"><i data-lucide="hash"></i> Nº Nota</span></th>
+                            <th><span class="table-header-icon"><i data-lucide="hash"></i> Nº Comprovante</span></th>
                             <th><span class="table-header-icon"><i data-lucide="user"></i> Cliente</span></th>
                             <th><span class="table-header-icon"><i data-lucide="car"></i> Veículo</span></th>
                             <th><span class="table-header-icon"><i data-lucide="hash"></i> Placa</span></th>
@@ -1105,7 +1163,7 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
                     <div class="fin-card-value negativo">R$ 3.200</div>
                 </div>
                 <div class="card">
-                    <div class="fin-card-title">Recebido (Notas Fiscais)</div>
+                    <div class="fin-card-title">Recebido (Comprovantes)</div>
                     <div class="fin-card-value positvo">R$ 8.500</div>
                 </div>
                 <div class="card">
@@ -1122,12 +1180,12 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
                 <table class="financial-table">
                     <thead>
                         <tr>
-                            <th><span class="table-header-icon"><i data-lucide="hash"></i> Nº Nota</span></th>
+                            <th><span class="table-header-icon"><i data-lucide="hash"></i> Nº Comprovante</span></th>
                             <th><span class="table-header-icon"><i data-lucide="package"></i> Vlr. Peças (Custo)</span></th>
                             <th><span class="table-header-icon"><i data-lucide="tag"></i> Vlr. Peças (Venda)</span></th>
                             <th><span class="table-header-icon"><i data-lucide="wrench"></i> Mão de Obra</span></th>
-                            <th><span class="table-header-icon"><i data-lucide="receipt"></i> Total Nota</span></th>
-                            <th><span class="table-header-icon"><i data-lucide="trending-up"></i> Lucro Nota</span></th>
+                            <th><span class="table-header-icon"><i data-lucide="receipt"></i> Total Comprovante</span></th>
+                            <th><span class="table-header-icon"><i data-lucide="trending-up"></i> Lucro Comprovante</span></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -1147,7 +1205,7 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
         <div id="page-configuracoes" class="main-content">
             <div class="card config-container">
                 <div class="form-group">
-                    <label>Logo da Oficina (para Notas)</label>
+                    <label>Logo da Oficina (para Comprovantes)</label>
                     <div class="logo-upload-area">
                         <i data-lucide="image" style="width: 30px; height: 30px;"></i>
                         <span>Upload Logo</span>
@@ -1566,7 +1624,7 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
     <div class="modal-overlay" id="modal-nova-os">
         <div class="modal modal-lg" style="max-width: 1000px;">
             <div class="modal-header">
-                <h3 class="modal-title">Nova Nota Fiscal</h3>
+                <h3 class="modal-title">Novo Comprovante</h3>
                 <button class="btn-icon" onclick="closeModal('modal-nova-os')"><i data-lucide="x"></i></button>
             </div>
             <div class="modal-body">
@@ -1578,7 +1636,7 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
                                 <input type="text" placeholder="Nome ou CPF...">
                                 <i data-lucide="search" class="input-icon-right"></i>
                             </div>
-                            <button type="button" class="btn btn-primary" title="Cadastrar novo cliente" onclick="openModal('modal-cliente')" style="padding:0;width:42px;flex:0 0 42px;align-self:stretch;display:inline-flex;align-items:center;justify-content:center;"><i data-lucide="plus"></i></button>
+                            <button type="button" class="btn btn-primary" title="Cadastrar novo cliente" onclick="openModal('modal-cliente')" style="padding:0;width:42px;flex:0 0 42px;display:inline-flex;align-items:center;justify-content:center;"><i data-lucide="plus"></i></button>
                         </div>
                     </div>
                     <div class="form-group">
@@ -1588,7 +1646,7 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
                                 <input type="text" placeholder="ABC1D23">
                                 <i data-lucide="search" class="input-icon-right"></i>
                             </div>
-                            <button type="button" class="btn btn-primary" title="Cadastrar novo veículo" onclick="openModal('modal-veiculo')" style="padding:0;width:42px;flex:0 0 42px;align-self:stretch;display:inline-flex;align-items:center;justify-content:center;"><i data-lucide="plus"></i></button>
+                            <button type="button" class="btn btn-primary" title="Cadastrar novo veículo" onclick="openModal('modal-veiculo')" style="padding:0;width:42px;flex:0 0 42px;display:inline-flex;align-items:center;justify-content:center;"><i data-lucide="plus"></i></button>
                         </div>
                     </div>
                 </div>
@@ -1618,6 +1676,10 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
                         <label>Lucro %</label>
                         <input type="number" class="peca-lucro" placeholder="0%" id="os-lucro-peca" oninput="calcularVendaOS()">
                     </div>
+                    <div class="form-group" style="flex: 0 0 95px;">
+                        <label>Desconto</label>
+                        <input type="number" class="peca-desconto" placeholder="0%" id="os-desconto-peca" oninput="calcularVendaOS()">
+                    </div>
                     <div class="form-group" style="flex: 0 0 100px;">
                         <label>Venda</label>
                         <input type="number" class="peca-venda" placeholder="R$ 0,00" id="os-venda-peca" readonly>
@@ -1634,7 +1696,7 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeModal('modal-nova-os')">Cancelar</button>
-                <button class="btn btn-primary">Criar Nota Fiscal</button>
+                <button class="btn btn-primary">Criar Comprovante</button>
             </div>
         </div>
     </div>
@@ -1695,8 +1757,8 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
                 </div>
             </div>
             <div class="print-os-info">
-                <div class="print-os-title">Ordem de Serviço</div>
-                Nº NOTA: <strong>1001</strong><br>
+                <div class="print-os-title">Comprovante</div>
+                Nº COMPROVANTE: <strong>1001</strong><br>
                 Emissão: 04/11/2024
             </div>
         </div>
@@ -1802,7 +1864,16 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
 
         // --- Sidebar Toggle ---
         function toggleSidebar() {
-            document.body.classList.toggle('sidebar-closed');
+            const isClosed = document.body.classList.contains('sidebar-closed');
+            if (isClosed) {
+                document.body.classList.add('sidebar-opening');
+                requestAnimationFrame(() => {
+                    document.body.classList.remove('sidebar-closed');
+                    setTimeout(() => document.body.classList.remove('sidebar-opening'), 160);
+                });
+                return;
+            }
+            document.body.classList.add('sidebar-closed');
         }
         // Default fechado em telas <=1024px
         (function initSidebar() {
@@ -2188,7 +2259,7 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
                 'clientes': 'Gerenciamento de Clientes',
                 'fornecedores': 'Fornecedores',
                 'veiculos': 'Frota de Veículos',
-                'os': 'Notas Fiscais',
+                'os': 'Comprovantes',
                 'orcamento': 'Fazer Orçamento',
                 'despesas': 'Controle de Despesas',
                 'financeiro': 'Painel Financeiro',
@@ -2240,10 +2311,12 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
         function calcularVendaOS() {
             const custo = parseFloat(document.getElementById('os-custo-peca').value) || 0;
             const lucroPorcent = parseFloat(document.getElementById('os-lucro-peca').value) || 0;
+            const descontoPorcent = parseFloat(document.getElementById('os-desconto-peca').value) || 0;
             const vendaInput = document.getElementById('os-venda-peca');
 
             if (custo > 0) {
-                const valorVenda = custo * (1 + (lucroPorcent / 100));
+                const valorComLucro = custo * (1 + (lucroPorcent / 100));
+                const valorVenda = valorComLucro * (1 - (descontoPorcent / 100));
                 vendaInput.value = valorVenda.toFixed(2);
             } else {
                 vendaInput.value = '';

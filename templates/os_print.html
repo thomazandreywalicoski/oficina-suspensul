@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Nota Fiscal Nº {{ '%06d'|format(os.numero|int) }} - {{ config.nome_oficina or 'Oficina Suspensul' }}</title>
+    <title>Comprovante Nº {{ '%06d'|format(os.numero|int) }} - {{ config.nome_oficina or 'Oficina Suspensul' }}</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', Arial, sans-serif; }
@@ -147,8 +147,8 @@
             </div>
         </div>
         <div class="print-os-info">
-            <div class="print-os-title">Nota Fiscal</div>
-            Nº NOTA: <strong>{{ '%06d'|format(os.numero|int) }}</strong><br>
+            <div class="print-os-title">Comprovante</div>
+            Nº COMPROVANTE: <strong>{{ '%06d'|format(os.numero|int) }}</strong><br>
             Emissão: {{ os.data_emissao[8:10] ~ '/' ~ os.data_emissao[5:7] ~ '/' ~ os.data_emissao[0:4] if os.data_emissao else '' }}
         </div>
     </div>
@@ -174,23 +174,28 @@
             <tr>
                 <th>Descrição</th>
                 <th>Qtd</th>
-                <th class="right">Vlr. Unit</th>
-                <th class="right">Total</th>
+                <th class="right" style="width: 110px;">Valor por Unidade</th>
+                <th class="right">Desconto por Unidade</th>
+                <th class="right" style="width: 125px;">Valor Final por Unidade</th>
+                <th class="right" style="width: 105px;">Total</th>
             </tr>
         </thead>
         <tbody>
             {% set total_pecas = namespace(v=0) %}
             {% for p in pecas %}
+                {% set valor_unidade = (p.valor_custo|float) * (1 + ((p.lucro_percentual|float) / 100)) %}
                 {% set sub = (p.valor_venda|float) * (p.quantidade|int) %}
                 {% set total_pecas.v = total_pecas.v + sub %}
                 <tr>
                     <td>{{ p.descricao }}</td>
                     <td>{{ p.quantidade }}</td>
+                    <td class="right">R$ {{ '%.2f'|format(valor_unidade) | replace('.', ',') }}</td>
+                    <td class="right">{{ '%.0f'|format((p.desconto_percentual|float) if p.desconto_percentual is defined else 0) }}%</td>
                     <td class="right">R$ {{ '%.2f'|format(p.valor_venda|float) | replace('.', ',') }}</td>
                     <td class="right">R$ {{ '%.2f'|format(sub) | replace('.', ',') }}</td>
                 </tr>
             {% else %}
-                <tr><td colspan="4" style="text-align:center;color:#777">Nenhuma peça registrada.</td></tr>
+                <tr><td colspan="6" style="text-align:center;color:#777">Nenhuma peça registrada.</td></tr>
             {% endfor %}
         </tbody>
     </table>
@@ -212,40 +217,24 @@
     </table>
 
     {% set subtotal = total_pecas.v + (os.valor_mao_obra|float) %}
-    {% set desconto_pct = (os.desconto_percentual|float) if os.desconto_percentual is defined else 0 %}
-    {% set total_geral = subtotal * (1 - desconto_pct/100) %}
     <div class="print-secao-title">Total Peças / Produtos / Mão de Obra</div>
     <table class="print-table">
         <thead>
             <tr>
                 <th>Total</th>
-                <th class="right">Desconto</th>
                 <th class="right">Valor Total</th>
             </tr>
         </thead>
         <tbody>
             <tr>
                 <td>Total devido pelas peças/produtos e mão de obra</td>
-                <td class="right">{{ '%.0f'|format(desconto_pct) }}%</td>
-                <td class="right">R$ {{ '%.2f'|format(total_geral) | replace('.', ',') }}</td>
+                <td class="right">R$ {{ '%.2f'|format(subtotal) | replace('.', ',') }}</td>
             </tr>
         </tbody>
     </table>
 
     <div class="print-termos">
-        O cliente acima identificado declara estar ciente e concorda com a descrição de peças, valores de produtos e serviços/mão de obra acima detalhados, autorizando a realização dos mesmos no veículo descrito. Garantia de 90 dias para serviços e conforme fabricante para peças.
-    </div>
-
-    <div class="print-assinaturas">
-        <div class="print-assinatura-box">
-            <div class="print-assinatura-cursiva">{{ config.nome_oficina or 'Oficina Suspensul' }}</div>
-            <div class="print-linha-assinatura"></div>
-            {{ config.nome_oficina or 'Oficina Suspensul' }}
-        </div>
-        <div class="print-assinatura-box">
-            <div class="print-linha-assinatura"></div>
-            Assinatura do Cliente
-        </div>
+        O cliente acima identificado declara estar ciente e concorda com a descrição de peças, valores de produtos e serviços/mão de obra acima detalhados, autorizando a realização dos mesmos no veículo descrito. Garantia de 90 dias para serviços e conforme fabricante para peças. Este comprovante não tem valor fiscal.
     </div>
 </div>
 
