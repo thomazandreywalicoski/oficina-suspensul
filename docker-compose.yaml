@@ -10,8 +10,6 @@ services:
     depends_on:
       - gerenciamento-app
       - landing-page
-    networks:
-      - suspensul_net
     labels:
       coolify.managed: "true"
       traefik.enable: "true"
@@ -23,8 +21,6 @@ services:
     restart: unless-stopped
     expose:
       - "80"
-    networks:
-      - suspensul_net
 
   gerenciamento-app:
     build: ./gerenciamento-oficina-suspensul
@@ -45,8 +41,6 @@ services:
       - mysql
     volumes:
       - ./gerenciamento-oficina-suspensul/static/uploads:/app/static/uploads
-    networks:
-      - suspensul_net
 
   mysql:
     image: mysql:8.0
@@ -61,8 +55,6 @@ services:
       - mysql_data:/var/lib/mysql
       - ./gerenciamento-oficina-suspensul/database/init.sql:/docker-entrypoint-initdb.d/init.sql
     command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-    networks:
-      - suspensul_net
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
@@ -78,12 +70,6 @@ services:
       - "80"
     depends_on:
       - mysql
-    networks:
-      - suspensul_net
 
 volumes:
   mysql_data:
-
-networks:
-  suspensul_net:
-    driver: bridge
