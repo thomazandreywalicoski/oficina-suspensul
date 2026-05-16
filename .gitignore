@@ -1,0 +1,6 @@
+.env
+__pycache__/
+*.pyc
+mysql_data/
+gerenciamento-oficina-suspensul/
+landing-page-oficina-suspensul/
