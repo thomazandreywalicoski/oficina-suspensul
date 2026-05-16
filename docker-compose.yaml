@@ -12,6 +12,8 @@ services:
       - landing-page
     networks:
       - suspensul_net
+    labels:
+      coolify.managed: "true"
 
   landing-page:
     build: ./landing-page-oficina-suspensul
