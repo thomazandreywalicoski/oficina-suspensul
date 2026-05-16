@@ -70,17 +70,6 @@ def get_db():
         pool = init_pool()
     return pool.get_connection()
 
-def _run_step(conn, cur, label, fn):
-    try:
-        fn(conn, cur)
-        conn.commit()
-    except Exception as e:
-        try:
-            conn.rollback()
-        except Exception:
-            pass
-        print(f"Migração [{label}] erro (ignorado): {e}")
-
 def run_migrations():
     global _migrations_done
     if _migrations_done:
@@ -88,129 +77,185 @@ def run_migrations():
     try:
         conn = get_db()
         cur = conn.cursor()
-        print("run_migrations: iniciando...")
-
-        # 1. CREATE TABLEs primeiro (mais importante)
-        def _create_orcamentos(conn, cur):
-            cur.execute("""CREATE TABLE IF NOT EXISTS orcamentos (
-                             id INT AUTO_INCREMENT PRIMARY KEY,
-                             slug VARCHAR(255) NOT NULL,
-                             veiculo_id INT NULL,
-                             pecas JSON NOT NULL,
-                             fornecedores_ids JSON NULL,
-                             mensagem TEXT NULL,
-                             criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
-                             UNIQUE KEY uniq_slug (slug)
-                           ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4""")
-        _run_step(conn, cur, 'create orcamentos', _create_orcamentos)
-
-        def _create_estoque_produtos(conn, cur):
-            cur.execute("""CREATE TABLE IF NOT EXISTS estoque_produtos (
-                             id INT AUTO_INCREMENT PRIMARY KEY,
-                             descricao VARCHAR(200) NOT NULL,
-                             quantidade INT NOT NULL DEFAULT 0,
-                             valor_compra DECIMAL(10,2) NOT NULL DEFAULT 0,
-                             lucro_percentual DECIMAL(6,2) NOT NULL DEFAULT 0,
-                             valor_venda DECIMAL(10,2) NOT NULL DEFAULT 0,
-                             ativo TINYINT(1) NOT NULL DEFAULT 1,
-                             criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
-                             atualizado_em DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-                           ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci""")
-        _run_step(conn, cur, 'create estoque_produtos', _create_estoque_produtos)
-
-        def _create_estoque_movimentacoes(conn, cur):
-            cur.execute("""CREATE TABLE IF NOT EXISTS estoque_movimentacoes (
-                             id INT AUTO_INCREMENT PRIMARY KEY,
-                             produto_id INT NOT NULL,
-                             tipo ENUM('entrada', 'saida') NOT NULL,
-                             quantidade INT NOT NULL,
-                             valor_unitario DECIMAL(10,2) NOT NULL DEFAULT 0,
-                             valor_total DECIMAL(10,2) NOT NULL DEFAULT 0,
-                             motivo VARCHAR(255),
-                             data_movimentacao DATE NOT NULL,
-                             despesa_id INT NULL,
-                             criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
-                             FOREIGN KEY (produto_id) REFERENCES estoque_produtos(id) ON DELETE CASCADE,
-                             FOREIGN KEY (despesa_id) REFERENCES despesas(id) ON DELETE SET NULL
-                           ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci""")
-        _run_step(conn, cur, 'create estoque_movimentacoes', _create_estoque_movimentacoes)
-
-        def _create_orcamentos_propostas(conn, cur):
-            cur.execute("""CREATE TABLE IF NOT EXISTS orcamentos_propostas (
-                             id INT AUTO_INCREMENT PRIMARY KEY,
-                             numero INT NOT NULL,
-                             slug VARCHAR(255) NULL UNIQUE,
-                             cliente_id INT NOT NULL,
-                             veiculo_id INT NOT NULL,
-                             valor_mao_obra DECIMAL(10,2) NOT NULL DEFAULT 0,
-                             mao_obra_texto VARCHAR(255) NULL,
-                             status VARCHAR(20) NOT NULL DEFAULT 'Pendente',
-                             os_id INT NULL,
-                             criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
-                             FOREIGN KEY (cliente_id) REFERENCES clientes(id),
-                             FOREIGN KEY (veiculo_id) REFERENCES veiculos(id)
-                           ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4""")
-        _run_step(conn, cur, 'create orcamentos_propostas', _create_orcamentos_propostas)
-
-        def _create_orcamentos_propostas_pecas(conn, cur):
-            cur.execute("""CREATE TABLE IF NOT EXISTS orcamentos_propostas_pecas (
-                             id INT AUTO_INCREMENT PRIMARY KEY,
-                             proposta_id INT NOT NULL,
-                             descricao VARCHAR(255) NOT NULL,
-                             fornecedor_id INT NULL,
-                             quantidade INT NOT NULL DEFAULT 1,
-                             valor_custo DECIMAL(10,2) NOT NULL DEFAULT 0,
-                             lucro_percentual DECIMAL(6,2) NOT NULL DEFAULT 0,
-                             desconto_percentual DECIMAL(6,2) NOT NULL DEFAULT 0,
-                             valor_venda_sem_desconto DECIMAL(10,2) NOT NULL DEFAULT 0,
-                             valor_desconto DECIMAL(10,2) NOT NULL DEFAULT 0,
-                             valor_venda DECIMAL(10,2) NOT NULL DEFAULT 0,
-                             FOREIGN KEY (proposta_id) REFERENCES orcamentos_propostas(id) ON DELETE CASCADE
-                           ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4""")
-        _run_step(conn, cur, 'create orcamentos_propostas_pecas', _create_orcamentos_propostas_pecas)
-
-        # 2. ALTER TABLEs
-        def _add_col_if_missing(conn, cur, table, column, col_def):
-            cur.execute(f"""SELECT COUNT(*) FROM information_schema.COLUMNS
-                           WHERE TABLE_SCHEMA = DATABASE()
-                           AND TABLE_NAME = '{table}'
-                           AND COLUMN_NAME = '{column}'""")
-            (existe,) = cur.fetchone()
-            if not existe:
-                cur.execute(f"ALTER TABLE {table} ADD COLUMN {column} {col_def}")
-                print(f"Migração: coluna {column} adicionada em {table}")
-
-        alter_steps = [
-            ('ordens_servico_pecas', 'fornecedor_id', 'INT NULL'),
-            ('ordens_servico_pecas', 'desconto_percentual', 'DECIMAL(6,2) NOT NULL DEFAULT 0'),
-            ('ordens_servico_pecas', 'valor_venda_sem_desconto', 'DECIMAL(10,2) NOT NULL DEFAULT 0'),
-            ('ordens_servico_pecas', 'valor_desconto', 'DECIMAL(10,2) NOT NULL DEFAULT 0'),
-            ('veiculos', 'imagem2', 'VARCHAR(255)'),
-            ('veiculos', 'imagem3', 'VARCHAR(255)'),
-            ('orcamentos', 'fornecedores_ids', 'JSON NULL'),
-            ('orcamentos', 'mensagem', 'TEXT NULL'),
-            ('ordens_servico', 'data_pagamento', 'DATE NULL'),
-            ('ordens_servico', 'slug', 'VARCHAR(255) NULL UNIQUE'),
-            ('despesas', 'tipo', "VARCHAR(20) NOT NULL DEFAULT 'saida'"),
-            ('orcamentos_propostas', 'mao_obra_texto', 'VARCHAR(255) NULL'),
-            ('orcamentos_propostas', 'slug', 'VARCHAR(255) NULL UNIQUE'),
-        ]
-        for table, column, col_def in alter_steps:
-            _run_step(conn, cur, f'alter {table}.{column}',
-                      lambda c, cu, t=table, co=column, cd=col_def: _add_col_if_missing(c, cu, t, co, cd))
-
-        # 3. FK fornecedor_id
-        def _add_fk_fornecedor(conn, cur):
+        cur.execute("""SELECT COUNT(*) FROM information_schema.COLUMNS
+                       WHERE TABLE_SCHEMA = DATABASE()
+                         AND TABLE_NAME = 'ordens_servico_pecas'
+                         AND COLUMN_NAME = 'fornecedor_id'""")
+        (existe,) = cur.fetchone()
+        if not existe:
+            cur.execute("ALTER TABLE ordens_servico_pecas ADD COLUMN fornecedor_id INT NULL")
             try:
                 cur.execute("""ALTER TABLE ordens_servico_pecas
                                ADD CONSTRAINT fk_pecas_fornecedor
                                FOREIGN KEY (fornecedor_id) REFERENCES fornecedores(id)
                                ON DELETE SET NULL""")
-            except Exception:
-                pass
-        _run_step(conn, cur, 'fk fornecedor', _add_fk_fornecedor)
-
-        # 4. Backfill slugs
+            except Exception as fe:
+                print(f"FK fornecedor_id já existe ou falhou: {fe}")
+            conn.commit()
+            print("Migração: coluna fornecedor_id adicionada em ordens_servico_pecas")
+        cur.execute("""SELECT COUNT(*) FROM information_schema.COLUMNS
+                       WHERE TABLE_SCHEMA = DATABASE()
+                         AND TABLE_NAME = 'ordens_servico_pecas'
+                         AND COLUMN_NAME = 'desconto_percentual'""")
+        (existe,) = cur.fetchone()
+        if not existe:
+            cur.execute("ALTER TABLE ordens_servico_pecas ADD COLUMN desconto_percentual DECIMAL(6,2) NOT NULL DEFAULT 0 AFTER lucro_percentual")
+            conn.commit()
+            print("Migração: coluna desconto_percentual adicionada em ordens_servico_pecas")
+        cur.execute("""SELECT COUNT(*) FROM information_schema.COLUMNS
+                       WHERE TABLE_SCHEMA = DATABASE()
+                         AND TABLE_NAME = 'ordens_servico_pecas'
+                         AND COLUMN_NAME = 'valor_venda_sem_desconto'""")
+        (existe,) = cur.fetchone()
+        if not existe:
+            cur.execute("ALTER TABLE ordens_servico_pecas ADD COLUMN valor_venda_sem_desconto DECIMAL(10,2) NOT NULL DEFAULT 0 AFTER desconto_percentual")
+            conn.commit()
+            print("Migração: coluna valor_venda_sem_desconto adicionada em ordens_servico_pecas")
+        cur.execute("""SELECT COUNT(*) FROM information_schema.COLUMNS
+                       WHERE TABLE_SCHEMA = DATABASE()
+                         AND TABLE_NAME = 'ordens_servico_pecas'
+                         AND COLUMN_NAME = 'valor_desconto'""")
+        (existe,) = cur.fetchone()
+        if not existe:
+            cur.execute("ALTER TABLE ordens_servico_pecas ADD COLUMN valor_desconto DECIMAL(10,2) NOT NULL DEFAULT 0 AFTER valor_venda_sem_desconto")
+            conn.commit()
+            print("Migração: coluna valor_desconto adicionada em ordens_servico_pecas")
+        # Migração: imagem2, imagem3 em veiculos
+        for col in ('imagem2', 'imagem3'):
+            cur.execute("""SELECT COUNT(*) FROM information_schema.COLUMNS
+                           WHERE TABLE_SCHEMA = DATABASE()
+                             AND TABLE_NAME = 'veiculos'
+                             AND COLUMN_NAME = %s""", (col,))
+            (existe,) = cur.fetchone()
+            if not existe:
+                cur.execute(f"ALTER TABLE veiculos ADD COLUMN {col} VARCHAR(255)")
+                conn.commit()
+                print(f"Migração: coluna {col} adicionada em veiculos")
+        cur.execute("""CREATE TABLE IF NOT EXISTS orcamentos (
+                         id INT AUTO_INCREMENT PRIMARY KEY,
+                         slug VARCHAR(255) NOT NULL,
+                         veiculo_id INT NULL,
+                         pecas JSON NOT NULL,
+                         criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
+                         UNIQUE KEY uniq_slug (slug)
+                       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4""")
+        conn.commit()
+        # Colunas adicionais em orcamentos
+        for col, ctype in [('fornecedores_ids', 'JSON NULL'), ('mensagem', 'TEXT NULL')]:
+            cur.execute(f"""SELECT COUNT(*) FROM information_schema.COLUMNS
+                           WHERE TABLE_SCHEMA = DATABASE()
+                           AND TABLE_NAME = 'orcamentos'
+                           AND COLUMN_NAME = '{col}'""")
+            (existe,) = cur.fetchone()
+            if not existe:
+                cur.execute(f"ALTER TABLE orcamentos ADD COLUMN {col} {ctype}")
+                conn.commit()
+                print(f"Migração: coluna {col} adicionada em orcamentos")
+        cur.execute("""SELECT COUNT(*) FROM information_schema.COLUMNS
+                       WHERE TABLE_SCHEMA = DATABASE()
+                         AND TABLE_NAME = 'ordens_servico'
+                         AND COLUMN_NAME = 'data_pagamento'""")
+        (existe,) = cur.fetchone()
+        if not existe:
+            cur.execute("ALTER TABLE ordens_servico ADD COLUMN data_pagamento DATE NULL AFTER data_emissao")
+            conn.commit()
+            print("Migração: coluna data_pagamento adicionada em ordens_servico")
+        cur.execute("""SELECT COUNT(*) FROM information_schema.COLUMNS
+                       WHERE TABLE_SCHEMA = DATABASE()
+                         AND TABLE_NAME = 'despesas'
+                         AND COLUMN_NAME = 'tipo'""")
+        (existe,) = cur.fetchone()
+        if not existe:
+            cur.execute("ALTER TABLE despesas ADD COLUMN tipo VARCHAR(20) NOT NULL DEFAULT 'saida' AFTER valor")
+            conn.commit()
+            print("Migração: coluna tipo adicionada em despesas")
+        cur.execute("""CREATE TABLE IF NOT EXISTS estoque_produtos (
+                         id INT AUTO_INCREMENT PRIMARY KEY,
+                         descricao VARCHAR(200) NOT NULL,
+                         quantidade INT NOT NULL DEFAULT 0,
+                         valor_compra DECIMAL(10,2) NOT NULL DEFAULT 0,
+                         lucro_percentual DECIMAL(6,2) NOT NULL DEFAULT 0,
+                         valor_venda DECIMAL(10,2) NOT NULL DEFAULT 0,
+                         ativo TINYINT(1) NOT NULL DEFAULT 1,
+                         criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
+                         atualizado_em DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci""")
+        conn.commit()
+        cur.execute("""CREATE TABLE IF NOT EXISTS estoque_movimentacoes (
+                         id INT AUTO_INCREMENT PRIMARY KEY,
+                         produto_id INT NOT NULL,
+                         tipo ENUM('entrada', 'saida') NOT NULL,
+                         quantidade INT NOT NULL,
+                         valor_unitario DECIMAL(10,2) NOT NULL DEFAULT 0,
+                         valor_total DECIMAL(10,2) NOT NULL DEFAULT 0,
+                         motivo VARCHAR(255),
+                         data_movimentacao DATE NOT NULL,
+                         despesa_id INT NULL,
+                         criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
+                         FOREIGN KEY (produto_id) REFERENCES estoque_produtos(id) ON DELETE CASCADE,
+                         FOREIGN KEY (despesa_id) REFERENCES despesas(id) ON DELETE SET NULL
+                       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci""")
+        conn.commit()
+        cur.execute("""CREATE TABLE IF NOT EXISTS orcamentos_propostas (
+                         id INT AUTO_INCREMENT PRIMARY KEY,
+                         numero INT NOT NULL,
+                         cliente_id INT NOT NULL,
+                         veiculo_id INT NOT NULL,
+                         valor_mao_obra DECIMAL(10,2) NOT NULL DEFAULT 0,
+                         mao_obra_texto VARCHAR(255) NULL,
+                         status VARCHAR(20) NOT NULL DEFAULT 'Pendente',
+                         os_id INT NULL,
+                         criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
+                         FOREIGN KEY (cliente_id) REFERENCES clientes(id),
+                         FOREIGN KEY (veiculo_id) REFERENCES veiculos(id)
+                       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4""")
+        conn.commit()
+        cur.execute("""CREATE TABLE IF NOT EXISTS orcamentos_propostas_pecas (
+                         id INT AUTO_INCREMENT PRIMARY KEY,
+                         proposta_id INT NOT NULL,
+                         descricao VARCHAR(255) NOT NULL,
+                         fornecedor_id INT NULL,
+                         quantidade INT NOT NULL DEFAULT 1,
+                         valor_custo DECIMAL(10,2) NOT NULL DEFAULT 0,
+                         lucro_percentual DECIMAL(6,2) NOT NULL DEFAULT 0,
+                         desconto_percentual DECIMAL(6,2) NOT NULL DEFAULT 0,
+                         valor_venda_sem_desconto DECIMAL(10,2) NOT NULL DEFAULT 0,
+                         valor_desconto DECIMAL(10,2) NOT NULL DEFAULT 0,
+                         valor_venda DECIMAL(10,2) NOT NULL DEFAULT 0,
+                         FOREIGN KEY (proposta_id) REFERENCES orcamentos_propostas(id) ON DELETE CASCADE
+                       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4""")
+        conn.commit()
+        # Migração: mao_obra_texto em orcamentos_propostas
+        cur.execute("""SELECT COUNT(*) FROM information_schema.COLUMNS
+                       WHERE TABLE_SCHEMA = DATABASE()
+                       AND TABLE_NAME = 'orcamentos_propostas'
+                       AND COLUMN_NAME = 'mao_obra_texto'""")
+        (existe,) = cur.fetchone()
+        if not existe:
+            cur.execute("ALTER TABLE orcamentos_propostas ADD COLUMN mao_obra_texto VARCHAR(255) NULL AFTER valor_mao_obra")
+            conn.commit()
+            print("Migração: coluna mao_obra_texto adicionada em orcamentos_propostas")
+        # Migração: slug em orcamentos_propostas
+        cur.execute("""SELECT COUNT(*) FROM information_schema.COLUMNS
+                       WHERE TABLE_SCHEMA = DATABASE()
+                       AND TABLE_NAME = 'orcamentos_propostas'
+                       AND COLUMN_NAME = 'slug'""")
+        (existe,) = cur.fetchone()
+        if not existe:
+            cur.execute("ALTER TABLE orcamentos_propostas ADD COLUMN slug VARCHAR(255) NULL UNIQUE AFTER numero")
+            conn.commit()
+            print("Migração: coluna slug adicionada em orcamentos_propostas")
+        # Migração: slug em ordens_servico
+        cur.execute("""SELECT COUNT(*) FROM information_schema.COLUMNS
+                       WHERE TABLE_SCHEMA = DATABASE()
+                       AND TABLE_NAME = 'ordens_servico'
+                       AND COLUMN_NAME = 'slug'""")
+        (existe,) = cur.fetchone()
+        if not existe:
+            cur.execute("ALTER TABLE ordens_servico ADD COLUMN slug VARCHAR(255) NULL UNIQUE AFTER numero")
+            conn.commit()
+            print("Migração: coluna slug adicionada em ordens_servico")
+        # Backfill slugs para registros existentes sem slug
         import re as _re, unicodedata as _ud
         def _make_slug(marca, modelo, ano, placa, numero):
             partes = [marca or '', modelo or '', str(ano or ''), placa or '']
@@ -218,47 +263,56 @@ def run_migrations():
             base = _ud.normalize('NFKD', base).encode('ascii', 'ignore').decode('ascii').lower()
             base = _re.sub(r'[^a-z0-9]+', '-', base).strip('-') or 'veiculo'
             return f"{base}-{numero:06d}"
-
-        def _backfill_slugs(conn, cur):
-            os_rows = query("SELECT os.id, os.numero, v.marca, v.modelo, v.ano, v.placa FROM ordens_servico os JOIN veiculos v ON os.veiculo_id=v.id WHERE os.slug IS NULL", fetch=True)
-            for r in (os_rows or []):
+        # Backfill ordens_servico
+        os_rows = query("SELECT os.id, os.numero, v.marca, v.modelo, v.ano, v.placa FROM ordens_servico os JOIN veiculos v ON os.veiculo_id=v.id WHERE os.slug IS NULL", fetch=True)
+        if os_rows:
+            for r in os_rows:
+                slug = _make_slug(r['marca'], r['modelo'], r['ano'], r['placa'], r['numero'])
                 try:
-                    cur.execute("UPDATE ordens_servico SET slug=%s WHERE id=%s", (_make_slug(r['marca'], r['modelo'], r['ano'], r['placa'], r['numero']), r['id']))
+                    cur.execute("UPDATE ordens_servico SET slug=%s WHERE id=%s", (slug, r['id']))
                     conn.commit()
                 except Exception:
                     conn.rollback()
-            prop_rows = query("SELECT op.id, op.numero, v.marca, v.modelo, v.ano, v.placa FROM orcamentos_propostas op JOIN veiculos v ON op.veiculo_id=v.id WHERE op.slug IS NULL", fetch=True)
-            for r in (prop_rows or []):
+            print(f"Migração: {len(os_rows)} slugs backfill em ordens_servico")
+        # Backfill orcamentos_propostas
+        prop_rows = query("SELECT op.id, op.numero, v.marca, v.modelo, v.ano, v.placa FROM orcamentos_propostas op JOIN veiculos v ON op.veiculo_id=v.id WHERE op.slug IS NULL", fetch=True)
+        if prop_rows:
+            for r in prop_rows:
+                slug = _make_slug(r['marca'], r['modelo'], r['ano'], r['placa'], r['numero'])
                 try:
-                    cur.execute("UPDATE orcamentos_propostas SET slug=%s WHERE id=%s", (_make_slug(r['marca'], r['modelo'], r['ano'], r['placa'], r['numero']), r['id']))
+                    cur.execute("UPDATE orcamentos_propostas SET slug=%s WHERE id=%s", (slug, r['id']))
                     conn.commit()
                 except Exception:
                     conn.rollback()
-            orc_rows = query("SELECT o.id, v.marca, v.modelo, v.ano, v.placa FROM orcamentos o JOIN veiculos v ON o.veiculo_id=v.id WHERE o.slug IS NULL OR o.slug LIKE 'solicitacao-orcamento%%'", fetch=True)
-            for r in (orc_rows or []):
+            print(f"Migração: {len(prop_rows)} slugs backfill em orcamentos_propostas")
+        # Backfill orcamentos (solicitacao)
+        orc_rows = query("SELECT o.id, v.marca, v.modelo, v.ano, v.placa FROM orcamentos o JOIN veiculos v ON o.veiculo_id=v.id WHERE o.slug IS NULL OR o.slug LIKE 'solicitacao-orcamento%'", fetch=True)
+        if orc_rows:
+            for r in orc_rows:
+                slug = _make_slug(r['marca'], r['modelo'], r['ano'], r['placa'], r['id'])
                 try:
-                    cur.execute("UPDATE orcamentos SET slug=%s WHERE id=%s", (_make_slug(r['marca'], r['modelo'], r['ano'], r['placa'], r['id']), r['id']))
+                    cur.execute("UPDATE orcamentos SET slug=%s WHERE id=%s", (slug, r['id']))
                     conn.commit()
                 except Exception:
                     conn.rollback()
-            for table, prefix in [('ordens_servico', 'comprovante-pagamento-'), ('orcamentos_propostas', 'orcamento-'), ('orcamentos', 'solicitacao-orcamento-')]:
-                rows = query(f"SELECT id, slug FROM {table} WHERE slug LIKE '{prefix}%%'", fetch=True)
-                for r in (rows or []):
+            print(f"Migração: {len(orc_rows)} slugs backfill em orcamentos")
+        # Corrigir slugs existentes que têm prefixo duplicado (comprovante-pagamento-..., orcamento-..., solicitacao-orcamento-...)
+        for table, prefix in [('ordens_servico', 'comprovante-pagamento-'), ('orcamentos_propostas', 'orcamento-'), ('orcamentos', 'solicitacao-orcamento-')]:
+            rows = query(f"SELECT id, slug FROM {table} WHERE slug LIKE '{prefix}%%'", fetch=True)
+            if rows:
+                for r in rows:
+                    new_slug = r['slug'][len(prefix):]
                     try:
-                        cur.execute(f"UPDATE {table} SET slug=%s WHERE id=%s", (r['slug'][len(prefix):], r['id']))
+                        cur.execute(f"UPDATE {table} SET slug=%s WHERE id=%s", (new_slug, r['id']))
                         conn.commit()
                     except Exception:
                         conn.rollback()
-        _run_step(conn, cur, 'backfill slugs', _backfill_slugs)
-
+                print(f"Migração: {len(rows)} slugs corrigidos em {table} (prefixo duplicado removido)")
         cur.close()
         conn.close()
         _migrations_done = True
-        print("run_migrations: concluído com sucesso")
     except Exception as e:
-        print(f"Erro FATAL em run_migrations: {e}")
-        import traceback
-        traceback.print_exc()
+        print(f"Erro em run_migrations: {e}")
 
 def query(sql, params=None, fetch=False, one=False, commit=False):
     conn = get_db()
@@ -328,7 +382,7 @@ def login_required(f):
 
 @app.before_request
 def exigir_login():
-    rotas_livres = {'login', 'static', 'visualizar_solicitacao_orcamento', 'visualizar_orcamento_proposta', 'visualizar_comprovante', 'health', 'debug_db'}
+    rotas_livres = {'login', 'static', 'visualizar_solicitacao_orcamento', 'visualizar_orcamento_proposta', 'visualizar_comprovante'}
     if request.endpoint in rotas_livres or request.path.startswith('/uploads/'):
         return None
     if session.get('admin_logged_in'):
@@ -1205,27 +1259,10 @@ def health():
     import traceback
     try:
         query("SELECT 1", fetch=True)
-        return jsonify({'status': 'ok', 'migrations_done': _migrations_done})
+        return jsonify({'status': 'ok'})
     except Exception as e:
         traceback.print_exc()
         return jsonify({'status': 'erro', 'erro': str(e), 'tipo': type(e).__name__}), 500
-
-@app.route('/debug-db')
-def debug_db():
-    import traceback
-    result = {'migrations_done': _migrations_done, 'tables': [], 'errors': []}
-    try:
-        rows = query("SHOW TABLES", fetch=True)
-        result['tables'] = [list(r.values())[0] for r in rows] if rows else []
-    except Exception as e:
-        result['errors'].append(f'SHOW TABLES: {e}')
-    for tbl in ['orcamentos', 'orcamentos_propostas', 'orcamentos_propostas_pecas', 'agendamentos', 'fornecedores']:
-        try:
-            cols = query(f"SHOW COLUMNS FROM {tbl}", fetch=True)
-            result[f'cols_{tbl}'] = [c['Field'] for c in cols] if cols else []
-        except Exception as e:
-            result['errors'].append(f'{tbl}: {e}')
-    return jsonify(result)
 
 
 if __name__ == '__main__':

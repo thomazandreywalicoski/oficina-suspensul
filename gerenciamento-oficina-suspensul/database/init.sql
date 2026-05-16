@@ -67,13 +67,13 @@ CREATE TABLE IF NOT EXISTS agendamentos (
 CREATE TABLE IF NOT EXISTS ordens_servico (
     id INT AUTO_INCREMENT PRIMARY KEY,
     numero INT NOT NULL UNIQUE,
-    slug VARCHAR(255) NULL UNIQUE,
     cliente_id INT NOT NULL,
     veiculo_id INT NOT NULL,
     data_emissao DATE NOT NULL,
     data_pagamento DATE NULL,
     valor_mao_obra DECIMAL(10,2) DEFAULT 0,
     status ENUM('Pendente', 'Paga') DEFAULT 'Pendente',
+    slug VARCHAR(255) NULL UNIQUE,
     observacoes TEXT,
     ativo TINYINT(1) NOT NULL DEFAULT 1,
     criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -93,8 +93,6 @@ CREATE TABLE IF NOT EXISTS ordens_servico_pecas (
     valor_custo DECIMAL(10,2) NOT NULL DEFAULT 0,
     lucro_percentual DECIMAL(6,2) NOT NULL DEFAULT 0,
     desconto_percentual DECIMAL(6,2) NOT NULL DEFAULT 0,
-    valor_venda_sem_desconto DECIMAL(10,2) NOT NULL DEFAULT 0,
-    valor_desconto DECIMAL(10,2) NOT NULL DEFAULT 0,
     valor_venda DECIMAL(10,2) NOT NULL DEFAULT 0,
     FOREIGN KEY (ordem_id) REFERENCES ordens_servico(id) ON DELETE CASCADE,
     FOREIGN KEY (fornecedor_id) REFERENCES fornecedores(id) ON DELETE SET NULL
@@ -140,19 +138,7 @@ CREATE TABLE IF NOT EXISTS estoque_movimentacoes (
     FOREIGN KEY (despesa_id) REFERENCES despesas(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tabela de Configurações da Oficina
-CREATE TABLE IF NOT EXISTS configuracoes (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nome_oficina VARCHAR(150) DEFAULT 'Oficina Suspensul',
-    cnpj VARCHAR(25),
-    endereco VARCHAR(255),
-    email VARCHAR(150),
-    whatsapp VARCHAR(25),
-    logo VARCHAR(255),
-    atualizado_em DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Tabela de Orçamentos (Cotações)
+-- Tabela de Orçamentos (Cotações Autopeças)
 CREATE TABLE IF NOT EXISTS orcamentos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     slug VARCHAR(255) NOT NULL,
@@ -161,8 +147,9 @@ CREATE TABLE IF NOT EXISTS orcamentos (
     fornecedores_ids JSON NULL,
     mensagem TEXT NULL,
     criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE KEY uniq_slug (slug)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    UNIQUE KEY uniq_slug (slug),
+    FOREIGN KEY (veiculo_id) REFERENCES veiculos(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tabela de Propostas de Orçamento
 CREATE TABLE IF NOT EXISTS orcamentos_propostas (
@@ -178,9 +165,9 @@ CREATE TABLE IF NOT EXISTS orcamentos_propostas (
     criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (cliente_id) REFERENCES clientes(id),
     FOREIGN KEY (veiculo_id) REFERENCES veiculos(id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tabela de Peças das Propostas
+-- Tabela de Peças da Proposta
 CREATE TABLE IF NOT EXISTS orcamentos_propostas_pecas (
     id INT AUTO_INCREMENT PRIMARY KEY,
     proposta_id INT NOT NULL,
@@ -194,7 +181,19 @@ CREATE TABLE IF NOT EXISTS orcamentos_propostas_pecas (
     valor_desconto DECIMAL(10,2) NOT NULL DEFAULT 0,
     valor_venda DECIMAL(10,2) NOT NULL DEFAULT 0,
     FOREIGN KEY (proposta_id) REFERENCES orcamentos_propostas(id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabela de Configurações da Oficina
+CREATE TABLE IF NOT EXISTS configuracoes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome_oficina VARCHAR(150) DEFAULT 'Oficina Suspensul',
+    cnpj VARCHAR(25),
+    endereco VARCHAR(255),
+    email VARCHAR(150),
+    whatsapp VARCHAR(25),
+    logo VARCHAR(255),
+    atualizado_em DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Inserir configuração padrão
 INSERT INTO configuracoes (nome_oficina, cnpj, endereco, email, whatsapp)
