@@ -39,6 +39,8 @@ CREATE TABLE IF NOT EXISTS veiculos (
     chassi VARCHAR(50),
     motorizacao VARCHAR(50),
     imagem VARCHAR(255),
+    imagem2 VARCHAR(255),
+    imagem3 VARCHAR(255),
     cliente_id INT,
     ativo TINYINT(1) NOT NULL DEFAULT 1,
     criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -65,9 +67,11 @@ CREATE TABLE IF NOT EXISTS agendamentos (
 CREATE TABLE IF NOT EXISTS ordens_servico (
     id INT AUTO_INCREMENT PRIMARY KEY,
     numero INT NOT NULL UNIQUE,
+    slug VARCHAR(255) NULL UNIQUE,
     cliente_id INT NOT NULL,
     veiculo_id INT NOT NULL,
     data_emissao DATE NOT NULL,
+    data_pagamento DATE NULL,
     valor_mao_obra DECIMAL(10,2) DEFAULT 0,
     status ENUM('Pendente', 'Paga') DEFAULT 'Pendente',
     observacoes TEXT,
@@ -89,6 +93,8 @@ CREATE TABLE IF NOT EXISTS ordens_servico_pecas (
     valor_custo DECIMAL(10,2) NOT NULL DEFAULT 0,
     lucro_percentual DECIMAL(6,2) NOT NULL DEFAULT 0,
     desconto_percentual DECIMAL(6,2) NOT NULL DEFAULT 0,
+    valor_venda_sem_desconto DECIMAL(10,2) NOT NULL DEFAULT 0,
+    valor_desconto DECIMAL(10,2) NOT NULL DEFAULT 0,
     valor_venda DECIMAL(10,2) NOT NULL DEFAULT 0,
     FOREIGN KEY (ordem_id) REFERENCES ordens_servico(id) ON DELETE CASCADE,
     FOREIGN KEY (fornecedor_id) REFERENCES fornecedores(id) ON DELETE SET NULL
@@ -145,6 +151,50 @@ CREATE TABLE IF NOT EXISTS configuracoes (
     logo VARCHAR(255),
     atualizado_em DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabela de Orçamentos (Cotações)
+CREATE TABLE IF NOT EXISTS orcamentos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    slug VARCHAR(255) NOT NULL,
+    veiculo_id INT NULL,
+    pecas JSON NOT NULL,
+    fornecedores_ids JSON NULL,
+    mensagem TEXT NULL,
+    criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uniq_slug (slug)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Tabela de Propostas de Orçamento
+CREATE TABLE IF NOT EXISTS orcamentos_propostas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    numero INT NOT NULL,
+    slug VARCHAR(255) NULL UNIQUE,
+    cliente_id INT NOT NULL,
+    veiculo_id INT NOT NULL,
+    valor_mao_obra DECIMAL(10,2) NOT NULL DEFAULT 0,
+    mao_obra_texto VARCHAR(255) NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'Pendente',
+    os_id INT NULL,
+    criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (cliente_id) REFERENCES clientes(id),
+    FOREIGN KEY (veiculo_id) REFERENCES veiculos(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Tabela de Peças das Propostas
+CREATE TABLE IF NOT EXISTS orcamentos_propostas_pecas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    proposta_id INT NOT NULL,
+    descricao VARCHAR(255) NOT NULL,
+    fornecedor_id INT NULL,
+    quantidade INT NOT NULL DEFAULT 1,
+    valor_custo DECIMAL(10,2) NOT NULL DEFAULT 0,
+    lucro_percentual DECIMAL(6,2) NOT NULL DEFAULT 0,
+    desconto_percentual DECIMAL(6,2) NOT NULL DEFAULT 0,
+    valor_venda_sem_desconto DECIMAL(10,2) NOT NULL DEFAULT 0,
+    valor_desconto DECIMAL(10,2) NOT NULL DEFAULT 0,
+    valor_venda DECIMAL(10,2) NOT NULL DEFAULT 0,
+    FOREIGN KEY (proposta_id) REFERENCES orcamentos_propostas(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Inserir configuração padrão
 INSERT INTO configuracoes (nome_oficina, cnpj, endereco, email, whatsapp)
