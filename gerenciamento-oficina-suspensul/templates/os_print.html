@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Comprovante Nº {{ '%06d'|format(os.numero|int) }} - {{ config.nome_oficina or 'Oficina Suspensul' }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', Arial, sans-serif; }
+        body { background: #f0f0f0; padding: 20px; }
+        .page {
+            background: white;
+            color: black;
+            margin: 0 auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        html {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        body, .page, .print-dados-col, .print-table th, .print-total-geral, .actions-toolbar button, .actions-toolbar button.secundario, .print-logo-placeholder {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        /* Formato A4 */
+        body.fmt-a4 .page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 18mm;
+            font-size: 13px;
+        }
+        /* Formato Cupom (80mm) */
+        body.fmt-cupom .page {
+            width: 80mm;
+            padding: 6mm;
+            font-size: 11px;
+        }
+        body.fmt-cupom .print-header { flex-direction: column; gap: 8px; text-align: center; padding-bottom: 10px; border-bottom: 1px dashed #000; margin-bottom: 10px; align-items: center; }
+        body.fmt-cupom .print-logo-area { flex-direction: column; align-items: center; justify-content: center; gap: 8px; width: 100%; }
+        body.fmt-cupom .print-oficina-dados { text-align: center; }
+        body.fmt-cupom .print-os-info { text-align: center; }
+        body.fmt-cupom .print-dados-secao { flex-direction: column; gap: 8px; margin-bottom: 10px; }
+        body.fmt-cupom .print-dados-col { background: transparent; padding: 5px 0; border-bottom: 1px dashed #000; }
+        body.fmt-cupom .print-totais { width: 100%; }
+        body.fmt-cupom .print-totais-tabela { width: 100%; }
+        body.fmt-cupom .print-table { font-size: 6px; }
+        body.fmt-cupom .print-assinaturas { margin-top: 30px; flex-direction: column; gap: 30px; }
+        body.fmt-cupom .print-termos { font-size: 9px; }
+        body.fmt-cupom .actions-toolbar { width: 80mm; }
+
+        .actions-toolbar {
+            width: 210mm;
+            margin: 0 auto 12px auto;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+        .actions-toolbar button {
+            padding: 10px 18px;
+            background: #ffe54c;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .actions-toolbar button.secundario { background: #333; color: #fff; }
+
+        .print-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
+        }
+        .print-logo-area { display: flex; align-items: center; gap: 15px; }
+        .print-logo-placeholder {
+            height: 60px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold;
+            border-radius: 6px;
+        }
+        .print-logo-placeholder img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .print-oficina-dados { font-size: 12px; line-height: 1.5; }
+        .print-os-info { text-align: right; }
+        .print-os-title { font-size: 20px; font-weight: bold; margin-bottom: 5px; }
+
+        .print-dados-secao { display: flex; gap: 20px; margin-bottom: 25px; font-size: 12px; }
+        .print-dados-col { flex: 1; padding: 12px; background: #f9f9f9; border-radius: 4px; }
+        .print-secao-title {
+            font-weight: bold; margin-bottom: 8px;
+            border-bottom: 1px solid #eee; padding-bottom: 5px;
+            text-transform: uppercase; font-size: 11px;
+        }
+
+        .print-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-bottom: 18px; font-size: 12px; border: 1px solid #ddd; }
+        .print-table th { background: #eee; padding: 8px; font-weight: bold; text-align: left; border: 0; box-shadow: inset -1px 0 0 #ddd, inset 0 -1px 0 #ddd; }
+        .print-table td { padding: 8px; border: 0; box-shadow: inset -1px 0 0 #ddd, inset 0 -1px 0 #ddd; }
+        .print-table .right { text-align: right; }
+        .print-table th:last-child, .print-table td:last-child { box-shadow: inset 0 -1px 0 #ddd; }
+        .print-table tbody tr:last-child td { box-shadow: inset -1px 0 0 #ddd; }
+        .print-table tbody tr:last-child td:last-child { box-shadow: none; }
+
+        .print-totais { width: 100%; display: flex; justify-content: flex-end; margin-bottom: 30px; }
+        .print-totais-tabela { width: 50%; border-collapse: separate; border-spacing: 0; font-size: 13px; border: 1px solid #ddd; }
+        .print-totais-tabela td { padding: 8px; border: 0; box-shadow: inset -1px 0 0 #ddd, inset 0 -1px 0 #ddd; }
+        .print-totais-tabela tr td:last-child { box-shadow: inset 0 -1px 0 #ddd; }
+        .print-totais-tabela tr:last-child td { box-shadow: inset -1px 0 0 #ddd; }
+        .print-totais-tabela tr:last-child td:last-child { box-shadow: none; }
+        .print-total-geral { font-weight: bold; font-size: 15px; background: #f0f0f0; }
+
+        .print-assinaturas {
+            display: flex; gap: 50px; margin-top: 40px;
+            justify-content: space-between; text-align: center; font-size: 12px;
+        }
+        .print-assinatura-box { flex: 1; position: relative; }
+        .print-linha-assinatura { border-top: 1px solid black; margin-bottom: 5px; margin-top: 40px; }
+        .print-assinatura-cursiva {
+            font-family: 'Dancing Script', cursive;
+            font-size: 26px;
+            font-weight: 700;
+            color: #111;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 28px;
+            white-space: nowrap;
+        }
+
+        .print-termos { margin-top: 25px; font-size: 11px; color: #444; text-align: justify; line-height: 1.4; }
+
+        body.preview-mode .actions-toolbar { display: none; }
+        @media print {
+            body { background: white; padding: 0; }
+            .page { box-shadow: none; margin: 0; }
+            .actions-toolbar { display: none; }
+            @page { margin: 0; }
+            body.fmt-a4 .page { width: 100%; min-height: auto; padding: 15mm; }
+            body.fmt-cupom .page { width: 80mm; padding: 5mm; }
+            .print-dados-col { background: #f9f9f9 !important; }
+            .print-table th { background: #eee !important; }
+            .print-total-geral { background: #f0f0f0 !important; }
+            .print-table, .print-totais-tabela { border: 1px solid #d6d6d6 !important; }
+            .print-table th, .print-table td, .print-totais-tabela td { border-color: transparent !important; }
+            .print-table th { box-shadow: inset -1px 0 0 #d6d6d6, inset 0 -1px 0 #d6d6d6 !important; }
+            .print-table td { box-shadow: inset -1px 0 0 #d6d6d6, inset 0 -1px 0 #d6d6d6 !important; }
+            .print-table th:last-child, .print-table td:last-child { box-shadow: inset 0 -1px 0 #d6d6d6 !important; }
+            .print-table tbody tr:last-child td { box-shadow: inset -1px 0 0 #d6d6d6 !important; }
+            .print-table tbody tr:last-child td:last-child { box-shadow: none !important; }
+            .print-totais-tabela td { box-shadow: inset -1px 0 0 #d6d6d6, inset 0 -1px 0 #d6d6d6 !important; }
+            .print-totais-tabela tr td:last-child { box-shadow: inset 0 -1px 0 #d6d6d6 !important; }
+            .print-totais-tabela tr:last-child td { box-shadow: inset -1px 0 0 #d6d6d6 !important; }
+            .print-totais-tabela tr:last-child td:last-child { box-shadow: none !important; }
+        }
+    </style>
+</head>
+<body class="fmt-{{ formato }}">
+
+<div class="actions-toolbar">
+    <button onclick="window.print()">Imprimir</button>
+    <button class="secundario" onclick="baixarPDF()">Baixar PDF</button>
+    <button class="secundario" onclick="window.close()">Fechar</button>
+</div>
+
+<div class="page">
+    <div class="print-header">
+        <div class="print-logo-area">
+            <div class="print-logo-placeholder">
+                {% if config.logo %}
+                    <img src="/static/uploads/{{ config.logo }}" alt="Logo">
+                {% else %}LOGO{% endif %}
+            </div>
+            <div class="print-oficina-dados">
+                <strong>{{ config.nome_oficina or 'Oficina Suspensul' }}</strong><br>
+                CNPJ: {{ config.cnpj or '-' }}<br>
+                {{ config.endereco or '' }}<br>
+                {{ config.email or '' }} | {{ config.whatsapp or '' }}
+            </div>
+        </div>
+        <div class="print-os-info">
+            <div class="print-os-title">Comprovante</div>
+            Nº COMPROVANTE: <strong>{{ '%06d'|format(os.numero|int) }}</strong><br>
+            Emissão: {{ os.data_emissao[8:10] ~ '/' ~ os.data_emissao[5:7] ~ '/' ~ os.data_emissao[0:4] if os.data_emissao else '' }}
+        </div>
+    </div>
+
+    <div class="print-dados-secao">
+        <div class="print-dados-col">
+            <div class="print-secao-title">Dados do Cliente</div>
+            <strong>Nome:</strong> {{ os.nome_completo or 'Não informado' }}<br>
+            <strong>CPF:</strong> {{ os.cpf or 'Não informado' }}<br>
+            <strong>Whatsapp:</strong> {{ os.whatsapp or 'Não informado' }}
+        </div>
+        <div class="print-dados-col">
+            <div class="print-secao-title">Dados do Veículo</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 20px;">
+                <div><strong>Placa:</strong> {{ os.placa or 'Não informado' }}</div>
+                <div><strong>Ano:</strong> {{ os.ano or 'Não informado' }}</div>
+                <div><strong>Marca:</strong> {{ os.marca or 'Não informado' }}</div>
+                <div><strong>KM:</strong> {{ os.km or 'Não informado' }}</div>
+                <div><strong>Modelo:</strong> {{ os.modelo or 'Não informado' }}</div>
+                <div><strong>Motor:</strong> {{ os.motorizacao or 'Não informado' }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="print-secao-title">Produtos / Peças Aplicadas</div>
+    <table class="print-table">
+        <thead>
+            <tr>
+                <th>Descrição</th>
+                <th>Qtd</th>
+                <th class="right" style="width: 110px;">Valor (und)</th>
+                <th class="right">Desconto (und)</th>
+                <th class="right" style="width: 125px;">Valor final (und)</th>
+                <th class="right" style="width: 105px;">Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% set total_pecas = namespace(v=0) %}
+            {% for p in pecas %}
+                {% set valor_unidade = (p.valor_venda_sem_desconto|float) if p.valor_venda_sem_desconto is defined and (p.valor_venda_sem_desconto|float) > 0 else ((p.valor_venda|float) + ((p.valor_desconto|float) if p.valor_desconto is defined and p.valor_desconto is not none else 0)) %}
+                {% set desconto_unidade = (p.valor_desconto|float) if p.valor_desconto is defined and p.valor_desconto is not none else (valor_unidade - (p.valor_venda|float)) %}
+                {% set valor_final_unidade = p.valor_venda|float %}
+                {% set sub = (p.valor_venda|float) * (p.quantidade|int) %}
+                {% set total_pecas.v = total_pecas.v + sub %}
+                <tr>
+                    <td>{{ (p.descricao[:22] ~ '...') if p.descricao and (p.descricao|length) > 22 else p.descricao }}</td>
+                    <td>{{ p.quantidade }}</td>
+                    <td class="right">R$ {{ '%.2f'|format(valor_unidade) | replace('.', ',') }}</td>
+                    <td class="right">R$ {{ '%.2f'|format(desconto_unidade) | replace('.', ',') }}</td>
+                    <td class="right">R$ {{ '%.2f'|format(valor_final_unidade) | replace('.', ',') }}</td>
+                    <td class="right">R$ {{ '%.2f'|format(sub) | replace('.', ',') }}</td>
+                </tr>
+            {% else %}
+                <tr><td colspan="6" style="text-align:center;color:#777">Nenhuma peça registrada.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="print-secao-title">Serviços / Mão de Obra</div>
+    <table class="print-table">
+        <thead>
+            <tr>
+                <th>Descrição do Serviço</th>
+                <th class="right" style="width: 120px;">Valor</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ os.observacoes or 'Mão de obra dos serviços executados' }}</td>
+                <td class="right">R$ {{ '%.2f'|format(os.valor_mao_obra|float) | replace('.', ',') }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    {% set subtotal = total_pecas.v + (os.valor_mao_obra|float) %}
+    <div class="print-secao-title">Total Peças / Produtos / Mão de Obra</div>
+    <table class="print-table">
+        <thead>
+            <tr>
+                <th>Total</th>
+                <th class="right">Valor Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Total devido pelas peças/produtos e mão de obra</td>
+                <td class="right">R$ {{ '%.2f'|format(subtotal) | replace('.', ',') }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="print-termos">
+        O cliente acima identificado declara estar ciente e concorda com a descrição de peças, valores de produtos e serviços/mão de obra acima detalhados, autorizando a realização dos mesmos no veículo descrito. Garantia de 90 dias para serviços e conforme fabricante para peças. Este comprovante não tem valor fiscal.
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+    // Modo preview: esconde toolbar e não abre diálogo de impressão
+    window.addEventListener('load', () => {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('preview') === '1') {
+            document.body.classList.add('preview-mode');
+            return;
+        }
+        if (params.get('baixar') === '1') {
+            document.body.classList.add('preview-mode');
+            setTimeout(() => baixarPDF(), 500);
+            return;
+        }
+        setTimeout(() => window.print(), 400);
+    });
+
+    function baixarPDF() {
+        const el = document.querySelector('.page');
+        const slug = '{{ slug or "" }}';
+        const filename = slug ? slug + '.pdf' : 'comprovante.pdf';
+        const btns = document.querySelector('.actions-toolbar');
+        btns.style.display = 'none';
+        html2pdf().set({
+            margin: 0,
+            filename: filename,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        }).from(el).save().then(() => { btns.style.display = 'flex'; });
+    }
+</script>
+</body>
+</html>

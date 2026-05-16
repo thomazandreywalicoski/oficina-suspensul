@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Oficina Suspensul</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/logo-oficina-suspensul.png') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --primary: #ffe54c;
+            --bg-main: #000000;
+            --bg-card: #111111;
+            --bg-card-border: #111111;
+            --bg-input: #1a1a1a;
+            --text-main: #ffffff;
+            --text-muted: #a0a0a0;
+            --danger: #b91c1c;
+            --border-radius: 8px;
+            --font-family: 'Outfit', sans-serif;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: var(--font-family);
+        }
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at top, #1a1a1a 0%, #000 42%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+        .login-card {
+            width: 100%;
+            max-width: 430px;
+            background: linear-gradient(var(--bg-card), var(--bg-card)) padding-box,
+                        conic-gradient(from var(--border-angle), var(--bg-card-border) 0deg, var(--bg-card-border) 250deg, var(--primary) 300deg, var(--primary) 360deg) border-box;
+            color: var(--text-main);
+            border-radius: var(--border-radius);
+            border: 6px solid transparent;
+            padding: 38px 34px 34px;
+            animation: borderRotate 3s linear infinite;
+        }
+        @property --border-angle {
+            syntax: '<angle>';
+            inherits: false;
+            initial-value: 0deg;
+        }
+        @keyframes borderRotate {
+            to { --border-angle: 360deg; }
+        }
+        .logo-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .logo-mark {
+            width: 200px;
+            min-height: 82px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .logo-mark img {
+            max-width: 100%;
+            max-height: 90px;
+            object-fit: contain;
+        }
+        .logo-title {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .input-wrap {
+            position: relative;
+        }
+        input {
+            width: 100%;
+            height: 50px;
+            border: none;
+            border-radius: 12px;
+            background: var(--bg-input);
+            color: var(--text-main);
+            padding: 0 16px 0 46px;
+            font-size: 15px;
+            font-weight: 500;
+            outline: none;
+        }
+        input::placeholder {
+            color: var(--text-muted);
+        }
+        input:focus {
+            box-shadow: 0 0 0 2px rgba(255, 229, 76, 0.2);
+            background: var(--bg-input);
+        }
+        .input-wrap i, .input-wrap svg {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 19px;
+            height: 19px;
+            color: var(--text-muted);
+        }
+        .login-error {
+            background: rgba(185,28,28,0.12);
+            color: #fff;
+            border-radius: 10px;
+            padding: 12px 14px;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 18px;
+            text-align: center;
+        }
+        .login-button {
+            width: 100%;
+            height: 52px;
+            border: none;
+            border-radius: 12px;
+            background: var(--primary);
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            margin-top: 6px;
+            transition: transform 0.18s ease, opacity 0.18s ease;
+        }
+        .login-button:hover {
+            transform: translateY(-1px);
+            opacity: 0.92;
+        }
+    </style>
+</head>
+<body>
+    <main class="login-card">
+        <div class="logo-area">
+            <div class="logo-mark">
+                <img src="{{ url_for('static', filename='img/logo-oficina-suspensul.png') }}" alt="Logo Oficina Suspensul">
+            </div>
+        </div>
+
+        {% if erro %}
+        <div class="login-error">{{ erro }}</div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('login') }}" autocomplete="off">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <div class="input-wrap">
+                    <i data-lucide="mail"></i>
+                    <input type="email" id="email" name="email" placeholder="Digite seu e-mail" required autofocus autocomplete="username">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="senha">Senha</label>
+                <div class="input-wrap">
+                    <i data-lucide="lock-keyhole"></i>
+                    <input type="password" id="senha" name="senha" placeholder="Digite sua senha" required autocomplete="current-password">
+                </div>
+            </div>
+            <button type="submit" class="login-button">
+                Entrar
+            </button>
+        </form>
+    </main>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

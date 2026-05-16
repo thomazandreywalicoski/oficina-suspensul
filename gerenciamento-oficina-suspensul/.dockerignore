@@ -1,0 +1,14 @@
+__pycache__
+*.pyc
+*.pyo
+.git
+.gitignore
+.vscode
+.idea
+.env
+*.log
+node_modules
+oficina_suspensul.html
+mysql_data/
+static/uploads/*
+!static/uploads/.gitkeep
