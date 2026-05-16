@@ -29,11 +29,15 @@ services:
     restart: unless-stopped
     expose:
       - "5000"
-    env_file:
-      - ./gerenciamento-oficina-suspensul/.env
     environment:
+      SECRET_KEY: "OficinaSuspensul!10@Gerenci4mento!10"
+      SESSION_COOKIE_SECURE: "true"
+      ADMIN_EMAIL: "gerenciamentooficinasuspensul@gmail.com"
+      ADMIN_PASSWORD: "!OFICINAsuspensul@OF2026!"
+      LOGIN_MAX_ATTEMPTS: "5"
+      LOGIN_LOCK_SECONDS: "7200"
       DB_HOST: mysql
-      DB_PORT: 3306
+      DB_PORT: "3306"
       DB_USER: suspensul
       DB_PASSWORD: "!OFICINAsuspensul@MYSQL2026!"
       DB_NAME: oficina_suspensul
