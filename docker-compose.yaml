@@ -51,6 +51,12 @@ services:
     build: ./gerenciamento-oficina-suspensul
     restart: unless-stopped
     environment:
+      SECRET_KEY: "OficinaSuspensul!10@Gerenci4mento!10"
+      SESSION_COOKIE_SECURE: "true"
+      ADMIN_EMAIL: gerenciamentooficinasuspensul@gmail.com
+      ADMIN_PASSWORD: "!OFICINAsuspensul@OF2026!"
+      LOGIN_MAX_ATTEMPTS: 5
+      LOGIN_LOCK_SECONDS: 7200
       DB_HOST: mysql
       DB_PORT: 3306
       DB_USER: suspensul
@@ -58,9 +64,6 @@ services:
       DB_NAME: oficina_suspensul
       FLASK_ENV: production
       PUBLIC_BASE_URL: https://oficinasuspensul.com.br
-      # Segredos — configure no Coolify (Environment Variables):
-      # SECRET_KEY, SESSION_COOKIE_SECURE, ADMIN_EMAIL, ADMIN_PASSWORD,
-      # LOGIN_MAX_ATTEMPTS, LOGIN_LOCK_SECONDS
     depends_on:
       - mysql
     volumes:
