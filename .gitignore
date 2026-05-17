@@ -1,4 +1,0 @@
-.env
-__pycache__/
-*.pyc
-mysql_data/

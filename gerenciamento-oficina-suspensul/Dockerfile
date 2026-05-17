@@ -14,8 +14,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 RUN mkdir -p /app/uploads /app/static/uploads
-RUN sed -i 's/\r$//' /app/start.sh && chmod +x /app/start.sh
 
 EXPOSE 5000
 
-CMD ["/bin/sh", "/app/start.sh"]
+CMD ["python", "app.py"]

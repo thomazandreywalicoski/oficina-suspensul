@@ -6,7 +6,6 @@ from datetime import datetime, date, timedelta
 from decimal import Decimal
 from functools import wraps
 from flask import Flask, render_template, request, jsonify, send_from_directory, abort, redirect, url_for, session
-from werkzeug.middleware.proxy_fix import ProxyFix
 from dotenv import load_dotenv
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
@@ -16,7 +15,6 @@ from mysql.connector import pooling
 load_dotenv()
 
 app = Flask(__name__)
-app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_port=1, x_prefix=1)
 SECRET_KEY = os.getenv('SECRET_KEY')
 if not SECRET_KEY:
     raise RuntimeError('SECRET_KEY deve ser definida no .env')
@@ -29,6 +27,7 @@ app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['SESSION_COOKIE_SECURE'] = os.getenv('SESSION_COOKIE_SECURE', 'false').lower() == 'true'
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
+PUBLIC_BASE_URL = os.getenv('PUBLIC_BASE_URL', '').rstrip('/')
 ADMIN_EMAIL = os.getenv('ADMIN_EMAIL', '').strip().lower()
 ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')
 ADMIN_PASSWORD_HASH = os.getenv('ADMIN_PASSWORD_HASH')
@@ -432,7 +431,7 @@ def logout():
 @app.route('/')
 @login_required
 def index():
-    return render_template('index.html')
+    return render_template('index.html', public_base_url=PUBLIC_BASE_URL)
 
 @app.route('/os/<int:os_id>/imprimir')
 @login_required

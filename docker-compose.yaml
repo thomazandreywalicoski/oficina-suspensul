@@ -1,69 +1,38 @@
-version: '3.8'
-
 services:
   nginx:
     build: ./nginx
     container_name: suspensul_nginx
     restart: unless-stopped
-    expose:
-      - "80"
+    ports:
+      - "80:80"
     depends_on:
-      - gerenciamento-app
-      - landing-page
+      - app
+      - landing
     networks:
-      - default
-      - suspensul_internal
+      - suspensul_net
 
-  landing-page:
+  landing:
     build: ./landing-page-oficina-suspensul
     container_name: suspensul_landing
     restart: unless-stopped
-    expose:
-      - "80"
     networks:
-      - suspensul_internal
-
-  gerenciamento-app:
-    build: ./gerenciamento-oficina-suspensul
-    container_name: suspensul_app
-    restart: unless-stopped
-    expose:
-      - "5000"
-    environment:
-      SECRET_KEY: "OficinaSuspensul!10@Gerenci4mento!10"
-      SESSION_COOKIE_SECURE: "true"
-      ADMIN_EMAIL: "gerenciamentooficinasuspensul@gmail.com"
-      ADMIN_PASSWORD: "!OFICINAsuspensul@OF2026!"
-      LOGIN_MAX_ATTEMPTS: "5"
-      LOGIN_LOCK_SECONDS: "7200"
-      DB_HOST: mysql
-      DB_PORT: "3306"
-      DB_USER: suspensul
-      DB_PASSWORD: "!OFICINAsuspensul@MYSQL2026!"
-      DB_NAME: oficina_suspensul
-      FLASK_ENV: production
-    depends_on:
-      - mysql
-    volumes:
-      - ./gerenciamento-oficina-suspensul/static/uploads:/app/static/uploads
-    networks:
-      - suspensul_internal
+      - suspensul_net
 
   mysql:
     image: mysql:8.0
     container_name: suspensul_mysql
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: "!OFICINAsuspensul@MYSQL2026!"
+      MYSQL_ROOT_PASSWORD: suspensul123
       MYSQL_DATABASE: oficina_suspensul
       MYSQL_USER: suspensul
-      MYSQL_PASSWORD: "!OFICINAsuspensul@MYSQL2026!"
+      MYSQL_PASSWORD: suspensul123
     volumes:
       - mysql_data:/var/lib/mysql
       - ./gerenciamento-oficina-suspensul/database/init.sql:/docker-entrypoint-initdb.d/init.sql
     command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     networks:
-      - suspensul_internal
+      - suspensul_net
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
@@ -73,18 +42,39 @@ services:
       PMA_HOST: mysql
       PMA_PORT: 3306
       PMA_USER: root
-      PMA_PASSWORD: "!OFICINAsuspensul@MYSQL2026!"
+      PMA_PASSWORD: suspensul123
       UPLOAD_LIMIT: 100M
-    expose:
-      - "80"
+    ports:
+      - "3801:80"
     depends_on:
       - mysql
     networks:
-      - suspensul_internal
+      - suspensul_net
+
+  app:
+    build: ./gerenciamento-oficina-suspensul
+    container_name: suspensul_app
+    restart: unless-stopped
+    env_file:
+      - ./gerenciamento-oficina-suspensul/.env
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: suspensul
+      DB_PASSWORD: suspensul123
+      DB_NAME: oficina_suspensul
+      FLASK_ENV: production
+      PUBLIC_BASE_URL: https://oficinasuspensul.com.br
+    depends_on:
+      - mysql
+    volumes:
+      - ./gerenciamento-oficina-suspensul/static/uploads:/app/static/uploads
+    networks:
+      - suspensul_net
 
 volumes:
   mysql_data:
 
 networks:
-  suspensul_internal:
+  suspensul_net:
     driver: bridge
