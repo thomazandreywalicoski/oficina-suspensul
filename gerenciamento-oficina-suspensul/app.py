@@ -9,6 +9,7 @@ from flask import Flask, render_template, request, jsonify, send_from_directory,
 from dotenv import load_dotenv
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
+from werkzeug.middleware.proxy_fix import ProxyFix
 import mysql.connector
 from mysql.connector import pooling
 
@@ -25,6 +26,12 @@ app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=24)
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['SESSION_COOKIE_SECURE'] = os.getenv('SESSION_COOKIE_SECURE', 'false').lower() == 'true'
+PUBLIC_BASE_URL = os.getenv('PUBLIC_BASE_URL', '').rstrip('/')
+app.config['PUBLIC_BASE_URL'] = PUBLIC_BASE_URL
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
+cookie_domain = os.getenv('SESSION_COOKIE_DOMAIN', '')
+if cookie_domain:
+    app.config['SESSION_COOKIE_DOMAIN'] = cookie_domain
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 ADMIN_EMAIL = os.getenv('ADMIN_EMAIL', '').strip().lower()
@@ -1262,6 +1269,10 @@ def health():
         traceback.print_exc()
         return jsonify({'status': 'erro', 'erro': str(e), 'tipo': type(e).__name__}), 500
 
+
+@app.context_processor
+def inject_public_base_url():
+    return {'PUBLIC_BASE_URL': app.config.get('PUBLIC_BASE_URL', '')}
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=False)

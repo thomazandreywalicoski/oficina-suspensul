@@ -1,0 +1,79 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: suspensul_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-suspensul123}
+      MYSQL_DATABASE: ${DB_NAME:-oficina_suspensul}
+      MYSQL_USER: ${DB_USER:-suspensul}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-suspensul123}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./gerenciamento-oficina-suspensul/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    networks:
+      - suspensul_net
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: suspensul_phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: ${DB_ROOT_PASSWORD:-suspensul123}
+      UPLOAD_LIMIT: 100M
+    ports:
+      - "3801:80"
+    depends_on:
+      - mysql
+    networks:
+      - suspensul_net
+
+  app:
+    build: ./gerenciamento-oficina-suspensul
+    container_name: suspensul_app
+    restart: unless-stopped
+    env_file:
+      - ./gerenciamento-oficina-suspensul/.env
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: ${DB_USER:-suspensul}
+      DB_PASSWORD: ${DB_PASSWORD:-suspensul123}
+      DB_NAME: ${DB_NAME:-oficina_suspensul}
+      FLASK_ENV: production
+    depends_on:
+      - mysql
+    volumes:
+      - uploads_data:/app/static/uploads
+    networks:
+      - suspensul_net
+
+  nginx:
+    image: nginx:alpine
+    container_name: suspensul_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "1221:1221"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - /dev/null:/etc/nginx/conf.d/default.conf:ro
+      - ./landing-page-oficina-suspensul:/usr/share/nginx/landing:ro
+      - uploads_data:/usr/share/nginx/uploads:ro
+    depends_on:
+      - app
+    networks:
+      - suspensul_net
+
+volumes:
+  mysql_data:
+  uploads_data:
+
+networks:
+  suspensul_net:
+    driver: bridge
