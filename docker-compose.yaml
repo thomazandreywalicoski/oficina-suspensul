@@ -1,10 +1,9 @@
 services:
   nginx:
     build: ./nginx
-    container_name: suspensul_nginx
     restart: unless-stopped
-    ports:
-      - "80:80"
+    expose:
+      - "80"
     depends_on:
       - app
       - landing
@@ -13,14 +12,12 @@ services:
 
   landing:
     build: ./landing-page-oficina-suspensul
-    container_name: suspensul_landing
     restart: unless-stopped
     networks:
       - suspensul_net
 
   mysql:
     image: mysql:8.0
-    container_name: suspensul_mysql
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: suspensul123
@@ -36,7 +33,6 @@ services:
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
-    container_name: suspensul_phpmyadmin
     restart: unless-stopped
     environment:
       PMA_HOST: mysql
@@ -44,8 +40,8 @@ services:
       PMA_USER: root
       PMA_PASSWORD: suspensul123
       UPLOAD_LIMIT: 100M
-    ports:
-      - "3801:80"
+    expose:
+      - "80"
     depends_on:
       - mysql
     networks:
@@ -53,7 +49,6 @@ services:
 
   app:
     build: ./gerenciamento-oficina-suspensul
-    container_name: suspensul_app
     restart: unless-stopped
     env_file:
       - ./gerenciamento-oficina-suspensul/.env
