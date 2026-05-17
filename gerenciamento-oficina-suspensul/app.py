@@ -387,7 +387,7 @@ def login_required(f):
 
 @app.before_request
 def exigir_login():
-    rotas_livres = {'login', 'static', 'landing', 'visualizar_solicitacao_orcamento', 'visualizar_orcamento_proposta', 'visualizar_comprovante'}
+    rotas_livres = {'login', 'static', 'visualizar_solicitacao_orcamento', 'visualizar_orcamento_proposta', 'visualizar_comprovante'}
     if request.endpoint in rotas_livres or request.path.startswith('/uploads/'):
         return None
     if session.get('admin_logged_in'):
@@ -435,17 +435,9 @@ def logout():
 
 
 @app.route('/')
+@login_required
 def index():
-    host = request.host.split(':')[0] if request.host else ''
-    if host in ('oficinasuspensul.com.br', 'www.oficinasuspensul.com.br'):
-        return send_from_directory(os.path.join(os.path.dirname(__file__), '..', 'landing-page-oficina-suspensul'), 'index.html')
-    if not session.get('admin_logged_in'):
-        return redirect(url_for('login'))
     return render_template('index.html')
-
-@app.route('/landing')
-def landing():
-    return send_from_directory(os.path.join(os.path.dirname(__file__), '..', 'landing-page-oficina-suspensul'), 'index.html')
 
 @app.route('/os/<int:os_id>/imprimir')
 @login_required

@@ -17,6 +17,8 @@ services:
     image: phpmyadmin/phpmyadmin:latest
     container_name: suspensul_phpmyadmin
     restart: unless-stopped
+    ports:
+      - "3801:80"
     environment:
       PMA_HOST: mysql
       PMA_PORT: 3306
@@ -43,13 +45,28 @@ services:
       - mysql
     volumes:
       - uploads_data:/app/static/uploads
-      - ./landing-page-oficina-suspensul:/landing-page-oficina-suspensul:ro
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.suspensul_app.rule=Host(`oficinasuspensul.com.br`) || Host(`gerenciamento.oficinasuspensul.com.br`)"
-      - "traefik.http.routers.suspensul_app.entryPoints=web"
-      - "traefik.http.services.suspensul_app.loadbalancer.server.port=5000"
-      - "traefik.docker.network=coolify"
+    ports:
+      - "5000:5000"
+
+  landing:
+    image: nginx:alpine
+    container_name: suspensul_landing
+    restart: unless-stopped
+    volumes:
+      - ./landing-page-oficina-suspensul:/usr/share/nginx/html:ro
+    ports:
+      - "8080:80"
+
+  proxy:
+    build: ./nginx
+    container_name: suspensul_proxy
+    restart: unless-stopped
+    volumes:
+      - uploads_data:/usr/share/nginx/uploads:ro
+    depends_on:
+      - app
+    ports:
+      - "5001:80"
 
 volumes:
   mysql_data:
