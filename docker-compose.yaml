@@ -45,10 +45,6 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:-suspensul123}
       DB_NAME: ${DB_NAME:-oficina_suspensul}
       FLASK_ENV: production
-    expose:
-      - "5000"
-    ports:
-      - "5000:5000"
     depends_on:
       - mysql
     volumes:
@@ -60,11 +56,9 @@ services:
     image: nginx:alpine
     container_name: suspensul_nginx
     restart: unless-stopped
-    expose:
-      - "80"
-      - "1221"
     ports:
       - "80:80"
+      - "443:443"
       - "1221:1221"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
