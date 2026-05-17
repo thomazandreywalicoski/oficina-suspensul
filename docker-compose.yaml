@@ -45,6 +45,8 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:-suspensul123}
       DB_NAME: ${DB_NAME:-oficina_suspensul}
       FLASK_ENV: production
+    ports:
+      - "5000:5000"
     depends_on:
       - mysql
     volumes:
