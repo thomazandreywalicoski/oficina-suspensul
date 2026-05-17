@@ -755,8 +755,7 @@
         }
         const fone = (cliente && cliente.whatsapp || '').replace(/\D/g, '');
         const slug = o.slug || id;
-        const baseUrl = window.PUBLIC_BASE_URL || window.location.origin;
-        const url = `${baseUrl}/comprovante-pagamento/${slug}`;
+        const url = `${window.location.origin}/comprovante-pagamento/${slug}`;
         const msg = encodeURIComponent(`Olá ${o.nome_completo}, segue seu Comprovante Nº ${String(o.numero).padStart(6,'0')}: ${url}`);
         const wpp = fone ? `https://wa.me/55${fone}?text=${msg}` : `https://wa.me/?text=${msg}`;
         window.open(wpp, '_blank');
@@ -1112,8 +1111,7 @@
             showToast('Permita pop-ups para abrir todas as abas', true);
         }
         try {
-            const baseUrl = window.PUBLIC_BASE_URL || window.location.origin;
-            const anexoUrl = baseUrl + '/solicitacao-orcamento/' + c.slug;
+            const anexoUrl = window.location.origin + '/solicitacao-orcamento/' + c.slug;
             const mensagemBase = c.mensagem || 'Opa, bom dia!\n\nGostaría de solicitar um orçamento para as peças/produtos do veículo abaixo';
             const msg = `${mensagemBase}\n\n${anexoUrl}`;
             janelas.forEach(j => {

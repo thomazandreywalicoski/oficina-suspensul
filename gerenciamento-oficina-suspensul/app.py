@@ -27,7 +27,6 @@ app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['SESSION_COOKIE_SECURE'] = os.getenv('SESSION_COOKIE_SECURE', 'false').lower() == 'true'
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
-PUBLIC_BASE_URL = os.getenv('PUBLIC_BASE_URL', '').rstrip('/')
 ADMIN_EMAIL = os.getenv('ADMIN_EMAIL', '').strip().lower()
 ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')
 ADMIN_PASSWORD_HASH = os.getenv('ADMIN_PASSWORD_HASH')
@@ -431,7 +430,7 @@ def logout():
 @app.route('/')
 @login_required
 def index():
-    return render_template('index.html', public_base_url=PUBLIC_BASE_URL)
+    return render_template('index.html')
 
 @app.route('/os/<int:os_id>/imprimir')
 @login_required
