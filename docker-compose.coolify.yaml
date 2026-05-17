@@ -43,23 +43,12 @@ services:
       - mysql
     volumes:
       - uploads_data:/app/static/uploads
-
-  # Nginx: landing page + reverse proxy Flask (rotas públicas + subdomínio gerenciamento)
-  nginx:
-    build:
-      context: .
-      dockerfile: nginx/Dockerfile
-    container_name: suspensul_nginx
-    restart: unless-stopped
-    volumes:
-      - uploads_data:/usr/share/nginx/uploads:ro
-    depends_on:
-      - app
+      - ./landing-page-oficina-suspensul:/landing-page-oficina-suspensul:ro
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.suspensul_nginx.rule=Host(`oficinasuspensul.com.br`) || Host(`gerenciamento.oficinasuspensul.com.br`)"
-      - "traefik.http.routers.suspensul_nginx.entryPoints=web"
-      - "traefik.http.services.suspensul_nginx.loadbalancer.server.port=80"
+      - "traefik.http.routers.suspensul_app.rule=Host(`oficinasuspensul.com.br`) || Host(`gerenciamento.oficinasuspensul.com.br`)"
+      - "traefik.http.routers.suspensul_app.entryPoints=web"
+      - "traefik.http.services.suspensul_app.loadbalancer.server.port=5000"
       - "traefik.docker.network=coolify"
 
 volumes:
