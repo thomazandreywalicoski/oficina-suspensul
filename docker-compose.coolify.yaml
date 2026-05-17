@@ -71,11 +71,10 @@ services:
 
   # Flask app com Traefik — domínio principal (rotas públicas) + subdomínio (gerenciamento)
   proxy:
-    image: nginx:alpine
+    build: ./nginx
     container_name: suspensul_proxy
     restart: unless-stopped
     volumes:
-      - ./nginx/nginx.coolify.conf:/etc/nginx/nginx.conf:ro
       - uploads_data:/usr/share/nginx/uploads:ro
     depends_on:
       - app
