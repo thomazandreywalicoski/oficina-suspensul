@@ -1,34 +1,23 @@
+# Docker Compose para deploy no Coolify
+# O Coolify usa Traefik como reverse proxy com SSL automático
+# Configure no Coolify:
+#   - oficinasuspensul.com.br → suspensul_nginx:80
+#   - gerenciamento.oficinasuspensul.com.br → suspensul_app:5000
+
 services:
   mysql:
     image: mysql:8.0
     container_name: suspensul_mysql
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-suspensul123}
-      MYSQL_DATABASE: ${DB_NAME:-oficina_suspensul}
-      MYSQL_USER: ${DB_USER:-suspensul}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-suspensul123}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
       - mysql_data:/var/lib/mysql
       - ./gerenciamento-oficina-suspensul/database/init.sql:/docker-entrypoint-initdb.d/init.sql
     command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-    networks:
-      - suspensul_net
-
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin:latest
-    container_name: suspensul_phpmyadmin
-    restart: unless-stopped
-    environment:
-      PMA_HOST: mysql
-      PMA_PORT: 3306
-      PMA_USER: root
-      PMA_PASSWORD: ${DB_ROOT_PASSWORD:-suspensul123}
-      UPLOAD_LIMIT: 100M
-    ports:
-      - "3801:80"
-    depends_on:
-      - mysql
     networks:
       - suspensul_net
 
@@ -41,14 +30,12 @@ services:
     environment:
       DB_HOST: mysql
       DB_PORT: 3306
-      DB_USER: ${DB_USER:-suspensul}
-      DB_PASSWORD: ${DB_PASSWORD:-suspensul123}
-      DB_NAME: ${DB_NAME:-oficina_suspensul}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
       FLASK_ENV: production
     expose:
       - "5000"
-    ports:
-      - "5000:5000"
     depends_on:
       - mysql
     volumes:
@@ -62,10 +49,6 @@ services:
     restart: unless-stopped
     expose:
       - "80"
-      - "1221"
-    ports:
-      - "80:80"
-      - "1221:1221"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - /dev/null:/etc/nginx/conf.d/default.conf:ro
