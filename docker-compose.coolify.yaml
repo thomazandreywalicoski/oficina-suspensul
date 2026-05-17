@@ -12,8 +12,6 @@ services:
       - mysql_data:/var/lib/mysql
       - ./gerenciamento-oficina-suspensul/database/init.sql:/docker-entrypoint-initdb.d/init.sql
     command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-    networks:
-      - suspensul_net
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
@@ -27,13 +25,12 @@ services:
       UPLOAD_LIMIT: 100M
     depends_on:
       - mysql
-    networks:
-      - suspensul_net
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.suspensul_phpmyadmin.rule=Host(`phpmyadmin.oficinasuspensul.com.br`)"
       - "traefik.http.routers.suspensul_phpmyadmin.entryPoints=http"
       - "traefik.http.services.suspensul_phpmyadmin.loadbalancer.server.port=80"
+      - "traefik.docker.network=coolify"
 
   app:
     build: ./gerenciamento-oficina-suspensul
@@ -52,8 +49,6 @@ services:
       - mysql
     volumes:
       - uploads_data:/app/static/uploads
-    networks:
-      - suspensul_net
 
   landing:
     image: nginx:alpine
@@ -61,15 +56,15 @@ services:
     restart: unless-stopped
     volumes:
       - ./landing-page-oficina-suspensul:/usr/share/nginx/html:ro
-    networks:
-      - suspensul_net
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.suspensul_landing.rule=Host(`oficinasuspensul.com.br`) && !PathPrefix(`/solicitacao-orcamento/`,`/orcamento/`,`/comprovante-pagamento/`,`/uploads/`,`/static/`)"
+      - "traefik.http.routers.suspensul_landing.rule=Host(`oficinasuspensul.com.br`)"
       - "traefik.http.routers.suspensul_landing.entryPoints=http"
+      - "traefik.http.routers.suspensul_landing.priority=1"
       - "traefik.http.services.suspensul_landing.loadbalancer.server.port=80"
+      - "traefik.docker.network=coolify"
 
-  # Flask app com Traefik — domínio principal (rotas públicas) + subdomínio (gerenciamento)
+  # Nginx proxy para Flask — rotas públicas no domínio principal + subdomínio gerenciamento
   proxy:
     build: ./nginx
     container_name: suspensul_proxy
@@ -78,23 +73,20 @@ services:
       - uploads_data:/usr/share/nginx/uploads:ro
     depends_on:
       - app
-    networks:
-      - suspensul_net
     labels:
       - "traefik.enable=true"
-      # Rotas públicas no domínio principal
-      - "traefik.http.routers.suspensul_public.rule=Host(`oficinasuspensul.com.br`) && PathPrefix(`/solicitacao-orcamento/`,`/orcamento/`,`/comprovante-pagamento/`,`/uploads/`,`/static/`)"
+      # Rotas públicas no domínio principal (prioridade alta para sobrepor landing)
+      - "traefik.http.routers.suspensul_public.rule=Host(`oficinasuspensul.com.br`) && (PathPrefix(`/solicitacao-orcamento/`) || PathPrefix(`/orcamento/`) || PathPrefix(`/comprovante-pagamento/`) || PathPrefix(`/uploads/`) || PathPrefix(`/static/`))"
       - "traefik.http.routers.suspensul_public.entryPoints=http"
+      - "traefik.http.routers.suspensul_public.priority=10"
       - "traefik.http.services.suspensul_public.loadbalancer.server.port=80"
       # Gerenciamento no subdomínio
       - "traefik.http.routers.suspensul_gerenciamento.rule=Host(`gerenciamento.oficinasuspensul.com.br`)"
       - "traefik.http.routers.suspensul_gerenciamento.entryPoints=http"
+      - "traefik.http.routers.suspensul_gerenciamento.priority=5"
       - "traefik.http.services.suspensul_gerenciamento.loadbalancer.server.port=80"
+      - "traefik.docker.network=coolify"
 
 volumes:
   mysql_data:
   uploads_data:
-
-networks:
-  suspensul_net:
-    driver: bridge
