@@ -55,6 +55,11 @@ services:
       - uploads_data:/usr/share/nginx/uploads:ro
     depends_on:
       - app
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.suspensul_nginx.rule=Host(`oficinasuspensul.com.br`) || Host(`gerenciamento.oficinasuspensul.com.br`)"
+      - "traefik.http.routers.suspensul_nginx.entryPoints=http"
+      - "traefik.http.services.suspensul_nginx.loadbalancer.server.port=80"
 
 volumes:
   mysql_data:
