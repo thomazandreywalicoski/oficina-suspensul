@@ -601,8 +601,8 @@ def listar_clientes():
     where = [] if incluir_inativos else ["ativo = 1"]
     params = []
     if search:
-        where.append("(nome_completo LIKE %s OR cpf LIKE %s)")
-        params.extend([f'%{search}%', f'%{search}%'])
+        where.append("(nome_completo LIKE %s OR cpf LIKE %s OR whatsapp LIKE %s)")
+        params.extend([f'%{search}%', f'%{search}%', f'%{search}%'])
     sql = "SELECT * FROM clientes"
     if where:
         sql += " WHERE " + " AND ".join(where)
@@ -735,8 +735,8 @@ def listar_veiculos():
     where = [] if incluir_inativos else ["v.ativo = 1"]
     params = []
     if search:
-        where.append("v.placa LIKE %s")
-        params.append(f'%{search}%')
+        where.append("(v.placa LIKE %s OR v.marca LIKE %s OR v.modelo LIKE %s OR v.ano LIKE %s OR v.motorizacao LIKE %s OR v.chassi LIKE %s OR c.nome_completo LIKE %s)")
+        params.extend([f'%{search}%', f'%{search}%', f'%{search}%', f'%{search}%', f'%{search}%', f'%{search}%', f'%{search}%'])
     sql = base
     if where:
         sql += " WHERE " + " AND ".join(where)
