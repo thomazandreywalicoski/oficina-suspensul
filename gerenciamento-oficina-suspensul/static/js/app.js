@@ -663,7 +663,7 @@
             const f = slot?.querySelector('input[type="file"]');
             if (f && f.files && f.files[0]) fd.append(col, f.files[0]);
         });
-        if (!inputs[0].value.trim()) return showToast('Informe pelo menos a marca ou modelo', true);
+        if (!inputs[1].value.trim() && !inputs[2].value.trim()) return showToast('Informe pelo menos a marca ou modelo', true);
         try {
             if (state.editandoVeiculo) {
                 await api('PUT', `/api/veiculos/${state.editandoVeiculo.id}`, fd);
