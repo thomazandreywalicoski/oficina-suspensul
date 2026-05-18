@@ -109,6 +109,7 @@
         agendamentoFiltroMes: new Date().getMonth() + 1,
         despesasFiltroAno: new Date().getFullYear(),
         despesasFiltroMes: new Date().getMonth() + 1,
+        dividas: [],
         financeiroFiltroAno: new Date().getFullYear(),
         financeiroFiltroMes: new Date().getMonth() + 1,
         osFiltroStatus: 'Todos',
@@ -316,6 +317,7 @@
                 case 'os': await carregarOS(); break;
                 case 'orcamento': await carregarOrcamento(); break;
                 case 'financeiro': await carregarFinanceiro(); break;
+                case 'dividas': await carregarDividas(); break;
                 case 'estoque': await carregarEstoque(); break;
                 case 'configuracoes': await carregarConfig(); break;
                 case 'agendamentos':
@@ -2334,4 +2336,129 @@
     window.abrirEstoqueEntradaProduto = abrirEstoqueEntradaProduto;
     window.abrirEstoqueEditarProduto = abrirEstoqueEditarProduto;
     window.toggleEstoqueProduto = toggleEstoqueProduto;
+
+    // ===================== DÍVIDAS =====================
+    const PESSOAS_DIVIDA = ['Oficina','Thomaz','Cassiano','Paulo','Jonas','Ari'];
+
+    function fmtDataBR(d) {
+        if (!d) return '';
+        const parts = String(d).split('-');
+        if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+        return d;
+    }
+
+    async function carregarDividas() {
+        try {
+            state.dividas = await api('GET', '/api/dividas');
+        } catch(_) { state.dividas = []; }
+        renderDividasCards();
+    }
+
+    function renderDividasCards() {
+        PESSOAS_DIVIDA.forEach(p => {
+            const el = document.getElementById('divida-total-' + p);
+            if (!el) return;
+            const divs = state.dividas.filter(d => d.pessoa === p && d.status === 'Pendente');
+            const total = divs.reduce((s, d) => s + (Number(d.valor) - Number(d.valor_pago || 0)), 0);
+            el.textContent = fmtBRL(total);
+            el.classList.toggle('negativo', total > 0);
+        });
+    }
+
+    window.abrirDividasPessoa = async function(pessoa) {
+        document.getElementById('modal-dividas-pessoa-title').textContent = 'Dívidas - ' + pessoa;
+        try {
+            const dividas = await api('GET', '/api/dividas?pessoa=' + encodeURIComponent(pessoa));
+            // Atualiza state.dividas para que abrirPagarDivida encontre os dados
+            dividas.forEach(d => {
+                const idx = state.dividas.findIndex(s => s.id === d.id);
+                if (idx >= 0) state.dividas[idx] = d; else state.dividas.push(d);
+            });
+            const listEl = document.getElementById('dividas-pessoa-list');
+            const totalEl = document.getElementById('dividas-pessoa-total');
+            if (!listEl) return;
+            if (!dividas.length) {
+                listEl.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:20px;">Nenhuma dívida encontrada.</div>';
+                totalEl.textContent = '';
+            } else {
+                listEl.innerHTML = dividas.map(d => {
+                    const valorRestante = Number(d.valor) - Number(d.valor_pago || 0);
+                    const isPaga = d.status === 'Paga';
+                    return `<div class="divida-list-item">
+                        <div class="divida-item-info">
+                            <div class="divida-item-nome">${escapeHtml(d.nome)}</div>
+                            <div class="divida-item-data">${fmtDataBR(d.data_divida)}</div>
+                            <div class="divida-item-status ${isPaga ? 'paga' : 'pendente'}">${isPaga ? 'Paga' : 'Pendente'}</div>
+                        </div>
+                        <div class="divida-item-valores">
+                            <div class="divida-item-valor">${fmtBRL(d.valor)}</div>
+                            ${Number(d.valor_pago || 0) > 0 ? `<div class="divida-item-pago">Pago: ${fmtBRL(d.valor_pago)}</div>` : ''}
+                            ${!isPaga ? `<button class="btn btn-primary" style="margin-top:6px;padding:4px 12px;font-size:12px;" onclick="abrirPagarDivida(${d.id})">Pagar</button>` : ''}
+                        </div>
+                    </div>`;
+                }).join('');
+                const totalPendente = dividas.filter(d => d.status === 'Pendente').reduce((s, d) => s + (Number(d.valor) - Number(d.valor_pago || 0)), 0);
+                const totalGeral = dividas.reduce((s, d) => s + Number(d.valor), 0);
+                totalEl.innerHTML = `Total pendente: ${fmtBRL(totalPendente)} <span style="color:var(--text-muted);font-weight:400;font-size:13px;">| Total geral: ${fmtBRL(totalGeral)}</span>`;
+            }
+            openModal('modal-dividas-pessoa');
+        } catch(e) { window.showAlert(e.message, 'Erro'); }
+    };
+
+    window.abrirModalNovaDivida = function() {
+        document.getElementById('divida-nome').value = '';
+        document.getElementById('divida-pessoa').value = '';
+        document.getElementById('divida-data').value = new Date().toISOString().split('T')[0];
+        document.getElementById('divida-valor').value = '';
+        openModal('modal-nova-divida');
+    };
+
+    window.salvarNovaDivida = async function() {
+        const nome = document.getElementById('divida-nome').value.trim();
+        const pessoa = document.getElementById('divida-pessoa').value;
+        const data_divida = document.getElementById('divida-data').value;
+        const valor = parseFloat(document.getElementById('divida-valor').value);
+        if (!nome) return showToast('Informe o nome da dívida', true);
+        if (!pessoa) return showToast('Selecione a pessoa', true);
+        if (!data_divida) return showToast('Informe a data', true);
+        if (!valor || valor <= 0) return showToast('Informe o valor', true);
+        try {
+            await api('POST', '/api/dividas', { nome, pessoa, data_divida, valor });
+            showToast('Dívida cadastrada com sucesso');
+            closeModal('modal-nova-divida');
+            await carregarDividas();
+        } catch(e) { window.showAlert(e.message, 'Erro'); }
+    };
+
+    window.abrirPagarDivida = function(id) {
+        const d = state.dividas.find(x => x.id === id);
+        if (!d) {
+            // buscar da lista aberta - refetch
+            return;
+        }
+        const valorTotal = Number(d.valor);
+        const jaPago = Number(d.valor_pago || 0);
+        const restante = valorTotal - jaPago;
+        document.getElementById('pagar-divida-total').textContent = fmtBRL(valorTotal);
+        document.getElementById('pagar-divida-ja-pago').textContent = fmtBRL(jaPago);
+        document.getElementById('pagar-divida-restante').textContent = fmtBRL(restante);
+        document.getElementById('pagar-divida-valor').value = '';
+        document.getElementById('pagar-divida-valor').max = restante;
+        document.getElementById('pagar-divida-id').value = id;
+        closeModal('modal-dividas-pessoa');
+        openModal('modal-pagar-divida');
+    };
+
+    window.confirmarPagamentoDivida = async function() {
+        const id = parseInt(document.getElementById('pagar-divida-id').value);
+        const valorPagamento = parseFloat(document.getElementById('pagar-divida-valor').value);
+        if (!valorPagamento || valorPagamento <= 0) return showToast('Informe o valor do pagamento', true);
+        try {
+            const result = await api('POST', `/api/dividas/${id}/pagar`, { valor_pagamento: valorPagamento });
+            showToast(result.status === 'Paga' ? 'Dívida quitada!' : 'Pagamento parcial registrado');
+            closeModal('modal-pagar-divida');
+            await carregarDividas();
+            await carregarFinanceiro();
+        } catch(e) { window.showAlert(e.message, 'Erro'); }
+    };
 })();

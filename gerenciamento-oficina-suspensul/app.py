@@ -417,6 +417,19 @@ def run_migrations():
                     except Exception:
                         conn.rollback()
                 print(f"Migração: {len(rows)} slugs corrigidos em {table} (prefixo duplicado removido)")
+        # ── Tabela de Dívidas ──
+        cur.execute("""CREATE TABLE IF NOT EXISTS dividas (
+                         id INT AUTO_INCREMENT PRIMARY KEY,
+                         nome VARCHAR(200) NOT NULL,
+                         pessoa ENUM('Oficina','Thomaz','Cassiano','Paulo','Jonas','Ari') NOT NULL,
+                         data_divida DATE NOT NULL,
+                         valor DECIMAL(10,2) NOT NULL,
+                         valor_pago DECIMAL(10,2) NOT NULL DEFAULT 0,
+                         status ENUM('Pendente','Paga') NOT NULL DEFAULT 'Pendente',
+                         criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
+                         atualizado_em DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci""")
+        conn.commit()
         cur.close()
         conn.close()
         _migrations_done = True
@@ -1137,6 +1150,47 @@ def alternar_despesa(did):
     query("UPDATE despesas SET ativo = 1 - ativo WHERE id=%s", (did,), commit=True)
     row = query("SELECT ativo FROM despesas WHERE id=%s", (did,), fetch=True, one=True)
     return jsonify({'ok': True, 'ativo': bool(row['ativo']) if row else None})
+
+# ===================== API: DÍVIDAS =====================
+
+@app.route('/api/dividas', methods=['GET'])
+def listar_dividas():
+    pessoa = request.args.get('pessoa')
+    if pessoa:
+        rows = query("SELECT * FROM dividas WHERE pessoa=%s ORDER BY data_divida DESC, id DESC", (pessoa,), fetch=True)
+    else:
+        rows = query("SELECT * FROM dividas ORDER BY pessoa, data_divida DESC, id DESC", fetch=True)
+    return jsonify(to_json(rows))
+
+@app.route('/api/dividas', methods=['POST'])
+def criar_divida():
+    d = request.json
+    nome = d.get('nome', '').strip()
+    pessoa = d.get('pessoa', '').strip()
+    data_divida = d.get('data_divida', date.today().isoformat())
+    valor = float(d.get('valor', 0))
+    if not nome or not pessoa or valor <= 0:
+        return jsonify({'erro': 'Preencha todos os campos'}), 400
+    did = query("INSERT INTO dividas (nome, pessoa, data_divida, valor) VALUES (%s,%s,%s,%s)",
+                (nome, pessoa, data_divida, valor), commit=True)
+    return jsonify({'id': did}), 201
+
+@app.route('/api/dividas/<int:did>/pagar', methods=['POST'])
+def pagar_divida(did):
+    d = request.json
+    valor_pagamento = float(d.get('valor_pagamento', 0))
+    if valor_pagamento <= 0:
+        return jsonify({'erro': 'Valor inválido'}), 400
+    row = query("SELECT * FROM dividas WHERE id=%s", (did,), fetch=True, one=True)
+    if not row:
+        return jsonify({'erro': 'Dívida não encontrada'}), 404
+    novo_pago = float(row['valor_pago']) + valor_pagamento
+    novo_status = 'Paga' if novo_pago >= float(row['valor']) else 'Pendente'
+    query("UPDATE dividas SET valor_pago=%s, status=%s WHERE id=%s", (novo_pago, novo_status, did), commit=True)
+    # Descontar do lucro: registrar como despesa
+    query("INSERT INTO despesas (descricao, valor, data_despesa, tipo) VALUES (%s,%s,%s,'saida')",
+          (f"Pagamento dívida: {row['nome']} ({row['pessoa']})", valor_pagamento, date.today().isoformat()), commit=True)
+    return jsonify({'ok': True, 'valor_pago': novo_pago, 'status': novo_status})
 
 # ===================== API: ESTOQUE =====================
 
