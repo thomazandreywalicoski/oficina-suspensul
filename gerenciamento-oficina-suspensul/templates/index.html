@@ -2227,11 +2227,16 @@
                 <button class="btn-icon" onclick="closeModal('modal-veiculo-imagens')"><i data-lucide="x"></i></button>
             </div>
             <div class="modal-body">
-                <div id="veiculo-carrossel" style="position:relative;width:100%;aspect-ratio:16/10;background:#111;border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center;">
-                    <img id="veiculo-carrossel-img" src="" alt="" style="max-width:100%;max-height:100%;object-fit:contain;">
-                    <button type="button" class="btn-icon" onclick="carrosselVeiculoNav(-1)" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.6);color:#fff;border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;"><i data-lucide="chevron-left"></i></button>
-                    <button type="button" class="btn-icon" onclick="carrosselVeiculoNav(1)" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.6);color:#fff;border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;"><i data-lucide="chevron-right"></i></button>
-                    <div id="veiculo-carrossel-counter" style="position:absolute;bottom:8px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.6);color:#fff;padding:4px 10px;border-radius:12px;font-size:12px;"></div>
+                <div id="veiculo-carrossel" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;">
+                    <div class="veiculo-img-container" style="aspect-ratio:4/3;background:var(--bg-input);border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                        <i data-lucide="image-off" style="width:32px;height:32px;color:var(--text-muted);"></i>
+                    </div>
+                    <div class="veiculo-img-container" style="aspect-ratio:4/3;background:var(--bg-input);border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                        <i data-lucide="image-off" style="width:32px;height:32px;color:var(--text-muted);"></i>
+                    </div>
+                    <div class="veiculo-img-container" style="aspect-ratio:4/3;background:var(--bg-input);border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                        <i data-lucide="image-off" style="width:32px;height:32px;color:var(--text-muted);"></i>
+                    </div>
                 </div>
             </div>
         </div>
@@ -3918,15 +3923,7 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
                 </div>
                 <div class="form-group">
                     <label>Pessoa</label>
-                    <select id="divida-pessoa" style="width:100%;padding:10px 12px;background:var(--bg-input);color:var(--text-main);border:1px solid var(--border-color);border-radius:var(--border-radius);font-size:14px;">
-                        <option value="">Selecione...</option>
-                        <option value="Oficina">Oficina</option>
-                        <option value="Thomaz">Thomaz</option>
-                        <option value="Cassiano">Cassiano</option>
-                        <option value="Paulo">Paulo</option>
-                        <option value="Jonas">Jonas</option>
-                        <option value="Ari">Ari</option>
-                    </select>
+                    <input type="text" id="divida-pessoa" placeholder="Selecione uma pessoa..." readonly style="cursor:pointer;" onclick="openModal('modal-selecionar-pessoa')">
                 </div>
                 <div class="form-group">
                     <label>Data</label>
@@ -3940,6 +3937,20 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeModal('modal-nova-divida')">Cancelar</button>
                 <button class="btn btn-primary" onclick="salvarNovaDivida()">Cadastrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL: Selecionar Pessoa (Dívida) ===== -->
+    <div class="modal-overlay" id="modal-selecionar-pessoa">
+        <div class="modal" style="max-width:420px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Selecionar Pessoa</h3>
+                <button class="btn-icon" onclick="closeModal('modal-selecionar-pessoa')"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <div id="pessoa-picker-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+                </div>
             </div>
         </div>
     </div>

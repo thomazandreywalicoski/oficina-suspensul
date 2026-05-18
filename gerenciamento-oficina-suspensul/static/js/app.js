@@ -556,35 +556,19 @@
         m.querySelector('.btn-primary').innerText = 'Salvar';
         window.openModal('modal-veiculo');
     };
-    let _carrosselImgs = [];
-    let _carrosselIdx = 0;
-    function _atualizarCarrossel() {
-        const img = document.getElementById('veiculo-carrossel-img');
-        const counter = document.getElementById('veiculo-carrossel-counter');
-        if (!img || !counter) return;
-        if (!_carrosselImgs.length) {
-            img.src = '';
-            img.alt = 'Sem imagens';
-            counter.innerText = 'Sem imagens';
-            return;
-        }
-        img.src = _carrosselImgs[_carrosselIdx];
-        counter.innerText = `${_carrosselIdx + 1} / ${_carrosselImgs.length}`;
-    }
-    window.carrosselVeiculoNav = function(dir) {
-        if (!_carrosselImgs.length) return;
-        _carrosselIdx = (_carrosselIdx + dir + _carrosselImgs.length) % _carrosselImgs.length;
-        _atualizarCarrossel();
-    };
     window.visualizarVeiculoImagens = function(id) {
         const v = state.veiculos.find(x => x.id === id);
         if (!v) return;
-        _carrosselImgs = ['imagem','imagem2','imagem3']
-            .map(c => v[c])
-            .filter(Boolean)
-            .map(f => `/static/uploads/${f}`);
-        _carrosselIdx = 0;
-        _atualizarCarrossel();
+        const imgs = ['imagem','imagem2','imagem3'].map(c => v[c] ? `/static/uploads/${v[c]}` : null);
+        const containers = document.querySelectorAll('#veiculo-carrossel .veiculo-img-container');
+        containers.forEach((c, i) => {
+            if (imgs[i]) {
+                c.innerHTML = `<img src="${imgs[i]}" style="width:100%;height:100%;object-fit:cover;">`;
+            } else {
+                c.innerHTML = '<i data-lucide="image-off" style="width:32px;height:32px;color:var(--text-muted);"></i>';
+            }
+        });
+        lucide.createIcons();
         window.openModal('modal-veiculo-imagens');
     };
 
@@ -2395,11 +2379,25 @@
         } catch(e) { window.showAlert(e.message, 'Erro'); }
     };
 
+    window.selecionarPessoaDivida = function(nome) {
+        document.getElementById('divida-pessoa').value = nome;
+        closeModal('modal-selecionar-pessoa');
+    };
+
     window.abrirModalNovaDivida = function() {
         document.getElementById('divida-nome').value = '';
         document.getElementById('divida-pessoa').value = '';
         document.getElementById('divida-data').value = new Date().toISOString().split('T')[0];
         document.getElementById('divida-valor').value = '';
+        const grid = document.getElementById('pessoa-picker-grid');
+        if (grid) {
+            grid.innerHTML = PESSOAS_DIVIDA.map(p => `
+                <div onclick="selecionarPessoaDivida('${p}')" style="background:var(--bg-card);border:1px solid #2a2a2a;border-radius:8px;padding:20px 12px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:var(--transition);">
+                    <div style="width:40px;height:40px;border-radius:50%;background:var(--primary);color:#000;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;">${p[0]}</div>
+                    <span style="font-size:13px;font-weight:600;color:var(--text-main);text-align:center;">${p}</span>
+                </div>
+            `).join('');
+        }
         openModal('modal-nova-divida');
     };
 
