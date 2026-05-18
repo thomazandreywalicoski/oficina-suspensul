@@ -2382,10 +2382,15 @@
         });
     }
 
+    let _dividasPessoaList = [];
+
     window.abrirDividasPessoa = async function(pessoa) {
         document.getElementById('modal-dividas-pessoa-title').textContent = 'Dívidas - ' + pessoa;
+        const buscaInput = document.getElementById('dividas-pessoa-busca');
+        if (buscaInput) buscaInput.value = '';
         try {
             const dividas = await api('GET', '/api/dividas?pessoa=' + encodeURIComponent(pessoa));
+            _dividasPessoaList = dividas;
             // Atualiza state.dividas para que abrirPagarDivida encontre os dados
             dividas.forEach(d => {
                 const idx = state.dividas.findIndex(s => s.id === d.id);
@@ -2394,32 +2399,51 @@
             const listEl = document.getElementById('dividas-pessoa-list');
             const totalEl = document.getElementById('dividas-pessoa-total');
             if (!listEl) return;
-            if (!dividas.length) {
-                listEl.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:20px;">Nenhuma dívida encontrada.</div>';
-            } else {
-                listEl.innerHTML = dividas.map(d => {
-                    const valorRestante = Number(d.valor) - Number(d.valor_pago || 0);
-                    const isPaga = d.status === 'Paga';
-                    const nomeTrunc = String(d.nome || '').length > 25 ? String(d.nome).slice(0, 25) + '...' : d.nome;
-                    const statusBg = isPaga ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)';
-                    const statusColor = isPaga ? '#22c55e' : '#ef4444';
-                    return `<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 100px auto;gap:8px;align-items:center;padding:12px 16px;background:rgba(128,128,128,0.08);border-radius:8px;font-size:13px;">
-                        <div style="font-weight:600;color:var(--text-main);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center;" title="${escapeHtml(d.nome)}">${escapeHtml(nomeTrunc)}</div>
-                        <div style="color:var(--text-muted);text-align:center;">${fmtDataBR(d.data_divida)}</div>
-                        <div style="color:var(--text-main);font-weight:600;text-align:center;">${fmtBRL(d.valor)}</div>
-                        <div style="color:#22c55e;font-weight:600;text-align:center;">${fmtBRL(d.valor_pago || 0)}</div>
-                        <div style="color:${statusColor};font-weight:600;text-align:center;">${fmtBRL(valorRestante)}</div>
-                        <div style="text-align:center;"><span style="display:inline-block;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;background:${statusBg};color:${statusColor};">${isPaga ? 'Paga' : 'Pendente'}</span></div>
-                        <div style="display:flex;gap:6px;align-items:center;justify-content:center;">
-                            ${!isPaga ? `<button class="btn-icon btn-action-green" title="Pagar" onclick="abrirPagarDivida(${d.id})"><i data-lucide="check"></i></button>` : ''}
-                            <button class="btn-icon btn-action-blue" title="Editar" onclick="editarDivida(${d.id})"><i data-lucide="pencil"></i></button>
-                            <button class="btn-icon btn-action-red" title="Excluir" onclick="excluirDivida(${d.id})"><i data-lucide="trash-2"></i></button>
-                        </div>
-                    </div>`;
-                }).join('');
-            }
+            _renderDividasPessoaCards(dividas);
             openModal('modal-dividas-pessoa');
         } catch(e) { window.showAlert(e.message, 'Erro'); }
+    };
+
+    function _renderDividasPessoaCards(dividas) {
+        const listEl = document.getElementById('dividas-pessoa-list');
+        if (!listEl) return;
+        if (!dividas.length) {
+            listEl.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:20px;">Nenhuma dívida encontrada.</div>';
+        } else {
+            listEl.innerHTML = dividas.map(d => {
+                const valorRestante = Number(d.valor) - Number(d.valor_pago || 0);
+                const isPaga = d.status === 'Paga';
+                const nomeTrunc = String(d.nome || '').length > 25 ? String(d.nome).slice(0, 25) + '...' : d.nome;
+                const statusBg = isPaga ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)';
+                const statusColor = isPaga ? '#22c55e' : '#ef4444';
+                return `<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 100px auto;gap:8px;align-items:center;padding:12px 16px;background:rgba(128,128,128,0.08);border-radius:8px;font-size:13px;">
+                    <div style="font-weight:600;color:var(--text-main);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center;" title="${escapeHtml(d.nome)}">${escapeHtml(nomeTrunc)}</div>
+                    <div style="color:var(--text-muted);text-align:center;">${fmtDataBR(d.data_divida)}</div>
+                    <div style="color:var(--text-main);font-weight:600;text-align:center;">${fmtBRL(d.valor)}</div>
+                    <div style="color:#22c55e;font-weight:600;text-align:center;">${fmtBRL(d.valor_pago || 0)}</div>
+                    <div style="color:${statusColor};font-weight:600;text-align:center;">${fmtBRL(valorRestante)}</div>
+                    <div style="text-align:center;"><span style="display:inline-block;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;background:${statusBg};color:${statusColor};">${isPaga ? 'Paga' : 'Pendente'}</span></div>
+                    <div style="display:flex;gap:6px;align-items:center;justify-content:center;">
+                        ${!isPaga ? `<button class="btn-icon btn-action-green" title="Pagar" onclick="abrirPagarDivida(${d.id})"><i data-lucide="check"></i></button>` : ''}
+                        <button class="btn-icon btn-action-blue" title="Editar" onclick="editarDivida(${d.id})"><i data-lucide="pencil"></i></button>
+                        <button class="btn-icon btn-action-red" title="Excluir" onclick="excluirDivida(${d.id})"><i data-lucide="trash-2"></i></button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+        refreshIcons();
+    }
+
+    window.filtrarDividasPessoa = function(termo) {
+        const q = (termo || '').toLowerCase().trim();
+        if (!q) return _renderDividasPessoaCards(_dividasPessoaList);
+        const filtered = _dividasPessoaList.filter(d =>
+            (d.nome || '').toLowerCase().includes(q) ||
+            (d.status || '').toLowerCase().includes(q) ||
+            fmtDataBR(d.data_divida).includes(q) ||
+            fmtBRL(d.valor).includes(q)
+        );
+        _renderDividasPessoaCards(filtered);
     };
 
     window.selecionarPessoaDivida = function(nome) {

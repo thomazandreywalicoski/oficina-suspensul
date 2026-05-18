@@ -3898,6 +3898,7 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
         <div class="modal" style="max-width:780px;">
             <div class="modal-header">
                 <h3 class="modal-title" id="modal-dividas-pessoa-title">Dívidas</h3>
+                <input type="text" id="dividas-pessoa-busca" placeholder="Pesquisar dívida..." oninput="filtrarDividasPessoa(this.value)" style="flex:1;max-width:220px;padding:6px 10px;background:var(--bg-input);color:var(--text-main);border:1px solid var(--border-color);border-radius:var(--border-radius);font-size:13px;">
                 <button class="btn-icon" onclick="closeModal('modal-dividas-pessoa')"><i data-lucide="x"></i></button>
             </div>
             <div class="modal-body" style="padding:16px;">
