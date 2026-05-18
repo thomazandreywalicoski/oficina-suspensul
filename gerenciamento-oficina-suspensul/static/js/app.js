@@ -591,7 +591,28 @@
         img.src = src;
         img.style.cssText = 'width:100%;height:100%;object-fit:cover;';
         slot.appendChild(img);
+        // Delete button overlay
+        const del = document.createElement('button');
+        del.type = 'button';
+        del.title = 'Remover imagem';
+        del.style.cssText = 'position:absolute;top:4px;right:4px;width:24px;height:24px;border-radius:50%;background:rgba(239,68,68,0.9);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;font-size:14px;line-height:1;z-index:2;';
+        del.innerHTML = '×';
+        const slotIdx = slot.dataset.slot;
+        const col = ['imagem','imagem2','imagem3'][parseInt(slotIdx) - 1];
+        del.onclick = (e) => { e.stopPropagation(); deleteImageFromSlot(slot, col); };
+        slot.appendChild(del);
         if (file) slot.appendChild(file);
+    }
+    async function deleteImageFromSlot(slot, col) {
+        if (!state.editandoVeiculo) {
+            _resetSlot(slot);
+            return;
+        }
+        try {
+            await api('DELETE', `/api/veiculos/${state.editandoVeiculo.id}/imagem/${col}`);
+            _resetSlot(slot);
+            showToast('Imagem removida');
+        } catch(e) { showToast('Erro ao remover imagem', true); }
     }
     function _resetSlot(slot) {
         const file = slot.querySelector('input[type="file"]');

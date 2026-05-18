@@ -809,6 +809,22 @@ def atualizar_veiculo(vid):
             query(f"UPDATE veiculos SET {col}=%s WHERE id=%s", (fname, vid), commit=True)
     return jsonify({'ok': True})
 
+@app.route('/api/veiculos/<int:vid>/imagem/<col>', methods=['DELETE'])
+def deletar_imagem_veiculo(vid, col):
+    if col not in ('imagem', 'imagem2', 'imagem3'):
+        return jsonify({'erro': 'Coluna inválida'}), 400
+    row = query(f"SELECT {col} FROM veiculos WHERE id=%s", (vid,), fetch=True, one=True)
+    if not row:
+        return jsonify({'erro': 'Veículo não encontrado'}), 404
+    fname = row[col]
+    if fname:
+        try:
+            os.remove(os.path.join(app.config['UPLOAD_FOLDER'], fname))
+        except Exception:
+            pass
+    query(f"UPDATE veiculos SET {col}=NULL WHERE id=%s", (vid,), commit=True)
+    return jsonify({'ok': True})
+
 @app.route('/api/veiculos/<int:vid>/toggle-ativo', methods=['PATCH'])
 def alternar_veiculo(vid):
     query("UPDATE veiculos SET ativo = 1 - ativo WHERE id=%s", (vid,), commit=True)
