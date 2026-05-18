@@ -1430,6 +1430,7 @@
                 <td class="actions-cell">
                     <button class="btn-icon btn-action-blue" title="Visualizar" onclick="window.visualizarProposta(${p.id})"><i data-lucide="eye"></i></button>
                     <button class="btn-icon btn-action-orange" title="Baixar PDF" onclick="window.baixarPropostaPDF(${p.id})"><i data-lucide="download"></i></button>
+                    <button class="btn-icon btn-action-green" title="Compartilhar" onclick="window.compartilharProposta(${p.id})"><i data-lucide="share-2"></i></button>
                     ${!isAprovado ? `<button class="btn-icon btn-action-purple" title="Editar" onclick="window.editarProposta(${p.id})"><i data-lucide="pencil"></i></button>` : ''}
                     ${!isAprovado ? `<button class="btn-icon btn-action-green" title="Aprovar" onclick="window.aprovarProposta(${p.id})"><i data-lucide="check-circle"></i></button>` : ''}
                     ${!isAprovado ? `<button class="btn-icon btn-action-red" title="Excluir" onclick="window.excluirProposta(${p.id})"><i data-lucide="trash-2"></i></button>` : ''}
@@ -1510,6 +1511,23 @@
         const p = state.orcamentosPropostas.find(x => x.id === id);
         const slug = p && p.slug ? p.slug : id;
         window.open('/orcamento/' + slug + '?baixar=1', '_blank');
+    };
+
+    window.compartilharProposta = async function(id) {
+        const p = state.orcamentosPropostas.find(x => x.id === id);
+        if (!p) return;
+        let cliente = state.clientes.find(c => c.id === p.cliente_id);
+        if (!cliente) {
+            const arr = await api('GET', '/api/clientes');
+            cliente = arr.find(c => c.id === p.cliente_id);
+        }
+        const fone = (cliente && cliente.whatsapp || '').replace(/\D/g, '');
+        const slug = p.slug || id;
+        const baseUrl = window.PUBLIC_BASE_URL || window.location.origin;
+        const url = `${baseUrl}/orcamento/${slug}`;
+        const msg = encodeURIComponent(`Olá ${p.nome_completo}, segue seu Orçamento Nº ${String(p.numero).padStart(6,'0')}: ${url}`);
+        const wpp = fone ? `https://wa.me/55${fone}?text=${msg}` : `https://wa.me/?text=${msg}`;
+        window.open(wpp, '_blank');
     };
 
     window.editarProposta = async function(id) {
