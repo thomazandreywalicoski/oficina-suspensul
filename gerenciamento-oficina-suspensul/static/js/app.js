@@ -2384,17 +2384,14 @@
                 listEl.innerHTML = dividas.map(d => {
                     const valorRestante = Number(d.valor) - Number(d.valor_pago || 0);
                     const isPaga = d.status === 'Paga';
-                    return `<div class="divida-list-item">
-                        <div class="divida-item-info">
-                            <div class="divida-item-nome">${escapeHtml(d.nome)}</div>
-                            <div class="divida-item-data">${fmtDataBR(d.data_divida)}</div>
-                            <div class="divida-item-status ${isPaga ? 'paga' : 'pendente'}">${isPaga ? 'Paga' : 'Pendente'}</div>
-                        </div>
-                        <div class="divida-item-valores">
-                            <div class="divida-item-valor">${fmtBRL(d.valor)}</div>
-                            ${Number(d.valor_pago || 0) > 0 ? `<div class="divida-item-pago">Pago: ${fmtBRL(d.valor_pago)}</div>` : ''}
-                            ${!isPaga ? `<button class="btn btn-primary" style="margin-top:6px;padding:4px 12px;font-size:12px;" onclick="abrirPagarDivida(${d.id})">Pagar</button>` : ''}
-                        </div>
+                    return `<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 100px 80px;gap:0;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border-color);font-size:13px;">
+                        <div style="font-weight:500;color:var(--text-main);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escapeHtml(d.nome)}">${escapeHtml(d.nome)}</div>
+                        <div style="color:var(--text-muted);">${fmtDataBR(d.data_divida)}</div>
+                        <div style="color:var(--text-main);font-weight:600;">${fmtBRL(d.valor)}</div>
+                        <div style="color:#22c55e;font-weight:600;">${fmtBRL(d.valor_pago || 0)}</div>
+                        <div style="color:${isPaga ? '#22c55e' : '#ef4444'};font-weight:600;">${fmtBRL(valorRestante)}</div>
+                        <div><span class="divida-item-status ${isPaga ? 'paga' : 'pendente'}" style="font-size:11px;font-weight:600;">${isPaga ? 'Paga' : 'Pendente'}</span></div>
+                        <div>${!isPaga ? `<button class="btn btn-primary" style="padding:4px 10px;font-size:11px;" onclick="abrirPagarDivida(${d.id})">Pagar</button>` : ''}</div>
                     </div>`;
                 }).join('');
                 const totalPendente = dividas.filter(d => d.status === 'Pendente').reduce((s, d) => s + (Number(d.valor) - Number(d.valor_pago || 0)), 0);
@@ -2436,6 +2433,7 @@
             // buscar da lista aberta - refetch
             return;
         }
+        document.getElementById('pagar-divida-nome').textContent = d.nome;
         const valorTotal = Number(d.valor);
         const jaPago = Number(d.valor_pago || 0);
         const restante = valorTotal - jaPago;

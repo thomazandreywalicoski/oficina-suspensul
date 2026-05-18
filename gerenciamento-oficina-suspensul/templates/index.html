@@ -3882,14 +3882,17 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
 
     <!-- ===== MODAL: Dívidas da Pessoa ===== -->
     <div class="modal-overlay" id="modal-dividas-pessoa">
-        <div class="modal" style="max-width:560px;">
+        <div class="modal" style="max-width:780px;">
             <div class="modal-header">
                 <h3 class="modal-title" id="modal-dividas-pessoa-title">Dívidas</h3>
                 <button class="btn-icon" onclick="closeModal('modal-dividas-pessoa')"><i data-lucide="x"></i></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="padding:0;">
+                <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 100px 80px;gap:0;align-items:center;padding:10px 16px;background:var(--primary);color:#000;font-size:11px;font-weight:700;text-transform:uppercase;">
+                    <div>Nome</div><div>Data</div><div>Valor Total</div><div>Valor Pago</div><div>Valor Devido</div><div>Status</div><div>Ação</div>
+                </div>
                 <div id="dividas-pessoa-list"></div>
-                <div id="dividas-pessoa-total" style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border-color);text-align:right;font-size:16px;font-weight:700;color:var(--text-main);"></div>
+                <div id="dividas-pessoa-total" style="margin-top:8px;padding:12px 16px;border-top:1px solid var(--border-color);text-align:right;font-size:16px;font-weight:700;color:var(--text-main);"></div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeModal('modal-dividas-pessoa')">Fechar</button>
@@ -3939,26 +3942,32 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
 
     <!-- ===== MODAL: Pagar Dívida ===== -->
     <div class="modal-overlay" id="modal-pagar-divida">
-        <div class="modal" style="max-width:400px;">
+        <div class="modal" style="max-width:480px;">
             <div class="modal-header">
                 <h3 class="modal-title">Pagar Dívida</h3>
                 <button class="btn-icon" onclick="closeModal('modal-pagar-divida')"><i data-lucide="x"></i></button>
             </div>
             <div class="modal-body">
                 <div style="margin-bottom:16px;">
-                    <div style="font-size:13px;color:var(--text-muted);">Valor total da dívida</div>
-                    <div id="pagar-divida-total" style="font-size:20px;font-weight:700;color:var(--text-main);"></div>
+                    <div style="font-size:13px;color:var(--text-muted);">Nome da dívida</div>
+                    <div id="pagar-divida-nome" style="font-size:18px;font-weight:700;color:var(--text-main);"></div>
                 </div>
-                <div style="margin-bottom:16px;">
-                    <div style="font-size:13px;color:var(--text-muted);">Valor já pago</div>
-                    <div id="pagar-divida-ja-pago" style="font-size:16px;color:#22c55e;font-weight:600;"></div>
-                </div>
-                <div style="margin-bottom:16px;">
-                    <div style="font-size:13px;color:var(--text-muted);">Valor restante</div>
-                    <div id="pagar-divida-restante" style="font-size:16px;color:#ef4444;font-weight:600;"></div>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px;">
+                    <div>
+                        <div style="font-size:12px;color:var(--text-muted);">Valor Total</div>
+                        <div id="pagar-divida-total" style="font-size:16px;font-weight:700;color:var(--text-main);"></div>
+                    </div>
+                    <div>
+                        <div style="font-size:12px;color:var(--text-muted);">Valor Pago</div>
+                        <div id="pagar-divida-ja-pago" style="font-size:16px;font-weight:600;color:#22c55e;"></div>
+                    </div>
+                    <div>
+                        <div style="font-size:12px;color:var(--text-muted);">Valor Devido</div>
+                        <div id="pagar-divida-restante" style="font-size:16px;font-weight:600;color:#ef4444;"></div>
+                    </div>
                 </div>
                 <div class="form-group" style="margin-bottom:0;">
-                    <label>Quanto deseja pagar? (R$)</label>
+                    <label>Valor que deseja pagar (R$)</label>
                     <input type="number" id="pagar-divida-valor" step="0.01" min="0.01" placeholder="0,00">
                 </div>
                 <input type="hidden" id="pagar-divida-id">
