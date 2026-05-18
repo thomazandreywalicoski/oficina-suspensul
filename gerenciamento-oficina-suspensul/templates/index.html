@@ -3887,12 +3887,8 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
                 <h3 class="modal-title" id="modal-dividas-pessoa-title">Dívidas</h3>
                 <button class="btn-icon" onclick="closeModal('modal-dividas-pessoa')"><i data-lucide="x"></i></button>
             </div>
-            <div class="modal-body" style="padding:0;">
-                <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 100px 80px;gap:0;align-items:center;padding:10px 16px;background:var(--primary);color:#000;font-size:11px;font-weight:700;text-transform:uppercase;">
-                    <div>Nome</div><div>Data</div><div>Valor Total</div><div>Valor Pago</div><div>Valor Devido</div><div>Status</div><div>Ação</div>
-                </div>
-                <div id="dividas-pessoa-list"></div>
-                <div id="dividas-pessoa-total" style="margin-top:8px;padding:12px 16px;border-top:1px solid var(--border-color);text-align:right;font-size:16px;font-weight:700;color:var(--text-main);"></div>
+            <div class="modal-body" style="padding:16px;">
+                <div id="dividas-pessoa-list" style="display:flex;flex-direction:column;gap:10px;"></div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeModal('modal-dividas-pessoa')">Fechar</button>
@@ -3948,22 +3944,22 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
                 <button class="btn-icon" onclick="closeModal('modal-pagar-divida')"><i data-lucide="x"></i></button>
             </div>
             <div class="modal-body">
-                <div style="margin-bottom:16px;">
-                    <div style="font-size:13px;color:var(--text-muted);">Nome da dívida</div>
-                    <div id="pagar-divida-nome" style="font-size:18px;font-weight:700;color:var(--text-main);"></div>
+                <div class="form-group">
+                    <label>Nome da dívida</label>
+                    <input type="text" id="pagar-divida-nome" readonly style="background:var(--bg-input);color:var(--text-main);font-size:14px;font-weight:600;">
                 </div>
-                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px;">
-                    <div>
-                        <div style="font-size:12px;color:var(--text-muted);">Valor Total</div>
-                        <div id="pagar-divida-total" style="font-size:16px;font-weight:700;color:var(--text-main);"></div>
+                <div class="form-row" style="margin-bottom:16px;">
+                    <div class="form-group">
+                        <label>Valor Total</label>
+                        <input type="text" id="pagar-divida-total" readonly style="background:var(--bg-input);color:var(--text-main);font-size:14px;font-weight:600;">
                     </div>
-                    <div>
-                        <div style="font-size:12px;color:var(--text-muted);">Valor Pago</div>
-                        <div id="pagar-divida-ja-pago" style="font-size:16px;font-weight:600;color:#22c55e;"></div>
+                    <div class="form-group">
+                        <label>Valor Pago</label>
+                        <input type="text" id="pagar-divida-ja-pago" readonly style="background:var(--bg-input);color:#22c55e;font-size:14px;font-weight:600;">
                     </div>
-                    <div>
-                        <div style="font-size:12px;color:var(--text-muted);">Valor Devido</div>
-                        <div id="pagar-divida-restante" style="font-size:16px;font-weight:600;color:#ef4444;"></div>
+                    <div class="form-group">
+                        <label>Valor Devido</label>
+                        <input type="text" id="pagar-divida-restante" readonly style="background:var(--bg-input);color:#ef4444;font-size:14px;font-weight:600;">
                     </div>
                 </div>
                 <div class="form-group" style="margin-bottom:0;">

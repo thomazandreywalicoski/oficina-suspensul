@@ -2379,24 +2379,23 @@
             if (!listEl) return;
             if (!dividas.length) {
                 listEl.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:20px;">Nenhuma dívida encontrada.</div>';
-                totalEl.textContent = '';
             } else {
                 listEl.innerHTML = dividas.map(d => {
                     const valorRestante = Number(d.valor) - Number(d.valor_pago || 0);
                     const isPaga = d.status === 'Paga';
-                    return `<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 100px 80px;gap:0;align-items:center;padding:10px 16px;border-bottom:1px solid var(--border-color);font-size:13px;">
-                        <div style="font-weight:500;color:var(--text-main);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escapeHtml(d.nome)}">${escapeHtml(d.nome)}</div>
-                        <div style="color:var(--text-muted);">${fmtDataBR(d.data_divida)}</div>
-                        <div style="color:var(--text-main);font-weight:600;">${fmtBRL(d.valor)}</div>
-                        <div style="color:#22c55e;font-weight:600;">${fmtBRL(d.valor_pago || 0)}</div>
-                        <div style="color:${isPaga ? '#22c55e' : '#ef4444'};font-weight:600;">${fmtBRL(valorRestante)}</div>
-                        <div><span class="divida-item-status ${isPaga ? 'paga' : 'pendente'}" style="font-size:11px;font-weight:600;">${isPaga ? 'Paga' : 'Pendente'}</span></div>
-                        <div>${!isPaga ? `<button class="btn btn-primary" style="padding:4px 10px;font-size:11px;" onclick="abrirPagarDivida(${d.id})">Pagar</button>` : ''}</div>
+                    const nomeTrunc = String(d.nome || '').length > 25 ? String(d.nome).slice(0, 25) + '...' : d.nome;
+                    const statusBg = isPaga ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)';
+                    const statusColor = isPaga ? '#22c55e' : '#ef4444';
+                    return `<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 100px 100px;gap:8px;align-items:center;padding:12px 16px;background:rgba(128,128,128,0.08);border-radius:8px;font-size:13px;">
+                        <div style="font-weight:600;color:var(--text-main);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center;" title="${escapeHtml(d.nome)}">${escapeHtml(nomeTrunc)}</div>
+                        <div style="color:var(--text-muted);text-align:center;">${fmtDataBR(d.data_divida)}</div>
+                        <div style="color:var(--text-main);font-weight:600;text-align:center;">${fmtBRL(d.valor)}</div>
+                        <div style="color:#22c55e;font-weight:600;text-align:center;">${fmtBRL(d.valor_pago || 0)}</div>
+                        <div style="color:${statusColor};font-weight:600;text-align:center;">${fmtBRL(valorRestante)}</div>
+                        <div style="text-align:center;"><span style="display:inline-block;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;background:${statusBg};color:${statusColor};">${isPaga ? 'Paga' : 'Pendente'}</span></div>
+                        <div style="text-align:center;">${!isPaga ? `<button class="btn btn-primary" style="padding:8px 16px;font-size:13px;" onclick="abrirPagarDivida(${d.id})">Pagar</button>` : ''}</div>
                     </div>`;
                 }).join('');
-                const totalPendente = dividas.filter(d => d.status === 'Pendente').reduce((s, d) => s + (Number(d.valor) - Number(d.valor_pago || 0)), 0);
-                const totalGeral = dividas.reduce((s, d) => s + Number(d.valor), 0);
-                totalEl.innerHTML = `Total pendente: ${fmtBRL(totalPendente)} <span style="color:var(--text-muted);font-weight:400;font-size:13px;">| Total geral: ${fmtBRL(totalGeral)}</span>`;
             }
             openModal('modal-dividas-pessoa');
         } catch(e) { window.showAlert(e.message, 'Erro'); }
@@ -2433,13 +2432,13 @@
             // buscar da lista aberta - refetch
             return;
         }
-        document.getElementById('pagar-divida-nome').textContent = d.nome;
+        document.getElementById('pagar-divida-nome').value = d.nome;
         const valorTotal = Number(d.valor);
         const jaPago = Number(d.valor_pago || 0);
         const restante = valorTotal - jaPago;
-        document.getElementById('pagar-divida-total').textContent = fmtBRL(valorTotal);
-        document.getElementById('pagar-divida-ja-pago').textContent = fmtBRL(jaPago);
-        document.getElementById('pagar-divida-restante').textContent = fmtBRL(restante);
+        document.getElementById('pagar-divida-total').value = fmtBRL(valorTotal);
+        document.getElementById('pagar-divida-ja-pago').value = fmtBRL(jaPago);
+        document.getElementById('pagar-divida-restante').value = fmtBRL(restante);
         document.getElementById('pagar-divida-valor').value = '';
         document.getElementById('pagar-divida-valor').max = restante;
         document.getElementById('pagar-divida-id').value = id;
