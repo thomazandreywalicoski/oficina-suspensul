@@ -187,9 +187,11 @@
     <div class="print-dados-secao">
         <div class="print-dados-col">
             <div class="print-secao-title">Dados do Cliente</div>
-            <strong>Nome:</strong> {{ os.nome_completo or 'Não informado' }}<br>
-            <strong>CPF:</strong> {{ os.cpf or 'Não informado' }}<br>
-            <strong>Whatsapp:</strong> {{ os.whatsapp or 'Não informado' }}
+            <div style="display:grid;grid-template-columns:1fr;gap:4px 20px;">
+                <div><strong>Nome:</strong> {{ os.nome_completo or 'Não informado' }}</div>
+                <div><strong>CPF:</strong> {{ os.cpf or 'Não informado' }}</div>
+                <div><strong>Whatsapp:</strong> {{ os.whatsapp or 'Não informado' }}</div>
+            </div>
         </div>
         <div class="print-dados-col">
             <div class="print-secao-title">Dados do Veículo</div>
