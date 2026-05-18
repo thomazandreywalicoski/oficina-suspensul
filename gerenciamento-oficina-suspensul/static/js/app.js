@@ -513,7 +513,7 @@
                 <td>${v.imagem
                     ? `<img class="vehicle-img-table" src="/static/uploads/${escapeHtml(v.imagem)}" alt="">`
                     : `<div class="vehicle-no-img"><i data-lucide="image-off"></i></div>`}</td>
-                <td><strong>${escapeHtml(v.placa)}</strong></td>
+                <td><strong>${escapeHtml(v.placa || 'Sem placa')}</strong></td>
                 <td>${escapeHtml((v.marca || '') + ' ' + (v.modelo || ''))}</td>
                 <td>${escapeHtml(v.ano || '')}</td>
                 <td>${fmtNumPt(v.km)}</td>
@@ -642,7 +642,7 @@
             const f = slot?.querySelector('input[type="file"]');
             if (f && f.files && f.files[0]) fd.append(col, f.files[0]);
         });
-        if (!inputs[0].value.trim()) return showToast('Placa é obrigatória', true);
+        if (!inputs[0].value.trim()) return showToast('Informe pelo menos a marca ou modelo', true);
         try {
             if (state.editandoVeiculo) {
                 await api('PUT', `/api/veiculos/${state.editandoVeiculo.id}`, fd);
@@ -675,7 +675,7 @@
                 <td><strong>${String(o.numero).padStart(6,'0')}</strong></td>
                 <td>${escapeHtml(o.nome_completo)}</td>
                 <td>${escapeHtml((o.marca||'') + ' ' + (o.modelo||''))}</td>
-                <td>${escapeHtml(o.placa)}</td>
+                <td>${escapeHtml(o.placa || 'Não informado')}</td>
                 <td>${fmtDataBR(o.data_emissao)}</td>
                 <td><span class="badge ${o.status === 'Paga' ? 'badge-paga' : 'badge-pendente'}">${o.status}</span></td>
                 <td class="actions-cell">
@@ -850,10 +850,10 @@
         });
         let dropdown2 = criarDropdown(inputVeiculo, async (q) => {
             const arr = await api('GET', '/api/veiculos?q=' + encodeURIComponent(q));
-            return arr.map(v => ({ label: `${v.placa} - ${v.marca||''} ${v.modelo||''}`, value: v.id, raw: v }));
+            return arr.map(v => ({ label: `${v.placa||'Sem placa'} - ${v.marca||''} ${v.modelo||''}`, value: v.id, raw: v }));
         }, (item) => {
             state.novaOSVeiculo = item.raw;
-            inputVeiculo.value = `${item.raw.placa} - ${item.raw.marca||''} ${item.raw.modelo||''}`;
+            inputVeiculo.value = `${item.raw.placa||'Sem placa'} - ${item.raw.marca||''} ${item.raw.modelo||''}`;
         });
     }
 
@@ -974,7 +974,7 @@
                 const v = (arr || []).find(x => x.id === c.veiculo_id);
                 if (v) {
                     state.orcamentoVeiculo = v;
-                    document.getElementById('cotacao-veiculo-busca').value = `${v.placa} - ${v.marca||''} ${v.modelo||''}`;
+                    document.getElementById('cotacao-veiculo-busca').value = `${v.placa||'Sem placa'} - ${v.marca||''} ${v.modelo||''}`;
                 }
             }
             // Set pecas
@@ -1159,10 +1159,10 @@
         if (!input) return;
         criarDropdown(input, async (q) => {
             const arr = await api('GET', '/api/veiculos?q=' + encodeURIComponent(q));
-            return arr.map(v => ({ label: `${v.placa} - ${v.marca||''} ${v.modelo||''}`, value: v.id, raw: v }));
+            return arr.map(v => ({ label: `${v.placa||'Sem placa'} - ${v.marca||''} ${v.modelo||''}`, value: v.id, raw: v }));
         }, (item) => {
             state.orcamentoVeiculo = item.raw;
-            input.value = `${item.raw.placa} - ${item.raw.marca||''} ${item.raw.modelo||''}`;
+            input.value = `${item.raw.placa||'Sem placa'} - ${item.raw.marca||''} ${item.raw.modelo||''}`;
         });
     }
 
@@ -1403,7 +1403,7 @@
                 <td><strong>${String(p.numero).padStart(6, '0')}</strong></td>
                 <td>${escapeHtml(p.nome_completo)}</td>
                 <td>${escapeHtml((p.marca || '') + ' ' + (p.modelo || ''))}</td>
-                <td>${escapeHtml(p.placa)}</td>
+                <td>${escapeHtml(p.placa || 'Não informado')}</td>
                 <td>${fmtDataBR(p.criado_em)}</td>
                 <td><span class="badge ${statusClass}">${p.status}</span></td>
                 <td class="actions-cell">
@@ -1564,10 +1564,10 @@
         });
         criarDropdown(inputVeiculo, async (q) => {
             const arr = await api('GET', '/api/veiculos?q=' + encodeURIComponent(q));
-            return arr.map(v => ({ label: `${v.placa} - ${v.marca || ''} ${v.modelo || ''}`, value: v.id, raw: v }));
+            return arr.map(v => ({ label: `${v.placa||'Sem placa'} - ${v.marca || ''} ${v.modelo || ''}`, value: v.id, raw: v }));
         }, (item) => {
             state.propostaVeiculo = item.raw;
-            inputVeiculo.value = `${item.raw.placa} - ${item.raw.marca || ''} ${item.raw.modelo || ''}`;
+            inputVeiculo.value = `${item.raw.placa||'Sem placa'} - ${item.raw.marca || ''} ${item.raw.modelo || ''}`;
         });
     }
 
@@ -1585,10 +1585,10 @@
         });
         criarDropdown(inputs[1], async (q) => {
             const arr = await api('GET', '/api/veiculos?q=' + encodeURIComponent(q));
-            return arr.map(v => ({ label: `${v.placa} - ${v.marca||''} ${v.modelo||''}`, value: v.id, raw: v }));
+            return arr.map(v => ({ label: `${v.placa||'Sem placa'} - ${v.marca||''} ${v.modelo||''}`, value: v.id, raw: v }));
         }, (item) => {
             state.novoAgVeiculoId = item.raw.id;
-            inputs[1].value = `${item.raw.placa} - ${item.raw.marca||''} ${item.raw.modelo||''}`;
+            inputs[1].value = `${item.raw.placa||'Sem placa'} - ${item.raw.marca||''} ${item.raw.modelo||''}`;
         });
     }
 

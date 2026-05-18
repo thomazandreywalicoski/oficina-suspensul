@@ -103,7 +103,7 @@ def run_migrations():
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci""")
         cur.execute("""CREATE TABLE IF NOT EXISTS veiculos (
             id INT AUTO_INCREMENT PRIMARY KEY,
-            placa VARCHAR(15) NOT NULL UNIQUE,
+            placa VARCHAR(15) NULL UNIQUE,
             marca VARCHAR(60),
             modelo VARCHAR(80),
             ano INT,
@@ -427,6 +427,16 @@ def run_migrations():
             cur.execute("ALTER TABLE clientes CHANGE COLUMN cpf cpf VARCHAR(20) NULL")
             conn.commit()
             print("Migração: coluna cpf tornada nullable em clientes")
+        # Migração: placa nullable
+        cur.execute("""SELECT COUNT(*) FROM information_schema.COLUMNS
+                       WHERE TABLE_SCHEMA = DATABASE()
+                         AND TABLE_NAME = 'veiculos'
+                         AND COLUMN_NAME = 'placa'""")
+        (existe_placa,) = cur.fetchone()
+        if existe_placa:
+            cur.execute("ALTER TABLE veiculos CHANGE COLUMN placa placa VARCHAR(15) NULL UNIQUE")
+            conn.commit()
+            print("Migração: coluna placa tornada nullable em veiculos")
         # ── Tabela de Dívidas ──
         cur.execute("""CREATE TABLE IF NOT EXISTS dividas (
                          id INT AUTO_INCREMENT PRIMARY KEY,
@@ -765,9 +775,10 @@ def criar_veiculo():
         d = request.json or {}
         imgs = {'imagem': None, 'imagem2': None, 'imagem3': None}
 
+    placa_val = d.get('placa', '').strip() or None
     vid = query("""INSERT INTO veiculos (placa, marca, modelo, ano, km, motorizacao, imagem, imagem2, imagem3, cliente_id)
                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
-                (d.get('placa'), d.get('marca'), d.get('modelo'),
+                (placa_val, d.get('marca'), d.get('modelo'),
                  int(d.get('ano') or 0) or None, int(d.get('km') or 0),
                  d.get('motorizacao'),
                  imgs['imagem'], imgs['imagem2'], imgs['imagem3'],
@@ -784,9 +795,10 @@ def atualizar_veiculo(vid):
         imgs = {'imagem': None, 'imagem2': None, 'imagem3': None}
 
     # Atualiza campos básicos
+    placa_val = d.get('placa', '').strip() or None
     query("""UPDATE veiculos SET placa=%s, marca=%s, modelo=%s, ano=%s, km=%s,
              motorizacao=%s, cliente_id=%s WHERE id=%s""",
-          (d.get('placa'), d.get('marca'), d.get('modelo'),
+          (placa_val, d.get('marca'), d.get('modelo'),
            int(d.get('ano') or 0) or None, int(d.get('km') or 0),
            d.get('motorizacao'),
            int(d['cliente_id']) if d.get('cliente_id') else None, vid), commit=True)
