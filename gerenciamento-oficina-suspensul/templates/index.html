@@ -126,6 +126,7 @@
             padding: 20px;
             flex-shrink: 0;
             z-index: 100;
+            overflow: hidden;
         }
 
         .brand {
@@ -1239,8 +1240,11 @@
         }
 
         /* --- Sidebar Toggle --- */
-        .sidebar { overflow: hidden; transition: width 0.14s ease, padding 0.14s ease, transform 0.14s ease; will-change: width, transform; }
-        .sidebar-inner { min-width: calc(var(--sidebar-width) - 40px); }
+        .sidebar { transition: width 0.14s ease, padding 0.14s ease, transform 0.14s ease; will-change: width, transform; }
+        .sidebar-inner { min-width: calc(var(--sidebar-width) - 40px); display: flex; flex-direction: column; flex: 1; min-height: 0; overflow-y: auto; }
+        .sidebar-inner::-webkit-scrollbar { width: 4px; }
+        .sidebar-inner::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-inner::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
         .brand span, .nav-link span, .nav-section { transition: none; }
         body.sidebar-closed .sidebar {
             width: 80px;

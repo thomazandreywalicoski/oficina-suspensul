@@ -2340,12 +2340,6 @@
     // ===================== DÍVIDAS =====================
     const PESSOAS_DIVIDA = ['Oficina','Thomaz','Cassiano','Paulo','Jonas','Ari'];
 
-    function fmtDataBR(d) {
-        if (!d) return '';
-        const parts = String(d).split('-');
-        if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
-        return d;
-    }
 
     async function carregarDividas() {
         try {
