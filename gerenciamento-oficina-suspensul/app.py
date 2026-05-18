@@ -86,7 +86,7 @@ def run_migrations():
         cur.execute("""CREATE TABLE IF NOT EXISTS clientes (
             id INT AUTO_INCREMENT PRIMARY KEY,
             nome_completo VARCHAR(150) NOT NULL,
-            cpf VARCHAR(20) NOT NULL UNIQUE,
+            cpf VARCHAR(20) NULL UNIQUE,
             whatsapp VARCHAR(25),
             ativo TINYINT(1) NOT NULL DEFAULT 1,
             criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -417,6 +417,16 @@ def run_migrations():
                     except Exception:
                         conn.rollback()
                 print(f"Migração: {len(rows)} slugs corrigidos em {table} (prefixo duplicado removido)")
+        # Migração: CPF nullable
+        cur.execute("""SELECT COUNT(*) FROM information_schema.COLUMNS
+                       WHERE TABLE_SCHEMA = DATABASE()
+                         AND TABLE_NAME = 'clientes'
+                         AND COLUMN_NAME = 'cpf'""")
+        (existe,) = cur.fetchone()
+        if existe:
+            cur.execute("ALTER TABLE clientes CHANGE COLUMN cpf cpf VARCHAR(20) NULL")
+            conn.commit()
+            print("Migração: coluna cpf tornada nullable em clientes")
         # ── Tabela de Dívidas ──
         cur.execute("""CREATE TABLE IF NOT EXISTS dividas (
                          id INT AUTO_INCREMENT PRIMARY KEY,
@@ -603,15 +613,17 @@ def listar_clientes():
 @app.route('/api/clientes', methods=['POST'])
 def criar_cliente():
     d = request.json
+    cpf_val = d.get('cpf', '').strip() or None
     cid = query("INSERT INTO clientes (nome_completo, cpf, whatsapp) VALUES (%s, %s, %s)",
-                (d['nome_completo'], d['cpf'], d.get('whatsapp')), commit=True)
+                (d['nome_completo'], cpf_val, d.get('whatsapp')), commit=True)
     return jsonify({'id': cid}), 201
 
 @app.route('/api/clientes/<int:cid>', methods=['PUT'])
 def atualizar_cliente(cid):
     d = request.json
+    cpf_val = d.get('cpf', '').strip() or None
     query("UPDATE clientes SET nome_completo=%s, cpf=%s, whatsapp=%s WHERE id=%s",
-          (d['nome_completo'], d['cpf'], d.get('whatsapp'), cid), commit=True)
+          (d['nome_completo'], cpf_val, d.get('whatsapp'), cid), commit=True)
     return jsonify({'ok': True})
 
 @app.route('/api/clientes/<int:cid>/toggle-ativo', methods=['PATCH'])

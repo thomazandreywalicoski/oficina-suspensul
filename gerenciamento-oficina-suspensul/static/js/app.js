@@ -397,7 +397,7 @@
             cpf: inputs[1].value.trim(),
             whatsapp: inputs[2].value.trim(),
         };
-        if (!data.nome_completo || !data.cpf) return showToast('Preencha nome e CPF', true);
+        if (!data.nome_completo) return showToast('Preencha o nome do cliente', true);
         try {
             if (state.editandoCliente) {
                 await api('PUT', `/api/clientes/${state.editandoCliente.id}`, data);
