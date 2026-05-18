@@ -1232,6 +1232,24 @@ def pagar_divida(did):
           (f"Pagamento dívida: {row['nome']} ({row['pessoa']})", valor_pagamento, date.today().isoformat()), commit=True)
     return jsonify({'ok': True, 'valor_pago': novo_pago, 'status': novo_status})
 
+@app.route('/api/dividas/<int:did>', methods=['PUT'])
+def editar_divida(did):
+    d = request.json
+    nome = (d.get('nome') or '').strip()
+    pessoa = d.get('pessoa', '').strip()
+    data_divida = d.get('data_divida')
+    valor = d.get('valor')
+    if not nome or not pessoa or not data_divida or valor is None:
+        return jsonify({'erro': 'Dados inválidos'}), 400
+    query("UPDATE dividas SET nome=%s, pessoa=%s, data_divida=%s, valor=%s WHERE id=%s",
+          (nome, pessoa, data_divida, valor, did), commit=True)
+    return jsonify({'ok': True})
+
+@app.route('/api/dividas/<int:did>', methods=['DELETE'])
+def excluir_divida(did):
+    query("DELETE FROM dividas WHERE id=%s", (did,), commit=True)
+    return jsonify({'ok': True})
+
 # ===================== API: ESTOQUE =====================
 
 @app.route('/api/estoque/produtos', methods=['GET'])

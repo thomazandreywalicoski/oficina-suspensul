@@ -2403,14 +2403,18 @@
                     const nomeTrunc = String(d.nome || '').length > 25 ? String(d.nome).slice(0, 25) + '...' : d.nome;
                     const statusBg = isPaga ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)';
                     const statusColor = isPaga ? '#22c55e' : '#ef4444';
-                    return `<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 100px 100px;gap:8px;align-items:center;padding:12px 16px;background:rgba(128,128,128,0.08);border-radius:8px;font-size:13px;">
+                    return `<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 100px auto;gap:8px;align-items:center;padding:12px 16px;background:rgba(128,128,128,0.08);border-radius:8px;font-size:13px;">
                         <div style="font-weight:600;color:var(--text-main);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center;" title="${escapeHtml(d.nome)}">${escapeHtml(nomeTrunc)}</div>
                         <div style="color:var(--text-muted);text-align:center;">${fmtDataBR(d.data_divida)}</div>
                         <div style="color:var(--text-main);font-weight:600;text-align:center;">${fmtBRL(d.valor)}</div>
                         <div style="color:#22c55e;font-weight:600;text-align:center;">${fmtBRL(d.valor_pago || 0)}</div>
                         <div style="color:${statusColor};font-weight:600;text-align:center;">${fmtBRL(valorRestante)}</div>
                         <div style="text-align:center;"><span style="display:inline-block;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;background:${statusBg};color:${statusColor};">${isPaga ? 'Paga' : 'Pendente'}</span></div>
-                        <div style="text-align:center;">${!isPaga ? `<button class="btn btn-primary" style="padding:8px 16px;font-size:13px;" onclick="abrirPagarDivida(${d.id})">Pagar</button>` : ''}</div>
+                        <div style="display:flex;gap:6px;align-items:center;justify-content:center;">
+                            ${!isPaga ? `<button class="btn-icon btn-action-green" title="Pagar" onclick="abrirPagarDivida(${d.id})"><i data-lucide="check"></i></button>` : ''}
+                            <button class="btn-icon btn-action-blue" title="Editar" onclick="editarDivida(${d.id})"><i data-lucide="pencil"></i></button>
+                            <button class="btn-icon btn-action-red" title="Excluir" onclick="excluirDivida(${d.id})"><i data-lucide="trash-2"></i></button>
+                        </div>
                     </div>`;
                 }).join('');
             }
@@ -2424,10 +2428,13 @@
     };
 
     window.abrirModalNovaDivida = function() {
+        state.editandoDividaId = null;
         document.getElementById('divida-nome').value = '';
         document.getElementById('divida-pessoa').value = '';
         document.getElementById('divida-data').value = new Date().toISOString().split('T')[0];
         document.getElementById('divida-valor').value = '';
+        document.querySelector('#modal-nova-divida .modal-title').textContent = 'Nova Dívida';
+        document.querySelector('#modal-nova-divida .btn-primary').textContent = 'Cadastrar';
         const grid = document.getElementById('pessoa-picker-grid');
         if (grid) {
             grid.innerHTML = PESSOAS_DIVIDA.map(p => `
@@ -2450,8 +2457,14 @@
         if (!data_divida) return showToast('Informe a data', true);
         if (!valor || valor <= 0) return showToast('Informe o valor', true);
         try {
-            await api('POST', '/api/dividas', { nome, pessoa, data_divida, valor });
-            showToast('Dívida cadastrada com sucesso');
+            if (state.editandoDividaId) {
+                await api('PUT', `/api/dividas/${state.editandoDividaId}`, { nome, pessoa, data_divida, valor });
+                showToast('Dívida atualizada');
+                state.editandoDividaId = null;
+            } else {
+                await api('POST', '/api/dividas', { nome, pessoa, data_divida, valor });
+                showToast('Dívida cadastrada com sucesso');
+            }
             closeModal('modal-nova-divida');
             await carregarDividas();
         } catch(e) { window.showAlert(e.message, 'Erro'); }
@@ -2488,5 +2501,36 @@
             await carregarDividas();
             await carregarFinanceiro();
         } catch(e) { window.showAlert(e.message, 'Erro'); }
+    };
+
+    window.editarDivida = async function(id) {
+        const d = state.dividas.find(x => x.id === id);
+        if (!d) return;
+        document.getElementById('divida-nome').value = d.nome;
+        document.getElementById('divida-pessoa').value = d.pessoa;
+        document.getElementById('divida-data').value = d.data_divida ? d.data_divida.slice(0,10) : '';
+        document.getElementById('divida-valor').value = d.valor;
+        state.editandoDividaId = id;
+        closeModal('modal-dividas-pessoa');
+        openModal('modal-nova-divida');
+        document.querySelector('#modal-nova-divida .modal-title').textContent = 'Editar Dívida';
+        document.querySelector('#modal-nova-divida .btn-primary').textContent = 'Salvar';
+    };
+
+    window.excluirDivida = async function(id) {
+        window.showConfirm('Deseja excluir esta dívida?', async () => {
+            try {
+                await api('DELETE', `/api/dividas/${id}`);
+                showToast('Dívida excluída');
+                await carregarDividas();
+                await carregarFinanceiro();
+                // Reabrir modal da pessoa se estava aberto
+                const title = document.getElementById('modal-dividas-pessoa-title')?.textContent;
+                if (title) {
+                    const pessoa = title.replace('Dívidas - ', '');
+                    abrirDividasPessoa(pessoa);
+                }
+            } catch(e) { window.showAlert(e.message, 'Erro'); }
+        });
     };
 })();
