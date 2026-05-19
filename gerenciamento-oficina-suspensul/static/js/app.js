@@ -763,7 +763,7 @@
         const fone = (cliente && cliente.whatsapp || '').replace(/\D/g, '');
         const slug = o.slug || id;
         const baseUrl = window.PUBLIC_BASE_URL || window.location.origin;
-        const url = `${baseUrl}/comprovante-pagamento/${slug}`;
+        const url = `${baseUrl}/comprovante-pagamento/${slug}?preview=1`;
         const msg = encodeURIComponent(`Olá ${o.nome_completo}, segue seu Comprovante Nº ${String(o.numero).padStart(6,'0')}: ${url}`);
         const wpp = fone ? `https://wa.me/55${fone}?text=${msg}` : `https://wa.me/?text=${msg}`;
         window.open(wpp, '_blank');
@@ -1524,7 +1524,7 @@
         const fone = (cliente && cliente.whatsapp || '').replace(/\D/g, '');
         const slug = p.slug || id;
         const baseUrl = window.PUBLIC_BASE_URL || window.location.origin;
-        const url = `${baseUrl}/orcamento/${slug}`;
+        const url = `${baseUrl}/orcamento/${slug}?preview=1`;
         const msg = encodeURIComponent(`Olá ${p.nome_completo}, segue seu Orçamento Nº ${String(p.numero).padStart(6,'0')}: ${url}`);
         const wpp = fone ? `https://wa.me/55${fone}?text=${msg}` : `https://wa.me/?text=${msg}`;
         window.open(wpp, '_blank');
