@@ -62,6 +62,47 @@
     }
     function refreshIcons() { try { lucide.createIcons(); } catch(e){} }
 
+    // ---------- Paginação ----------
+    const ROWS_PER_PAGE = 8;
+    const _pageState = {};
+    function _getPage(key) { return _pageState[key] || 1; }
+    function _setPage(key, p) { _pageState[key] = p; }
+
+    function paginateRows(rows, key) {
+        const page = _getPage(key);
+        const total = Math.ceil(rows.length / ROWS_PER_PAGE) || 1;
+        const safePage = Math.min(page, total);
+        if (safePage !== page) _setPage(key, safePage);
+        const start = (safePage - 1) * ROWS_PER_PAGE;
+        return { paged: rows.slice(start, start + ROWS_PER_PAGE), current: safePage, total };
+    }
+
+    function renderPagination(key, current, total, onChange) {
+        const containerId = `pagination-${key}`;
+        let container = document.getElementById(containerId);
+        if (!container) {
+            const table = document.querySelector(`.${key}-table`);
+            if (!table) return;
+            container = document.createElement('div');
+            container.id = containerId;
+            container.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:6px;padding:12px 0 4px;';
+            table.parentNode.insertBefore(container, table.nextSibling);
+        }
+        if (total <= 1) { container.innerHTML = ''; return; }
+        const btnStyle = (disabled) => `padding:6px 12px;border:1px solid var(--border-color);border-radius:var(--border-radius);background:var(--bg-input);color:${disabled ? '#555' : 'var(--text-main)'};cursor:${disabled ? 'default' : 'pointer'};font-size:13px;opacity:${disabled ? '0.4' : '1'};`;
+        const activeStyle = 'padding:6px 14px;border:1px solid var(--primary);border-radius:var(--border-radius);background:var(--primary);color:#000;font-weight:700;font-size:13px;cursor:default;';
+        container.innerHTML = `
+            <button style="${btnStyle(current<=1)}" ${current<=1?'disabled':''} data-p="1">«</button>
+            <button style="${btnStyle(current<=1)}" ${current<=1?'disabled':''} data-p="${current-1}">‹</button>
+            <span style="${activeStyle}">${current} / ${total}</span>
+            <button style="${btnStyle(current>=total)}" ${current>=total?'disabled':''} data-p="${current+1}">›</button>
+            <button style="${btnStyle(current>=total)}" ${current>=total?'disabled':''} data-p="${total}">»</button>
+        `;
+        container.querySelectorAll('button:not([disabled])').forEach(btn => {
+            btn.onclick = () => { _setPage(key, parseInt(btn.dataset.p)); onChange(); };
+        });
+    }
+
     function showToast(msg, isError) {
         let el = document.getElementById('toast-msg');
         if (!el) {
@@ -335,9 +376,15 @@
         const url = '/api/clientes' + (params.toString() ? '?' + params.toString() : '');
         const rows = await api('GET', url);
         state.clientes = rows;
+        _setPage('clients', 1);
+        renderClientesTabela();
+    }
+    function renderClientesTabela() {
+        const rows = state.clientes;
         const tbody = document.querySelector('.clients-table tbody');
         if (!tbody) return;
-        tbody.innerHTML = rows.length ? rows.map(c => {
+        const { paged, current, total } = paginateRows(rows, 'clients');
+        tbody.innerHTML = paged.length ? paged.map(c => {
             const inativo = !c.ativo;
             return `
             <tr style="${inativo ? 'opacity:0.45;' : ''}">
@@ -351,6 +398,7 @@
                 </td>
             </tr>`;
         }).join('') : `<tr><td colspan="5" style="text-align:center;color:#777">Nenhum cliente cadastrado.</td></tr>`;
+        renderPagination('clients', current, total, renderClientesTabela);
         refreshIcons();
     }
 
@@ -420,9 +468,15 @@
         const url = '/api/fornecedores' + (params.toString() ? '?' + params.toString() : '');
         const rows = await api('GET', url);
         state.fornecedores = rows;
+        _setPage('suppliers', 1);
+        renderFornecedoresTabela();
+    }
+    function renderFornecedoresTabela() {
+        const rows = state.fornecedores;
         const tbody = document.querySelector('.suppliers-table tbody');
         if (!tbody) return;
-        tbody.innerHTML = rows.length ? rows.map(f => {
+        const { paged, current, total } = paginateRows(rows, 'suppliers');
+        tbody.innerHTML = paged.length ? paged.map(f => {
             const inativo = !f.ativo;
             return `
             <tr style="${inativo ? 'opacity:0.45;' : ''}">
@@ -436,6 +490,7 @@
                 </td>
             </tr>`;
         }).join('') : `<tr><td colspan="5" style="text-align:center;color:#777">Nenhum fornecedor cadastrado.</td></tr>`;
+        renderPagination('suppliers', current, total, renderFornecedoresTabela);
         refreshIcons();
     }
 
@@ -504,9 +559,15 @@
         const url = '/api/veiculos' + (params.toString() ? '?' + params.toString() : '');
         const rows = await api('GET', url);
         state.veiculos = rows;
+        _setPage('vehicles', 1);
+        renderVeiculosTabela();
+    }
+    function renderVeiculosTabela() {
+        const rows = state.veiculos;
         const tbody = document.querySelector('.vehicles-table tbody');
         if (!tbody) return;
-        tbody.innerHTML = rows.length ? rows.map(v => {
+        const { paged, current, total } = paginateRows(rows, 'vehicles');
+        tbody.innerHTML = paged.length ? paged.map(v => {
             const inativo = !v.ativo;
             return `
             <tr style="${inativo ? 'opacity:0.45;' : ''}">
@@ -526,6 +587,7 @@
                 </td>
             </tr>`;
         }).join('') : `<tr><td colspan="8" style="text-align:center;color:#777">Nenhum veículo cadastrado.</td></tr>`;
+        renderPagination('vehicles', current, total, renderVeiculosTabela);
         refreshIcons();
     }
 
@@ -689,9 +751,15 @@
         const url = '/api/os' + (params.length ? '?' + params.join('&') : '');
         const rows = await api('GET', url);
         state.os = rows;
+        _setPage('os', 1);
+        renderOSTabela();
+    }
+    function renderOSTabela() {
+        const rows = state.os;
         const tbody = document.querySelector('.os-table tbody');
         if (tbody) {
-            tbody.innerHTML = rows.length ? rows.map(o => `
+            const { paged, current, total } = paginateRows(rows, 'os');
+            tbody.innerHTML = paged.length ? paged.map(o => `
             <tr>
                 <td><strong>${String(o.numero).padStart(6,'0')}</strong></td>
                 <td>${escapeHtml(o.nome_completo)}</td>
@@ -709,6 +777,7 @@
                     ${o.status === 'Paga' ? '' : `<button class="btn-icon btn-action-red" title="Excluir" onclick="excluirOS(${o.id})"><i data-lucide="trash-2"></i></button>`}
                 </td>
             </tr>`).join('') : `<tr><td colspan="7" style="text-align:center;color:#777">Nenhum comprovante.</td></tr>`;
+            renderPagination('os', current, total, renderOSTabela);
             refreshIcons();
         }
     }
@@ -1414,9 +1483,15 @@
         const url = '/api/propostas' + (params.toString() ? '?' + params.toString() : '');
         const rows = await api('GET', url);
         state.orcamentosPropostas = rows;
+        _setPage('propostas', 1);
+        renderPropostasTabela();
+    }
+    function renderPropostasTabela() {
+        const rows = state.orcamentosPropostas;
         const tbody = document.querySelector('.propostas-table tbody');
         if (!tbody) return;
-        tbody.innerHTML = rows.length ? rows.map(p => {
+        const { paged, current, total } = paginateRows(rows, 'propostas');
+        tbody.innerHTML = paged.length ? paged.map(p => {
             const isAprovado = p.status === 'Aprovado';
             const statusClass = isAprovado ? 'badge-paga' : 'badge-pendente';
             return `
@@ -1437,6 +1512,7 @@
                 </td>
             </tr>`;
         }).join('') : `<tr><td colspan="7" style="text-align:center;color:#777">Nenhum orçamento cadastrado.</td></tr>`;
+        renderPagination('propostas', current, total, renderPropostasTabela);
         refreshIcons();
     }
 
@@ -1730,6 +1806,11 @@
         const url = '/api/despesas?' + params.toString();
         const rows = await api('GET', url);
         state.despesas = rows;
+        _setPage('expenses', 1);
+        renderDespesasTabela();
+    }
+    function renderDespesasTabela() {
+        const rows = state.despesas;
         const tbody = document.querySelector('.expenses-table tbody');
         if (!tbody) return;
         // Adiciona coluna de ações se ainda não existir
@@ -1739,7 +1820,8 @@
             th.innerHTML = '<span class="table-header-icon"><i data-lucide="settings"></i> Ações</span>';
             thead.appendChild(th);
         }
-        tbody.innerHTML = rows.length ? rows.map(d => {
+        const { paged, current, total } = paginateRows(rows, 'expenses');
+        tbody.innerHTML = paged.length ? paged.map(d => {
             const inativo = !d.ativo;
             return `
             <tr style="${inativo ? 'opacity:0.45;' : ''}">
@@ -1751,6 +1833,7 @@
                 </td>
             </tr>`;
         }).join('') : `<tr><td colspan="4" style="text-align:center;color:#777">Nenhuma despesa no período.</td></tr>`;
+        renderPagination('expenses', current, total, renderDespesasTabela);
         refreshIcons();
     }
 
@@ -1823,7 +1906,8 @@
         if (!tbody) return;
         const termo = (document.getElementById('estoque-search')?.value || '').trim().toLowerCase();
         const rows = state.estoque.filter(p => !termo || String(p.descricao || '').toLowerCase().includes(termo));
-        tbody.innerHTML = rows.length ? rows.map(p => `
+        const { paged, current, total } = paginateRows(rows, 'estoque');
+        tbody.innerHTML = paged.length ? paged.map(p => `
             <tr>
                 <td>${escapeHtml(p.descricao)}</td>
                 <td>${fmtNumPt(p.quantidade)}</td>
@@ -1837,6 +1921,7 @@
                     <button class="btn-icon btn-action-red" title="Desativar produto" onclick="toggleEstoqueProduto(${p.id})"><i data-lucide="trash-2"></i></button>
                 </td>
             </tr>`).join('') : `<tr><td colspan="7" style="text-align:center;color:#777">Nenhum produto em estoque.</td></tr>`;
+        renderPagination('estoque', current, total, renderEstoqueTabela);
         refreshIcons();
     }
 
@@ -2152,7 +2237,7 @@
         const btnSai = document.querySelector('#modal-saida .modal-footer .btn-primary');
         if (btnSai) btnSai.onclick = salvarSaida;
         const estoqueBusca = document.getElementById('estoque-search');
-        if (estoqueBusca) estoqueBusca.addEventListener('input', renderEstoqueTabela);
+        if (estoqueBusca) estoqueBusca.addEventListener('input', () => { _setPage('estoque', 1); renderEstoqueTabela(); });
         const estoqueCompra = document.getElementById('estoque-entrada-compra');
         const estoqueLucro = document.getElementById('estoque-entrada-lucro');
         if (estoqueCompra) estoqueCompra.addEventListener('input', calcularEstoqueEntradaVenda);
