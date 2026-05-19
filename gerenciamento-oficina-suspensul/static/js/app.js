@@ -85,21 +85,28 @@
             if (!table) return;
             container = document.createElement('div');
             container.id = containerId;
-            container.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:6px;padding:12px 0 4px;';
             table.parentNode.insertBefore(container, table.nextSibling);
         }
+        container.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:6px;padding:12px 0 4px;';
         if (total <= 1) { container.innerHTML = ''; return; }
-        const btnStyle = (disabled) => `padding:6px 12px;border:1px solid var(--border-color);border-radius:var(--border-radius);background:var(--bg-input);color:${disabled ? '#555' : 'var(--text-main)'};cursor:${disabled ? 'default' : 'pointer'};font-size:13px;opacity:${disabled ? '0.4' : '1'};`;
-        const activeStyle = 'padding:6px 14px;border:1px solid var(--primary);border-radius:var(--border-radius);background:var(--primary);color:#000;font-weight:700;font-size:13px;cursor:default;';
-        container.innerHTML = `
-            <button style="${btnStyle(current<=1)}" ${current<=1?'disabled':''} data-p="1">«</button>
-            <button style="${btnStyle(current<=1)}" ${current<=1?'disabled':''} data-p="${current-1}">‹</button>
-            <span style="${activeStyle}">${current} / ${total}</span>
-            <button style="${btnStyle(current>=total)}" ${current>=total?'disabled':''} data-p="${current+1}">›</button>
-            <button style="${btnStyle(current>=total)}" ${current>=total?'disabled':''} data-p="${total}">»</button>
-        `;
-        container.querySelectorAll('button:not([disabled])').forEach(btn => {
-            btn.onclick = () => { _setPage(key, parseInt(btn.dataset.p)); onChange(); };
+        const sz = 'width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--border-radius);font-size:14px;font-weight:600;border:1px solid var(--border-color);';
+        const btn = (label, page, disabled) => {
+            const bg = disabled ? 'background:var(--bg-input);color:#555;cursor:default;opacity:0.4;' : 'background:var(--bg-input);color:var(--text-main);cursor:pointer;';
+            return `<button style="${sz}${bg}" ${disabled ? 'disabled' : ''} data-p="${page}">${label}</button>`;
+        };
+        const activeBtn = (label) => `<button style="${sz}background:var(--primary);color:#000;cursor:default;border-color:var(--primary);" disabled>${label}</button>`;
+        const prevPage = current - 1;
+        const nextPage = current + 1;
+        container.innerHTML =
+            btn('«', 1, current <= 1) +
+            btn('‹', prevPage, current <= 1) +
+            (prevPage >= 1 ? btn(prevPage, prevPage, false) : btn(prevPage, prevPage, true)) +
+            activeBtn(current) +
+            (nextPage <= total ? btn(nextPage, nextPage, false) : btn(nextPage, nextPage, true)) +
+            btn('›', nextPage, current >= total) +
+            btn('»', total, current >= total);
+        container.querySelectorAll('button:not([disabled])').forEach(b => {
+            b.onclick = () => { _setPage(key, parseInt(b.dataset.p)); onChange(); };
         });
     }
 
