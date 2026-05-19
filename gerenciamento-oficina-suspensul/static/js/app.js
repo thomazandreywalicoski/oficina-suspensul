@@ -83,9 +83,10 @@
         if (!container) {
             const table = document.querySelector(`.${key}-table`);
             if (!table) return;
+            const wrapper = table.closest('.table-container') || table.parentNode;
             container = document.createElement('div');
             container.id = containerId;
-            table.parentNode.insertBefore(container, table.nextSibling);
+            wrapper.parentNode.insertBefore(container, wrapper.nextSibling);
         }
         container.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:6px;padding:12px 0 4px;';
         if (total <= 1) { container.innerHTML = ''; return; }
