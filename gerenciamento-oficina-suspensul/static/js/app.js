@@ -88,9 +88,9 @@
             container.id = containerId;
             wrapper.parentNode.insertBefore(container, wrapper.nextSibling);
         }
-        container.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:6px;padding:12px 0 4px;';
+        container.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:10px;padding-top:25px;';
         if (total <= 1) { container.innerHTML = ''; return; }
-        const sz = 'width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--border-radius);font-size:14px;font-weight:600;border:1px solid var(--border-color);';
+        const sz = 'width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--border-radius);font-size:18px;font-weight:600;border:1px solid var(--border-color);';
         const btn = (label, page, disabled) => {
             const bg = disabled ? 'background:var(--bg-input);color:#555;cursor:default;opacity:0.4;' : 'background:var(--bg-input);color:var(--text-main);cursor:pointer;';
             return `<button style="${sz}${bg}" ${disabled ? 'disabled' : ''} data-p="${page}">${label}</button>`;
