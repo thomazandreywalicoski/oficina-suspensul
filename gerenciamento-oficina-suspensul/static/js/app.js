@@ -90,7 +90,11 @@
         }
         container.style.cssText = 'display:flex;align-items:center;justify-content:center;gap:10px;padding-top:25px;';
         if (total <= 1) { container.innerHTML = ''; return; }
-        const sz = 'width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--border-radius);font-size:18px;font-weight:600;border:1px solid var(--border-color);';
+        const sz = 'width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--border-radius);font-size:14px;font-weight:600;border:1px solid var(--border-color);';
+        const icoFirst = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transform:scaleX(-1)"><path d="m7 18 6-6-6-6"/><path d="M17 6v12"/></svg>';
+        const icoLast = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 18 6-6-6-6"/><path d="M17 6v12"/></svg>';
+        const icoPrev = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="transform:scaleX(-1)"><path d="m9 18 6-6-6-6"/></svg>';
+        const icoNext = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>';
         const btn = (label, page, disabled) => {
             const bg = disabled ? 'background:var(--bg-input);color:#555;cursor:default;opacity:0.4;' : 'background:var(--bg-input);color:var(--text-main);cursor:pointer;';
             return `<button style="${sz}${bg}" ${disabled ? 'disabled' : ''} data-p="${page}">${label}</button>`;
@@ -99,13 +103,13 @@
         const prevPage = current - 1;
         const nextPage = current + 1;
         container.innerHTML =
-            btn('«', 1, current <= 1) +
-            btn('‹', prevPage, current <= 1) +
+            btn(icoFirst, 1, current <= 1) +
+            btn(icoPrev, prevPage, current <= 1) +
             (prevPage >= 1 ? btn(prevPage, prevPage, false) : btn(prevPage, prevPage, true)) +
             activeBtn(current) +
             (nextPage <= total ? btn(nextPage, nextPage, false) : btn(nextPage, nextPage, true)) +
-            btn('›', nextPage, current >= total) +
-            btn('»', total, current >= total);
+            btn(icoNext, nextPage, current >= total) +
+            btn(icoLast, total, current >= total);
         container.querySelectorAll('button:not([disabled])').forEach(b => {
             b.onclick = () => { _setPage(key, parseInt(b.dataset.p)); onChange(); };
         });
