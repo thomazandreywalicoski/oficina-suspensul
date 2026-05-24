@@ -2521,9 +2521,9 @@
                     <div style="color:${statusColor};font-weight:600;text-align:center;">${fmtBRL(valorRestante)}</div>
                     <div style="text-align:center;"><span style="display:inline-block;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;background:${statusBg};color:${statusColor};">${isPaga ? 'Paga' : 'Pendente'}</span></div>
                     <div style="display:flex;gap:6px;align-items:center;justify-content:center;">
-                        ${!isPaga ? `<button class="btn-icon btn-action-green" title="Pagar" onclick="abrirPagarDivida(${d.id})" style="width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--border-radius);padding:0;cursor:pointer;"><i data-lucide="banknote" style="width:18px;height:18px;color:#fff;"></i></button>` : ''}
-                        <button class="btn-icon btn-action-blue" title="Editar" onclick="editarDivida(${d.id})" style="width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--border-radius);padding:0;cursor:pointer;"><i data-lucide="pencil" style="width:18px;height:18px;color:#fff;"></i></button>
-                        <button class="btn-icon btn-action-red" title="Excluir" onclick="excluirDivida(${d.id})" style="width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--border-radius);padding:0;cursor:pointer;"><i data-lucide="trash-2" style="width:18px;height:18px;color:#fff;"></i></button>
+                        ${!isPaga ? `<button class="btn-icon btn-action-green no-hover" title="Pagar" onclick="abrirPagarDivida(${d.id})" style="width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--border-radius);padding:0;cursor:pointer;"><i data-lucide="banknote" style="width:18px;height:18px;color:#fff;"></i></button>` : ''}
+                        <button class="btn-icon btn-action-blue no-hover" title="Editar" onclick="editarDivida(${d.id})" style="width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--border-radius);padding:0;cursor:pointer;"><i data-lucide="pencil" style="width:18px;height:18px;color:#fff;"></i></button>
+                        <button class="btn-icon btn-action-red no-hover" title="Excluir" onclick="excluirDivida(${d.id})" style="width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--border-radius);padding:0;cursor:pointer;"><i data-lucide="trash-2" style="width:18px;height:18px;color:#fff;"></i></button>
                     </div>
                 </div>`;
             }).join('');
@@ -2607,7 +2607,6 @@
         document.getElementById('pagar-divida-valor').value = '';
         document.getElementById('pagar-divida-valor').max = restante;
         document.getElementById('pagar-divida-id').value = id;
-        closeModal('modal-dividas-pessoa');
         openModal('modal-pagar-divida');
     };
 
