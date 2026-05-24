@@ -3329,6 +3329,11 @@
             closeModal('modal-seletor-data-saida');
         }
 
+        function openAppointmentTimeModal() {
+            renderAppointmentTimePicker();
+            openModal('modal-seletor-horario-agendamento');
+        }
+
         function renderAppointmentTimePicker() {
             const grid = document.getElementById('appointment-time-picker');
             if (!grid) return;
