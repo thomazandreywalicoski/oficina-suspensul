@@ -2521,9 +2521,9 @@
                     <div style="color:${statusColor};font-weight:600;text-align:center;">${fmtBRL(valorRestante)}</div>
                     <div style="text-align:center;"><span style="display:inline-block;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;background:${statusBg};color:${statusColor};">${isPaga ? 'Paga' : 'Pendente'}</span></div>
                     <div style="display:flex;gap:6px;align-items:center;justify-content:center;">
-                        ${!isPaga ? `<button class="btn-icon btn-action-green" style="width:36px;height:36px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;padding:0;cursor:pointer;" title="Pagar" onclick="abrirPagarDivida(${d.id})"><i data-lucide="check"></i></button>` : ''}
-                        <button class="btn-icon btn-action-blue" style="width:36px;height:36px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;padding:0;cursor:pointer;" title="Editar" onclick="editarDivida(${d.id})"><i data-lucide="pencil"></i></button>
-                        <button class="btn-icon btn-action-red" style="width:36px;height:36px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;padding:0;cursor:pointer;" title="Excluir" onclick="excluirDivida(${d.id})"><i data-lucide="trash-2"></i></button>
+                        ${!isPaga ? `<button class="btn-icon btn-action-green" title="Pagar" onclick="abrirPagarDivida(${d.id})" style="width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;padding:0;cursor:pointer;"><i data-lucide="check" style="width:18px;height:18px;color:#fff;"></i></button>` : ''}
+                        <button class="btn-icon btn-action-blue" title="Editar" onclick="editarDivida(${d.id})" style="width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;padding:0;cursor:pointer;"><i data-lucide="pencil" style="width:18px;height:18px;color:#fff;"></i></button>
+                        <button class="btn-icon btn-action-red" title="Excluir" onclick="excluirDivida(${d.id})" style="width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;padding:0;cursor:pointer;"><i data-lucide="trash-2" style="width:18px;height:18px;color:#fff;"></i></button>
                     </div>
                 </div>`;
             }).join('');
