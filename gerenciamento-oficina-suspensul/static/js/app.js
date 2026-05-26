@@ -152,6 +152,7 @@
         propostaCliente: null,
         propostaVeiculo: null,
         editandoProposta: null,
+        editandoPecaIdx: null,
         orcamentoVeiculo: null,
         orcamentoPecas: [],
         cotacoes: [],
@@ -1110,28 +1111,42 @@
         list.style.cssText = 'position:absolute;top:100%;left:0;right:0;background:#1a1a1a;border-radius:8px;margin-top:4px;max-height:200px;overflow-y:auto;z-index:100;display:none;box-shadow:0 4px 12px rgba(0,0,0,0.5);';
         wrap.appendChild(list);
         let timer;
+        
+        const updateList = async () => {
+            const q = inputEl.value.trim();
+            try {
+                const items = await fetcher(q);
+                list.innerHTML = items.length ? items.map((it, i) => `
+                    <div data-i="${i}" style="padding:10px 14px;cursor:pointer;color:#fff;font-size:14px;">${escapeHtml(it.label)}</div>
+                `).join('') : '<div style="padding:10px;color:#777;">Nenhum resultado</div>';
+                list.style.display = 'block';
+                list.querySelectorAll('div[data-i]').forEach(el => {
+                    el.onmouseover = () => el.style.background = '#252525';
+                    el.onmouseout = () => el.style.background = '';
+                    el.onclick = () => {
+                        onPick(items[parseInt(el.dataset.i)]);
+                        list.style.display = 'none';
+                    };
+                });
+            } catch(e) { console.error(e); }
+        };
+
         inputEl.addEventListener('input', () => {
             clearTimeout(timer);
-            const q = inputEl.value.trim();
-            if (q.length < 1) { list.style.display = 'none'; return; }
-            timer = setTimeout(async () => {
-                try {
-                    const items = await fetcher(q);
-                    list.innerHTML = items.length ? items.map((it, i) => `
-                        <div data-i="${i}" style="padding:10px 14px;cursor:pointer;color:#fff;font-size:14px;">${escapeHtml(it.label)}</div>
-                    `).join('') : '<div style="padding:10px;color:#777;">Nenhum resultado</div>';
-                    list.style.display = 'block';
-                    list.querySelectorAll('div[data-i]').forEach(el => {
-                        el.onmouseover = () => el.style.background = '#252525';
-                        el.onmouseout = () => el.style.background = '';
-                        el.onclick = () => {
-                            onPick(items[parseInt(el.dataset.i)]);
-                            list.style.display = 'none';
-                        };
-                    });
-                } catch(e) { console.error(e); }
-            }, 200);
+            timer = setTimeout(updateList, 200);
         });
+
+        inputEl.addEventListener('focus', () => {
+            clearTimeout(timer);
+            updateList();
+        });
+
+        inputEl.addEventListener('click', (e) => {
+            e.stopPropagation();
+            clearTimeout(timer);
+            updateList();
+        });
+
         document.addEventListener('click', (e) => {
             if (!wrap.contains(e.target)) list.style.display = 'none';
         });
@@ -1559,7 +1574,10 @@
                             <div style="text-align:center;font-weight:600;">${fmtBRL(p.vendaSemDesconto)}</div>
                             <div style="text-align:center;font-weight:600;">${fmtBRL(p.valorDesconto)}</div>
                             <div style="text-align:center;color:#22c55e;font-weight:700;">${fmtBRL(p.venda)}</div>
-                            <button type="button" class="btn-icon" onclick="window.removerPecaOrcamentoProposta(${i})" title="Remover" style="color:#e74c3c;justify-self:center;"><i data-lucide="trash-2"></i></button>
+                            <div style="display:flex;gap:8px;justify-content:center;">
+                                <button type="button" class="btn-icon" onclick="window.editarPecaOrcamentoProposta(${i})" title="Editar" style="color:#f1c40f;"><i data-lucide="pencil" style="width:16px;height:16px;"></i></button>
+                                <button type="button" class="btn-icon" onclick="window.removerPecaOrcamentoProposta(${i})" title="Remover" style="color:#e74c3c;"><i data-lucide="trash-2" style="width:16px;height:16px;"></i></button>
+                            </div>
                         </div>
                     `).join('')}
                 </div>`;
@@ -1572,7 +1590,37 @@
         renderPecasOrcamentoPropostaLista();
     };
 
+    window.editarPecaOrcamentoProposta = function(idx) {
+        const p = window.pecasOrcamentoProposta[idx];
+        if (!p) return;
+        state.editandoPecaIdx = idx;
+        
+        document.getElementById('peca-proposta-nome').value = p.nome;
+        document.getElementById('peca-proposta-qtd').value = p.qtd;
+        document.getElementById('peca-proposta-custo').value = p.custo;
+        document.getElementById('peca-proposta-lucro').value = p.lucro;
+        document.getElementById('peca-proposta-desconto').value = p.desconto;
+        
+        document.getElementById('peca-proposta-venda-sem-desconto').value = 'R$ ' + p.vendaSemDesconto.toFixed(2).replace('.', ',');
+        document.getElementById('peca-proposta-venda').value = p.venda.toFixed(2);
+        
+        document.getElementById('peca-proposta-fornecedor-id').value = p.fornecedor_id || '';
+        const lbl = document.querySelector('#peca-proposta-fornecedor-btn .peca-fornecedor-label');
+        if (lbl) {
+            lbl.textContent = p.fornecedor_nome || 'Selecione...';
+            lbl.style.color = p.fornecedor_nome ? 'var(--text-main)' : 'var(--text-muted)';
+        }
+        
+        const modal = document.getElementById('modal-peca-orcamento-proposta');
+        if (modal) {
+            modal.querySelector('.modal-title').textContent = 'Editar Peça/Produto';
+            modal.querySelector('.modal-footer .btn-primary').textContent = 'Salvar';
+        }
+        window.openModal('modal-peca-orcamento-proposta');
+    };
+
     window.openPecaOrcamentoProposta = function() {
+        state.editandoPecaIdx = null;
         document.getElementById('peca-proposta-nome').value = '';
         document.getElementById('peca-proposta-qtd').value = '';
         document.getElementById('peca-proposta-custo').value = '';
@@ -1583,6 +1631,12 @@
         document.getElementById('peca-proposta-fornecedor-id').value = '';
         const lbl = document.querySelector('#peca-proposta-fornecedor-btn .peca-fornecedor-label');
         if (lbl) { lbl.textContent = 'Selecione...'; lbl.style.color = 'var(--text-muted)'; }
+        
+        const modal = document.getElementById('modal-peca-orcamento-proposta');
+        if (modal) {
+            modal.querySelector('.modal-title').textContent = 'Adicionar Peça/Produto';
+            modal.querySelector('.modal-footer .btn-primary').textContent = 'Adicionar';
+        }
         window.openModal('modal-peca-orcamento-proposta');
     };
 
@@ -1640,14 +1694,23 @@
             valorDesconto = precoSemDesconto * descontoFrac;
             precoComDesconto = precoSemDesconto - valorDesconto;
         }
-        window.pecasOrcamentoProposta.push({
+        
+        const peca = {
             nome, qtd, custo, lucro, desconto,
             vendaSemDesconto: precoSemDesconto,
             valorDesconto,
             venda: precoComDesconto,
             fornecedor_id: fornecedorId,
             fornecedor_nome: fornecedorLabel === 'Selecione...' ? '' : fornecedorLabel
-        });
+        };
+
+        if (state.editandoPecaIdx !== null && state.editandoPecaIdx !== undefined) {
+            window.pecasOrcamentoProposta[state.editandoPecaIdx] = peca;
+            state.editandoPecaIdx = null;
+        } else {
+            window.pecasOrcamentoProposta.push(peca);
+        }
+
         renderPecasOrcamentoPropostaLista();
         window.closeModal('modal-peca-orcamento-proposta');
     };
