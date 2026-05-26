@@ -840,7 +840,9 @@
                 if (dados) {
                     window.closeModal('modal-placa-busca');
                     preencherModalVeiculoComDados(dados);
-                    origOpen('modal-veiculo');
+                    state.pularPlacaBusca = true;
+                    window.openModal('modal-veiculo');
+                    state.pularPlacaBusca = false;
                 }
             };
         }
@@ -861,7 +863,9 @@
                 e.preventDefault();
                 window.closeModal('modal-placa-busca');
                 resetarModalVeiculo();
-                origOpen('modal-veiculo');
+                state.pularPlacaBusca = true;
+                window.openModal('modal-veiculo');
+                state.pularPlacaBusca = false;
             };
         }
 
@@ -2439,7 +2443,7 @@
         // Reset on open via openModal hook
         const origOpen = window.openModal;
         window.openModal = function(id) {
-            if (id === 'modal-veiculo' && !state.editandoVeiculo) {
+            if (id === 'modal-veiculo' && !state.editandoVeiculo && !state.pularPlacaBusca) {
                 const buscaInput = document.getElementById('placa-busca-input');
                 if (buscaInput) {
                     buscaInput.value = '';
