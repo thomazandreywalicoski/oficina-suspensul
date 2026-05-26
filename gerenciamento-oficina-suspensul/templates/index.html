@@ -1423,7 +1423,8 @@
             table th {
                 white-space: nowrap !important;
             }
-            #modal-peca-orcamento-proposta .form-row {
+            #modal-peca-orcamento-proposta .form-row,
+            #modal-peca-os .form-row {
                 flex-direction: row !important;
                 gap: 15px !important;
             }
@@ -2412,7 +2413,7 @@
                         <input type="number" step="0.01" id="peca-os-lucro" value="20" oninput="calcularVendaPecaOS()">
                     </div>
                     <div class="form-group">
-                        <label>Valor de Venda (un., sem desconto)</label>
+                        <label>Venda (un., sem desconto)</label>
                         <input type="text" id="peca-os-venda-sem-desconto" readonly style="background-color: #e39f13; color: #fff; font-weight: 600;">
                     </div>
                 </div>
@@ -2422,7 +2423,7 @@
                         <input type="number" step="0.01" id="peca-os-desconto" value="5" oninput="calcularVendaPecaOS()">
                     </div>
                     <div class="form-group">
-                        <label>Valor de Venda Final (un.)</label>
+                        <label>Valor Venda Final (un.)</label>
                         <input type="text" id="peca-os-venda" readonly style="background-color: #22c55e; color: #fff; font-weight: 600;">
                     </div>
                 </div>
@@ -3860,7 +3861,7 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
                         <input type="number" step="0.01" id="peca-proposta-lucro" value="20" oninput="calcularVendaPecaOrcamentoProposta()">
                     </div>
                     <div class="form-group">
-                        <label>Valor de Venda (un., sem desconto)</label>
+                        <label>Venda (un., sem desconto)</label>
                         <input type="text" id="peca-proposta-venda-sem-desconto" readonly style="background-color:#e39f13;color:#fff;font-weight:600;">
                     </div>
                 </div>
@@ -3870,7 +3871,7 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
                         <input type="number" step="0.01" id="peca-proposta-desconto" value="5" oninput="calcularVendaPecaOrcamentoProposta()">
                     </div>
                     <div class="form-group">
-                        <label>Valor de Venda Final (un.)</label>
+                        <label>Valor Venda Final (un.)</label>
                         <input type="text" id="peca-proposta-venda" readonly style="background-color:#22c55e;color:#fff;font-weight:600;">
                     </div>
                 </div>
