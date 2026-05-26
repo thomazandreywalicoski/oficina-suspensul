@@ -387,6 +387,7 @@
         if (state.mostrarInativosClientes) params.set('incluir_inativos', 'true');
         const url = '/api/clientes' + (params.toString() ? '?' + params.toString() : '');
         const rows = await api('GET', url);
+        rows.sort((a, b) => b.id - a.id);
         state.clientes = rows;
         _setPage('clients', 1);
         renderClientesTabela();
@@ -479,6 +480,7 @@
         if (state.mostrarInativosFornecedores) params.set('incluir_inativos', 'true');
         const url = '/api/fornecedores' + (params.toString() ? '?' + params.toString() : '');
         const rows = await api('GET', url);
+        rows.sort((a, b) => b.id - a.id);
         state.fornecedores = rows;
         _setPage('suppliers', 1);
         renderFornecedoresTabela();
@@ -570,6 +572,7 @@
         if (state.mostrarInativosVeiculos) params.set('incluir_inativos', 'true');
         const url = '/api/veiculos' + (params.toString() ? '?' + params.toString() : '');
         const rows = await api('GET', url);
+        rows.sort((a, b) => b.id - a.id);
         state.veiculos = rows;
         _setPage('vehicles', 1);
         renderVeiculosTabela();
@@ -762,6 +765,7 @@
         if (state.mostrarInativosOS) params.push('incluir_inativos=true');
         const url = '/api/os' + (params.length ? '?' + params.join('&') : '');
         const rows = await api('GET', url);
+        rows.sort((a, b) => b.id - a.id);
         state.os = rows;
         _setPage('os', 1);
         renderOSTabela();
@@ -1003,7 +1007,9 @@
     // --- Tabela de Cotações ---
     async function carregarCotacoes() {
         try {
-            state.cotacoes = await api('GET', '/api/orcamentos');
+            const rows = await api('GET', '/api/orcamentos');
+            rows.sort((a, b) => b.id - a.id);
+            state.cotacoes = rows;
         } catch(_) { state.cotacoes = []; }
         renderCotacoesTabela();
     }
@@ -1511,6 +1517,7 @@
         if (busca) params.set('q', busca);
         const url = '/api/propostas' + (params.toString() ? '?' + params.toString() : '');
         const rows = await api('GET', url);
+        rows.sort((a, b) => b.id - a.id);
         state.orcamentosPropostas = rows;
         _setPage('propostas', 1);
         renderPropostasTabela();
@@ -1925,6 +1932,7 @@
     // ===================== ESTOQUE =====================
     async function carregarEstoque() {
         const rows = await api('GET', '/api/estoque/produtos');
+        rows.sort((a, b) => b.id - a.id);
         state.estoque = rows;
         renderEstoqueTabela();
         renderEstoqueSaidaProdutos();
@@ -2480,7 +2488,9 @@
 
     async function carregarDividas() {
         try {
-            state.dividas = await api('GET', '/api/dividas');
+            const rows = await api('GET', '/api/dividas');
+            rows.sort((a, b) => b.id - a.id);
+            state.dividas = rows;
         } catch(_) { state.dividas = []; }
         renderDividasCards();
     }
@@ -2504,6 +2514,7 @@
         if (buscaInput) buscaInput.value = '';
         try {
             const dividas = await api('GET', '/api/dividas?pessoa=' + encodeURIComponent(pessoa));
+            dividas.sort((a, b) => b.id - a.id);
             _dividasPessoaList = dividas;
             // Atualiza state.dividas para que abrirPagarDivida encontre os dados
             dividas.forEach(d => {

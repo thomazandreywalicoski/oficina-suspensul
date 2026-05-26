@@ -1423,7 +1423,9 @@
             table th {
                 white-space: nowrap !important;
             }
-            #modal-peca-orcamento-proposta .form-row {
+            #modal-peca-orcamento-proposta .form-row,
+            #modal-novo-agendamento .form-row,
+            #modal-veiculo .form-row {
                 flex-direction: row !important;
                 gap: 15px !important;
             }
@@ -2239,16 +2241,18 @@
                         <label>Marca</label>
                         <input type="text" placeholder="Ex: VW">
                     </div>
+                </div>
+                <div class="form-row">
                     <div class="form-group">
                         <label>Modelo</label>
                         <input type="text" placeholder="Ex: Gol">
                     </div>
-                </div>
-                <div class="form-row">
                     <div class="form-group">
                         <label>Ano</label>
                         <input type="number">
                     </div>
+                </div>
+                <div class="form-row">
                     <div class="form-group">
                         <label>KM Atual</label>
                         <input type="number">
