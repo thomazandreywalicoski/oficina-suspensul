@@ -841,10 +841,10 @@
                 
                 if (dados) {
                     window.closeModal('modal-placa-busca');
-                    preencherModalVeiculoComDados(dados);
                     state.pularPlacaBusca = true;
                     window.openModal('modal-veiculo');
                     state.pularPlacaBusca = false;
+                    preencherModalVeiculoComDados(dados);
                 }
             };
         }
@@ -864,10 +864,10 @@
             buscaPular.onclick = (e) => {
                 e.preventDefault();
                 window.closeModal('modal-placa-busca');
-                resetarModalVeiculo();
                 state.pularPlacaBusca = true;
                 window.openModal('modal-veiculo');
                 state.pularPlacaBusca = false;
+                resetarModalVeiculo();
             };
         }
 
