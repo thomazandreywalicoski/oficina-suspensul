@@ -1366,8 +1366,12 @@
                 top: 0;
                 left: 0;
                 height: 100vh;
+                height: 100dvh;
                 z-index: 1050;
                 box-shadow: 0 0 24px rgba(0,0,0,0.6);
+            }
+            .sidebar-inner {
+                padding-bottom: 80px !important;
             }
         }
 
@@ -1409,6 +1413,12 @@
             .calendar-period-trigger {
                 min-width: 0 !important;
                 flex: 1 !important;
+            }
+            table td:not(.actions-cell) {
+                max-width: 15ch !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                white-space: nowrap !important;
             }
         }
 
