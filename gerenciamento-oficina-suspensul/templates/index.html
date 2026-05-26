@@ -1519,7 +1519,7 @@
         <div id="page-clientes" class="main-content">
             <div class="page-header">
                 <div class="search-input-wrap">
-                    <input type="text" placeholder="Pesquisar cliente por qualquer informação...">
+                    <input type="text" placeholder="Buscar">
                     <i data-lucide="search" class="input-icon-right"></i>
                 </div>
                 <button class="btn btn-primary" onclick="openModal('modal-cliente')">
@@ -1564,7 +1564,7 @@
         <div id="page-fornecedores" class="main-content">
             <div class="page-header">
                 <div class="search-input-wrap">
-                    <input type="text" placeholder="Pesquisar fornecedor...">
+                    <input type="text" placeholder="Buscar">
                     <i data-lucide="search" class="input-icon-right"></i>
                 </div>
                 <button class="btn btn-primary" onclick="openModal('modal-fornecedor')">
@@ -1600,7 +1600,7 @@
         <div id="page-veiculos" class="main-content">
             <div class="page-header">
                 <div class="search-input-wrap">
-                    <input type="text" placeholder="Pesquisar veículo por qualquer informação...">
+                    <input type="text" placeholder="Buscar">
                     <i data-lucide="search" class="input-icon-right"></i>
                 </div>
                 <button class="btn btn-primary" onclick="openModal('modal-veiculo')">
@@ -1642,7 +1642,7 @@
             <div class="page-header">
                 <div class="search-filter-bar">
                     <div class="search-input-wrap">
-                        <input type="text" placeholder="Buscar Comprovante (Cliente, Placa)...">
+                        <input type="text" placeholder="Buscar">
                         <i data-lucide="search" class="input-icon-right"></i>
                     </div>
                     <button class="btn calendar-period-trigger" style="min-width: 150px;" onclick="openOSStatusModal()">
@@ -1686,7 +1686,7 @@
         <div id="page-orcamento" class="main-content">
             <div class="page-header">
                 <div class="search-input-wrap">
-                    <input type="text" id="cotacao-search" placeholder="Buscar Cotação (Placa, Veículo)..." oninput="filtrarCotacoes()">
+                    <input type="text" id="cotacao-search" placeholder="Buscar" oninput="filtrarCotacoes()">
                     <i data-lucide="search" class="input-icon-right"></i>
                 </div>
                 <button class="btn btn-primary" onclick="window.abrirModalNovaCotacao()">
@@ -1714,7 +1714,7 @@
             <div class="page-header">
                 <div class="search-filter-bar">
                     <div class="search-input-wrap">
-                        <input type="text" id="proposta-search" placeholder="Buscar Orçamento (Cliente, Placa)...">
+                        <input type="text" id="proposta-search" placeholder="Buscar">
                         <i data-lucide="search" class="input-icon-right"></i>
                     </div>
                 </div>
@@ -1786,7 +1786,7 @@
                     <div class="financeiro-col-header">
                         <h4>Comprovantes Pagos</h4>
                         <div class="search-input-wrap financeiro-col-search">
-                            <input type="text" id="financeiro-comprovantes-search" placeholder="Buscar comprovante...">
+                            <input type="text" id="financeiro-comprovantes-search" placeholder="Buscar">
                             <i data-lucide="search" class="input-icon-right"></i>
                         </div>
                     </div>
@@ -1796,7 +1796,7 @@
                     <div class="financeiro-col-header">
                         <h4>Movimentações do Caixa</h4>
                         <div class="search-input-wrap financeiro-col-search">
-                            <input type="text" id="financeiro-caixa-search" placeholder="Buscar movimentação...">
+                            <input type="text" id="financeiro-caixa-search" placeholder="Buscar">
                             <i data-lucide="search" class="input-icon-right"></i>
                         </div>
                     </div>
@@ -1850,7 +1850,7 @@
         <div id="page-estoque" class="main-content">
             <div class="page-header">
                 <div class="search-input-wrap">
-                    <input type="text" id="estoque-search" placeholder="Pesquisar produto em estoque...">
+                    <input type="text" id="estoque-search" placeholder="Buscar">
                     <i data-lucide="search" class="input-icon-right"></i>
                 </div>
                 <button type="button" class="btn btn-primary" onclick="openModal('modal-estoque')">
@@ -2825,27 +2825,6 @@
     <script>
         // Inicializa Lucide Icons
         lucide.createIcons();
-
-        // --- Dynamic Search Placeholders on Mobile ---
-        function updateSearchPlaceholders() {
-            const inputs = document.querySelectorAll('.main-content input[type="text"][placeholder]');
-            const isMobile = window.innerWidth <= 479;
-            inputs.forEach(input => {
-                if (!input.hasAttribute('data-original-placeholder')) {
-                    input.setAttribute('data-original-placeholder', input.placeholder || '');
-                }
-                if (isMobile) {
-                    input.placeholder = 'Buscar';
-                } else {
-                    input.placeholder = input.getAttribute('data-original-placeholder');
-                }
-            });
-        }
-        window.addEventListener('resize', updateSearchPlaceholders);
-        document.addEventListener('DOMContentLoaded', updateSearchPlaceholders);
-        updateSearchPlaceholders();
-        setTimeout(updateSearchPlaceholders, 500);
-        setTimeout(updateSearchPlaceholders, 1500);
 
         // --- Sidebar Toggle ---
         function toggleSidebar() {
