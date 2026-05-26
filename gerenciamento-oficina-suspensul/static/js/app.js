@@ -788,8 +788,10 @@
         try {
             showToast('Buscando dados da placa...');
             const res = await api('GET', `/api/consulta-placa/${placa}`);
+            console.log("DADOS DO VEICULO RETORNADOS PELA API:", res);
             return res;
         } catch (e) {
+            console.error("ERRO AO CONSULTAR PLACA:", e);
             window.showAlert(e.message || 'Erro ao buscar dados da placa. Verifique o formato e tente novamente.', 'Erro');
             return null;
         }
