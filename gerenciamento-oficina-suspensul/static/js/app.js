@@ -636,19 +636,64 @@
         m.querySelector('.btn-primary').innerText = 'Salvar';
         window.openModal('modal-veiculo');
     };
+    let carrosselImagens = [];
+    let carrosselIndex = 0;
+
+    function atualizarCarrosselVisualizacao() {
+        const imgEl = document.getElementById('veiculo-carrossel-img');
+        const semImg = document.getElementById('veiculo-carrossel-vazio');
+        const infoEl = document.getElementById('veiculo-carrossel-info');
+        const btnPrev = document.getElementById('veiculo-carrossel-prev');
+        const btnNext = document.getElementById('veiculo-carrossel-next');
+
+        if (!imgEl || !semImg || !infoEl || !btnPrev || !btnNext) return;
+
+        if (!carrosselImagens.length) {
+            imgEl.style.display = 'none';
+            semImg.style.display = 'flex';
+            infoEl.style.display = 'none';
+            btnPrev.style.display = 'none';
+            btnNext.style.display = 'none';
+        } else {
+            semImg.style.display = 'none';
+            imgEl.style.display = 'block';
+            imgEl.src = carrosselImagens[carrosselIndex];
+            
+            infoEl.style.display = 'block';
+            infoEl.textContent = `Imagem ${carrosselIndex + 1} de ${carrosselImagens.length}`;
+
+            if (carrosselImagens.length > 1) {
+                btnPrev.style.display = 'flex';
+                btnNext.style.display = 'flex';
+            } else {
+                btnPrev.style.display = 'none';
+                btnNext.style.display = 'none';
+            }
+        }
+    }
+
+    window.carrosselVisualizacaoMudar = function(direcao) {
+        if (!carrosselImagens.length) return;
+        carrosselIndex += direcao;
+        if (carrosselIndex < 0) {
+            carrosselIndex = carrosselImagens.length - 1;
+        } else if (carrosselIndex >= carrosselImagens.length) {
+            carrosselIndex = 0;
+        }
+        atualizarCarrosselVisualizacao();
+    };
+
     window.visualizarVeiculoImagens = function(id) {
         const v = state.veiculos.find(x => x.id === id);
         if (!v) return;
-        const imgs = ['imagem','imagem2','imagem3'].map(c => v[c] ? `/static/uploads/${v[c]}` : null);
-        const containers = document.querySelectorAll('#veiculo-carrossel .veiculo-img-container');
-        containers.forEach((c, i) => {
-            if (imgs[i]) {
-                c.innerHTML = `<img src="${imgs[i]}" style="width:100%;height:100%;object-fit:cover;">`;
-            } else {
-                c.innerHTML = '<i data-lucide="image-off" style="width:32px;height:32px;color:var(--text-muted);"></i>';
-            }
-        });
-        lucide.createIcons();
+        
+        carrosselImagens = ['imagem', 'imagem2', 'imagem3']
+            .map(col => v[col])
+            .filter(img => !!img)
+            .map(img => `/static/uploads/${img}`);
+            
+        carrosselIndex = 0;
+        atualizarCarrosselVisualizacao();
         window.openModal('modal-veiculo-imagens');
     };
 
@@ -1090,10 +1135,10 @@
 
         let dropdown1 = criarDropdown(inputCliente, async (q) => {
             const arr = await api('GET', '/api/clientes?q=' + encodeURIComponent(q));
-            return arr.map(c => ({ label: `${c.nome_completo} - ${c.cpf}`, value: c.id, raw: c }));
+            return arr.map(c => ({ label: `${c.nome_completo} - ${c.cpf || 'CPF não informado'}`, value: c.id, raw: c }));
         }, (item) => {
             state.novaOSCliente = item.raw;
-            inputCliente.value = `${item.raw.nome_completo} - ${item.raw.cpf}`;
+            inputCliente.value = `${item.raw.nome_completo} - ${item.raw.cpf || 'CPF não informado'}`;
         });
         let dropdown2 = criarDropdown(inputVeiculo, async (q) => {
             const arr = await api('GET', '/api/veiculos?q=' + encodeURIComponent(q));
@@ -1870,7 +1915,7 @@
             const idInput = document.getElementById('orcamento-proposta-id');
             if (idInput) idInput.value = p.id;
             const clienteInput = document.getElementById('orcamento-proposta-cliente-input');
-            if (clienteInput) clienteInput.value = `${p.nome_completo} - ${p.cpf || ''}`;
+            if (clienteInput) clienteInput.value = `${p.nome_completo} - ${p.cpf || 'CPF não informado'}`;
             const veiculoInput = document.getElementById('orcamento-proposta-veiculo-input');
             if (veiculoInput) veiculoInput.value = `${p.placa} - ${p.marca || ''} ${p.modelo || ''}`;
             const maoObraInput = document.getElementById('orcamento-proposta-mao-obra');
@@ -1911,10 +1956,10 @@
         if (!inputCliente || !inputVeiculo) return;
         criarDropdown(inputCliente, async (q) => {
             const arr = await api('GET', '/api/clientes?q=' + encodeURIComponent(q));
-            return arr.map(c => ({ label: `${c.nome_completo} - ${c.cpf}`, value: c.id, raw: c }));
+            return arr.map(c => ({ label: `${c.nome_completo} - ${c.cpf || 'CPF não informado'}`, value: c.id, raw: c }));
         }, (item) => {
             state.propostaCliente = item.raw;
-            inputCliente.value = `${item.raw.nome_completo} - ${item.raw.cpf}`;
+            inputCliente.value = `${item.raw.nome_completo} - ${item.raw.cpf || 'CPF não informado'}`;
         });
         criarDropdown(inputVeiculo, async (q) => {
             const arr = await api('GET', '/api/veiculos?q=' + encodeURIComponent(q));
@@ -1932,10 +1977,10 @@
         const inputs = m.querySelectorAll('input');
         criarDropdown(inputs[0], async (q) => {
             const arr = await api('GET', '/api/clientes?q=' + encodeURIComponent(q));
-            return arr.map(c => ({ label: `${c.nome_completo} - ${c.cpf}`, value: c.id, raw: c }));
+            return arr.map(c => ({ label: `${c.nome_completo} - ${c.cpf || 'CPF não informado'}`, value: c.id, raw: c }));
         }, (item) => {
             state.novoAgClienteId = item.raw.id;
-            inputs[0].value = `${item.raw.nome_completo} - ${item.raw.cpf}`;
+            inputs[0].value = `${item.raw.nome_completo} - ${item.raw.cpf || 'CPF não informado'}`;
         });
         criarDropdown(inputs[1], async (q) => {
             const arr = await api('GET', '/api/veiculos?q=' + encodeURIComponent(q));
