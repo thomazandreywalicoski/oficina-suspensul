@@ -2225,6 +2225,79 @@
         </div>
     </div>
 
+    <!-- Modal Busca Placa -->
+    <div class="modal-overlay" id="modal-placa-busca">
+        <div class="modal" style="max-width: 420px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Informe a placa do veículo</h3>
+                <button class="btn-icon" onclick="closeModal('modal-placa-busca')"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body" style="display:flex; flex-direction:column; align-items:center; gap:20px; padding: 25px 20px;">
+                <p style="color:var(--text-muted); text-align:center; font-size:14px; margin:0;">Digite a placa para preencher automaticamente os dados do veículo.</p>
+                
+                <!-- Brazilian Plate styled container -->
+                <div class="placa-brasil-container" style="
+                    width: 260px;
+                    height: 90px;
+                    border: 4px solid #101010;
+                    border-radius: 12px;
+                    background: #ffffff;
+                    display: flex;
+                    flex-direction: column;
+                    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+                    position: relative;
+                    overflow: hidden;
+                    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+                ">
+                    <!-- Blue Header band -->
+                    <div style="
+                        height: 26px;
+                        background: #003399;
+                        color: #ffffff;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        padding: 0 10px;
+                        font-weight: 800;
+                        font-size: 11px;
+                        letter-spacing: 1px;
+                        text-transform: uppercase;
+                    ">
+                        <span>BRASIL</span>
+                        <div style="display: flex; align-items: center; gap: 4px;">
+                            <!-- Tiny Brazilian Flag representation -->
+                            <div style="width: 14px; height: 10px; background: #009c3b; position: relative;">
+                                <div style="position: absolute; top: 1px; left: 3px; width: 8px; height: 8px; background: #ffdf00; transform: rotate(45deg);"></div>
+                                <div style="position: absolute; top: 3px; left: 5px; width: 4px; height: 4px; background: #002776; border-radius: 50%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Plate Input -->
+                    <input type="text" id="placa-busca-input" placeholder="AAA0X00" maxlength="7" style="
+                        flex: 1;
+                        border: none;
+                        outline: none;
+                        background: transparent;
+                        color: #000000;
+                        text-align: center;
+                        font-size: 32px;
+                        font-weight: 900;
+                        letter-spacing: 4px;
+                        text-transform: uppercase;
+                        padding: 0;
+                        margin: 0;
+                    ">
+                </div>
+                
+                <button type="button" class="btn btn-primary" id="btn-placa-busca-enviar" style="width:100%; height:46px; font-weight:600; display:flex; align-items:center; justify-content:center; gap:8px;">
+                    <i data-lucide="search" style="width:18px; height:18px;"></i> Buscar
+                </button>
+                <a href="#" id="btn-placa-busca-pular" style="color:var(--text-muted); font-size:13px; text-decoration:underline; margin-top:4px;">Pular e cadastrar manualmente</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Cadastro de Veículo -->
     <div class="modal-overlay" id="modal-veiculo">
         <div class="modal modal-lg">
             <div class="modal-header">
@@ -2232,36 +2305,59 @@
                 <button class="btn-icon" onclick="closeModal('modal-veiculo')"><i data-lucide="x"></i></button>
             </div>
             <div class="modal-body">
+                <!-- Row 1: Placa & Busca -->
                 <div class="form-row">
-                    <div class="form-group">
+                    <div class="form-group" style="flex: 1;">
                         <label>Placa <span style="font-weight:400;color:var(--text-muted);">(opcional)</span></label>
-                        <input type="text" placeholder="Ex: ABC1D23">
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="veiculo-placa" placeholder="Ex: ABC1D23" maxlength="7" style="text-transform: uppercase; flex: 1;">
+                            <button type="button" id="btn-veiculo-buscar-placa" class="btn" style="background: #eab308; color: #000000; border: none; padding: 0; width: 44px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; border-radius: 6px; cursor: pointer;" title="Buscar dados da placa">
+                                <i data-lucide="search" style="width: 20px; height: 20px;"></i>
+                            </button>
+                        </div>
                     </div>
+                </div>
+                <!-- Row 2: Marca & Modelo -->
+                <div class="form-row">
                     <div class="form-group">
                         <label>Marca</label>
-                        <input type="text" placeholder="Ex: VW">
+                        <input type="text" id="veiculo-marca" placeholder="Ex: VW">
                     </div>
-                </div>
-                <div class="form-row">
                     <div class="form-group">
                         <label>Modelo</label>
-                        <input type="text" placeholder="Ex: Gol">
-                    </div>
-                    <div class="form-group">
-                        <label>Ano</label>
-                        <input type="number">
+                        <input type="text" id="veiculo-modelo" placeholder="Ex: Gol">
                     </div>
                 </div>
+                <!-- Row 3: Ano & KM Atual -->
                 <div class="form-row">
                     <div class="form-group">
-                        <label>KM Atual</label>
-                        <input type="number">
+                        <label>Ano</label>
+                        <input type="number" id="veiculo-ano">
                     </div>
                     <div class="form-group">
-                        <label>Motorização</label>
-                        <input type="text" placeholder="Ex: 1.0 turbo">
+                        <label>KM Atual</label>
+                        <input type="number" id="veiculo-km">
                     </div>
                 </div>
+                <!-- Row 4: Motorização & Cor -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Motorização</label>
+                        <input type="text" id="veiculo-motorizacao" placeholder="Ex: 1.0 turbo">
+                    </div>
+                    <div class="form-group">
+                        <label>Cor</label>
+                        <input type="text" id="veiculo-cor" placeholder="Ex: Prata">
+                    </div>
+                </div>
+                <!-- Row 5: Combustível -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Combustível</label>
+                        <input type="text" id="veiculo-combustivel" placeholder="Ex: Flex">
+                    </div>
+                </div>
+                <!-- Row 6: Imagens -->
                 <div class="form-group">
                     <label>Imagens do Veículo (até 3)</label>
                     <div class="vehicle-image-uploads" style="display:flex;gap:12px;margin-top:10px;">

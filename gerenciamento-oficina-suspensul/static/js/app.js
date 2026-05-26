@@ -612,14 +612,16 @@
         state.editandoVeiculo = v;
         const m = document.getElementById('modal-veiculo');
         m.querySelector('.modal-title').innerText = 'Editar Veículo';
-        const inputs = m.querySelectorAll('input[type="text"], input[type="number"]');
-        // ordem: placa, marca, modelo, ano, km, motorização
-        inputs[0].value = v.placa || '';
-        inputs[1].value = v.marca || '';
-        inputs[2].value = v.modelo || '';
-        inputs[3].value = v.ano || '';
-        inputs[4].value = v.km || 0;
-        inputs[5].value = v.motorizacao || '';
+        
+        m.querySelector('#veiculo-placa').value = v.placa || '';
+        m.querySelector('#veiculo-marca').value = v.marca || '';
+        m.querySelector('#veiculo-modelo').value = v.modelo || '';
+        m.querySelector('#veiculo-ano').value = v.ano || '';
+        m.querySelector('#veiculo-km').value = v.km || 0;
+        m.querySelector('#veiculo-motorizacao').value = v.motorizacao || '';
+        m.querySelector('#veiculo-cor').value = v.cor || '';
+        m.querySelector('#veiculo-combustivel').value = v.combustivel || '';
+
         // Pré-popula previews das imagens existentes
         ['imagem','imagem2','imagem3'].forEach((col, idx) => {
             const slot = m.querySelector(`.vehicle-img-slot[data-slot="${idx+1}"]`);
@@ -726,21 +728,34 @@
 
     async function salvarVeiculo() {
         const m = document.getElementById('modal-veiculo');
-        const inputs = m.querySelectorAll('input[type="text"], input[type="number"]');
         const fd = new FormData();
-        fd.append('placa', inputs[0].value.trim());
-        fd.append('marca', inputs[1].value.trim());
-        fd.append('modelo', inputs[2].value.trim());
-        fd.append('ano', inputs[3].value || '');
-        fd.append('km', inputs[4].value || '0');
-        fd.append('motorizacao', inputs[5].value.trim());
+        
+        const placa = m.querySelector('#veiculo-placa').value.trim();
+        const marca = m.querySelector('#veiculo-marca').value.trim();
+        const modelo = m.querySelector('#veiculo-modelo').value.trim();
+        const ano = m.querySelector('#veiculo-ano').value || '';
+        const km = m.querySelector('#veiculo-km').value || '0';
+        const motorizacao = m.querySelector('#veiculo-motorizacao').value.trim();
+        const cor = m.querySelector('#veiculo-cor').value.trim();
+        const combustivel = m.querySelector('#veiculo-combustivel').value.trim();
+
+        fd.append('placa', placa);
+        fd.append('marca', marca);
+        fd.append('modelo', modelo);
+        fd.append('ano', ano);
+        fd.append('km', km);
+        fd.append('motorizacao', motorizacao);
+        fd.append('cor', cor);
+        fd.append('combustivel', combustivel);
+
         // Imagens: imagem, imagem2, imagem3
         ['imagem','imagem2','imagem3'].forEach((col, idx) => {
             const slot = m.querySelector(`.vehicle-img-slot[data-slot="${idx+1}"]`);
             const f = slot?.querySelector('input[type="file"]');
             if (f && f.files && f.files[0]) fd.append(col, f.files[0]);
         });
-        if (!inputs[1].value.trim() && !inputs[2].value.trim()) return showToast('Informe pelo menos a marca ou modelo', true);
+        
+        if (!marca && !modelo) return showToast('Informe pelo menos a marca ou modelo', true);
         try {
             if (state.editandoVeiculo) {
                 await api('PUT', `/api/veiculos/${state.editandoVeiculo.id}`, fd);
@@ -753,6 +768,125 @@
             resetarModalVeiculo();
             await carregarVeiculos();
         } catch (e) { window.showAlert(e.message, 'Erro'); }
+    }
+
+    // ===================== INTEGRACAO API PLACAS =====================
+    function formatarPlacaInput(input) {
+        if (!input) return;
+        input.addEventListener('input', (e) => {
+            let val = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+            if (val.length > 7) val = val.substring(0, 7);
+            e.target.value = val;
+        });
+    }
+
+    async function buscarDadosPlaca(placa) {
+        if (placa.length !== 7) {
+            showToast('A placa deve conter 7 caracteres alfanuméricos!', true);
+            return null;
+        }
+        try {
+            showToast('Buscando dados da placa...');
+            const res = await api('GET', `/api/consulta-placa/${placa}`);
+            return res;
+        } catch (e) {
+            window.showAlert(e.message || 'Erro ao buscar dados da placa. Verifique o formato e tente novamente.', 'Erro');
+            return null;
+        }
+    }
+
+    function preencherModalVeiculoComDados(dados) {
+        resetarModalVeiculo();
+        const m = document.getElementById('modal-veiculo');
+        if (!m) return;
+        
+        m.querySelector('#veiculo-placa').value = dados.placa || '';
+        m.querySelector('#veiculo-marca').value = dados.marca || '';
+        m.querySelector('#veiculo-modelo').value = dados.modelo || '';
+        m.querySelector('#veiculo-ano').value = dados.ano || '';
+        m.querySelector('#veiculo-cor').value = dados.cor || '';
+        m.querySelector('#veiculo-combustivel').value = dados.combustivel || '';
+        m.querySelector('#veiculo-motorizacao').value = dados.motorizacao || '';
+        m.querySelector('#veiculo-km').value = '';
+    }
+
+    function initPlacaBusca() {
+        const buscaInput = document.getElementById('placa-busca-input');
+        const buscaBtn = document.getElementById('btn-placa-busca-enviar');
+        const buscaPular = document.getElementById('btn-placa-busca-pular');
+        
+        const modalPlaca = document.getElementById('veiculo-placa');
+        const modalPlacaBtn = document.getElementById('btn-veiculo-buscar-placa');
+
+        formatarPlacaInput(buscaInput);
+        formatarPlacaInput(modalPlaca);
+
+        // Click search in lookup modal
+        if (buscaBtn) {
+            buscaBtn.onclick = async () => {
+                const placaVal = (buscaInput.value || '').trim();
+                if (placaVal.length !== 7) {
+                    return showToast('Preencha os 7 caracteres da placa!', true);
+                }
+                buscaBtn.disabled = true;
+                const originalText = buscaBtn.innerHTML;
+                buscaBtn.innerHTML = 'Buscando...';
+                
+                const dados = await buscarDadosPlaca(placaVal);
+                
+                buscaBtn.disabled = false;
+                buscaBtn.innerHTML = originalText;
+                
+                if (dados) {
+                    window.closeModal('modal-placa-busca');
+                    preencherModalVeiculoComDados(dados);
+                    origOpen('modal-veiculo');
+                }
+            };
+        }
+
+        // Search trigger inside lookup modal on Enter
+        if (buscaInput) {
+            buscaInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (buscaBtn) buscaBtn.click();
+                }
+            });
+        }
+
+        // Click skip link
+        if (buscaPular) {
+            buscaPular.onclick = (e) => {
+                e.preventDefault();
+                window.closeModal('modal-placa-busca');
+                resetarModalVeiculo();
+                origOpen('modal-veiculo');
+            };
+        }
+
+        // Yellow magnifying glass button trigger in registration modal
+        if (modalPlacaBtn) {
+            modalPlacaBtn.onclick = async () => {
+                const placaVal = (modalPlaca.value || '').trim();
+                if (placaVal.length !== 7) {
+                    return showToast('Digite os 7 caracteres da placa para buscar!', true);
+                }
+                modalPlacaBtn.disabled = true;
+                modalPlacaBtn.style.opacity = '0.5';
+                
+                const dados = await buscarDadosPlaca(placaVal);
+                
+                modalPlacaBtn.disabled = false;
+                modalPlacaBtn.style.opacity = '1';
+                
+                if (dados) {
+                    const kmVal = document.getElementById('veiculo-km').value;
+                    preencherModalVeiculoComDados(dados);
+                    document.getElementById('veiculo-km').value = kmVal;
+                }
+            };
+        }
     }
 
     // ===================== ORDENS DE SERVIÇO =====================
@@ -2305,6 +2439,15 @@
         // Reset on open via openModal hook
         const origOpen = window.openModal;
         window.openModal = function(id) {
+            if (id === 'modal-veiculo' && !state.editandoVeiculo) {
+                const buscaInput = document.getElementById('placa-busca-input');
+                if (buscaInput) {
+                    buscaInput.value = '';
+                    setTimeout(() => buscaInput.focus(), 150);
+                }
+                origOpen('modal-placa-busca');
+                return;
+            }
             origOpen(id);
             if (id === 'modal-cliente' && !state.editandoCliente) resetarModalCliente();
             if (id === 'modal-fornecedor' && !state.editandoFornecedor) resetarModalFornecedor();
@@ -2465,6 +2608,7 @@
         setupModalNovaProposta();
         setupModalNovoAgendamento();
         setupModalVeiculo();
+        initPlacaBusca();
         setupOrcamentoPage();
         setupConfigPage();
         const activePage = (() => {

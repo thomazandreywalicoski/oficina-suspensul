@@ -110,6 +110,8 @@ def run_migrations():
             km INT DEFAULT 0,
             chassi VARCHAR(50),
             motorizacao VARCHAR(50),
+            cor VARCHAR(60),
+            combustivel VARCHAR(60),
             imagem VARCHAR(255),
             cliente_id INT,
             ativo TINYINT(1) NOT NULL DEFAULT 1,
@@ -238,6 +240,17 @@ def run_migrations():
             (existe,) = cur.fetchone()
             if not existe:
                 cur.execute(f"ALTER TABLE veiculos ADD COLUMN {col} VARCHAR(255)")
+                conn.commit()
+                print(f"Migração: coluna {col} adicionada em veiculos")
+        # Migração: cor, combustivel em veiculos
+        for col in ('cor', 'combustivel'):
+            cur.execute("""SELECT COUNT(*) FROM information_schema.COLUMNS
+                           WHERE TABLE_SCHEMA = DATABASE()
+                             AND TABLE_NAME = 'veiculos'
+                             AND COLUMN_NAME = %s""", (col,))
+            (existe,) = cur.fetchone()
+            if not existe:
+                cur.execute(f"ALTER TABLE veiculos ADD COLUMN {col} VARCHAR(60) NULL")
                 conn.commit()
                 print(f"Migração: coluna {col} adicionada em veiculos")
         cur.execute("""CREATE TABLE IF NOT EXISTS orcamentos (
@@ -776,11 +789,11 @@ def criar_veiculo():
         imgs = {'imagem': None, 'imagem2': None, 'imagem3': None}
 
     placa_val = d.get('placa', '').strip() or None
-    vid = query("""INSERT INTO veiculos (placa, marca, modelo, ano, km, motorizacao, imagem, imagem2, imagem3, cliente_id)
-                   VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+    vid = query("""INSERT INTO veiculos (placa, marca, modelo, ano, km, motorizacao, cor, combustivel, imagem, imagem2, imagem3, cliente_id)
+                   VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
                 (placa_val, d.get('marca'), d.get('modelo'),
                  int(d.get('ano') or 0) or None, int(d.get('km') or 0),
-                 d.get('motorizacao'),
+                 d.get('motorizacao'), d.get('cor'), d.get('combustivel'),
                  imgs['imagem'], imgs['imagem2'], imgs['imagem3'],
                  int(d['cliente_id']) if d.get('cliente_id') else None), commit=True)
     return jsonify({'id': vid}), 201
@@ -797,10 +810,10 @@ def atualizar_veiculo(vid):
     # Atualiza campos básicos
     placa_val = d.get('placa', '').strip() or None
     query("""UPDATE veiculos SET placa=%s, marca=%s, modelo=%s, ano=%s, km=%s,
-             motorizacao=%s, cliente_id=%s WHERE id=%s""",
+             motorizacao=%s, cor=%s, combustivel=%s, cliente_id=%s WHERE id=%s""",
           (placa_val, d.get('marca'), d.get('modelo'),
            int(d.get('ano') or 0) or None, int(d.get('km') or 0),
-           d.get('motorizacao'),
+           d.get('motorizacao'), d.get('cor'), d.get('combustivel'),
            int(d['cliente_id']) if d.get('cliente_id') else None, vid), commit=True)
 
     # Atualiza apenas as imagens enviadas
@@ -808,6 +821,78 @@ def atualizar_veiculo(vid):
         if fname:
             query(f"UPDATE veiculos SET {col}=%s WHERE id=%s", (fname, vid), commit=True)
     return jsonify({'ok': True})
+
+@app.route('/api/consulta-placa/<placa>', methods=['GET'])
+def consulta_placa(placa):
+    placa = (placa or '').strip().replace('-', '').upper()
+    if len(placa) != 7 or not placa.isalnum():
+        return jsonify({'message': 'Placa Inválida! Favor usar o formato AAA0X00 ou AAA9999'}), 400
+    
+    token = os.getenv('APIPLACAS')
+    if not token:
+        return jsonify({'message': 'Token APIPLACAS não configurado nas variáveis de ambiente!'}), 400
+    
+    import urllib.request
+    import urllib.error
+    import json
+    import re
+    
+    url = f"https://wdapi2.com.br/consulta/{placa}/{token}"
+    try:
+        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        with urllib.request.urlopen(req, timeout=10) as response:
+            res_data = response.read().decode('utf-8')
+            data = json.loads(res_data)
+            
+            # The API might return 200 but contain a message indicating an error
+            if data.get('mensagemRetorno') and 'sem erros' not in data.get('mensagemRetorno').lower():
+                # check if there's an error message
+                msg = data.get('mensagemRetorno') or 'Sem resultados!'
+                return jsonify({'message': msg}), 400
+            
+            marca = data.get('marca') or data.get('MARCA') or ''
+            modelo = data.get('modelo') or data.get('MODELO') or ''
+            cor = data.get('cor') or ''
+            ano = data.get('ano') or data.get('anoModelo') or ''
+            
+            extra = data.get('extra') or {}
+            combustivel = extra.get('combustivel') or ''
+            
+            motorizacao = ''
+            fipe = data.get('fipe') or {}
+            fipe_dados = fipe.get('dados') or []
+            if fipe_dados:
+                texto_modelo = fipe_dados[0].get('texto_modelo', '')
+                match = re.search(r'\b(1\.[0-9]|2\.[0-9]|3\.[0-9]|4\.[0-9]|v6|v8)\b', texto_modelo, re.IGNORECASE)
+                if match:
+                    motorizacao = match.group(1)
+            
+            if not motorizacao and extra.get('cilindradas'):
+                try:
+                    cils = int(extra.get('cilindradas'))
+                    if cils > 0:
+                        motorizacao = f"{round(cils / 1000, 1)}"
+                except:
+                    pass
+            
+            return jsonify({
+                'placa': placa,
+                'marca': marca,
+                'modelo': modelo,
+                'cor': cor,
+                'ano': ano,
+                'combustivel': combustivel,
+                'motorizacao': motorizacao
+            })
+    except urllib.error.HTTPError as e:
+        try:
+            err_data = e.read().decode('utf-8')
+            err_json = json.loads(err_data)
+            return jsonify({'message': err_json.get('message') or err_json.get('mensagemRetorno') or 'Erro ao consultar placa!'}), e.code
+        except:
+            return jsonify({'message': f'Erro na API Placas: Código {e.code}'}), e.code
+    except Exception as e:
+        return jsonify({'message': f'Erro ao buscar dados da placa: {str(e)}'}), 500
 
 @app.route('/api/veiculos/<int:vid>/imagem/<col>', methods=['DELETE'])
 def deletar_imagem_veiculo(vid, col):
