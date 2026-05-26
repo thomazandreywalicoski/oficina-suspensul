@@ -213,6 +213,7 @@
             justify-content: space-between;
             padding: 0 32px;
             background-color: var(--bg-card);
+            flex-shrink: 0;
         }
 
         .page-title { font-size: 20px; font-weight: 600; }
@@ -1143,13 +1144,6 @@
         }
         @media (max-width: 768px) { .dividas-cards-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 480px) { .dividas-cards-grid { grid-template-columns: 1fr; } }
-
-        @media (max-width: 479px) {
-            .hide-sm { display: none !important; }
-            .page-title { font-size: 16px; }
-            #page-mandar-orcamento .search-input-wrap { width: auto; flex: 1; min-width: 0; }
-            #page-mandar-orcamento .search-input-wrap input { font-size: 13px; }
-        }
         .divida-person-card {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -1376,6 +1370,47 @@
             }
         }
 
+        @media (max-width: 479px) {
+            header .user-info span {
+                display: none !important;
+            }
+            .page-title {
+                font-size: 16px !important;
+            }
+            .page-header {
+                flex-wrap: nowrap !important;
+                gap: 10px !important;
+            }
+            .search-filter-bar {
+                flex: 1 !important;
+                flex-wrap: nowrap !important;
+                min-width: 0 !important;
+            }
+            div[data-left-group] {
+                flex: 1 !important;
+                min-width: 0 !important;
+            }
+            .search-input-wrap {
+                width: 100% !important;
+                max-width: none !important;
+                flex: 1 !important;
+                min-width: 0 !important;
+            }
+            .search-input-wrap input {
+                width: 100% !important;
+            }
+            .btn-text-extra {
+                display: none !important;
+            }
+            [data-toggle-inativos] {
+                display: none !important;
+            }
+            .calendar-period-trigger {
+                min-width: 0 !important;
+                flex: 1 !important;
+            }
+        }
+
         @media print {
             body * { visibility: hidden; background: white !important; color: black !important; }
             #os-print-template, #os-print-template * { visibility: visible; }
@@ -1431,7 +1466,7 @@
         <header>
             <div class="page-title" id="header-title">Agendamentos</div>
             <div class="user-info">
-                <span class="hide-sm">Admin Oficina Suspensul</span>
+                <span>Admin Oficina Suspensul</span>
                 <button type="button" class="profile-button" onclick="toggleProfileDropdown()" aria-label="Abrir perfil">
                     <i data-lucide="user" style="width: 18px"></i>
                 </button>
@@ -1452,7 +1487,7 @@
                     </button>
                 </div>
                 <button class="btn btn-primary" onclick="openModal('modal-novo-agendamento')">
-                    <i data-lucide="plus"></i> Novo Agendamento
+                    <i data-lucide="plus"></i> <span>Novo</span><span class="btn-text-extra"> Agendamento</span>
                 </button>
             </div>
             
@@ -1470,7 +1505,7 @@
                     <i data-lucide="search" class="input-icon-right"></i>
                 </div>
                 <button class="btn btn-primary" onclick="openModal('modal-cliente')">
-                    <i data-lucide="plus"></i> Novo Cliente
+                    <i data-lucide="plus"></i> <span>Novo</span><span class="btn-text-extra"> Cliente</span>
                 </button>
             </div>
             <div class="table-container">
@@ -1515,7 +1550,7 @@
                     <i data-lucide="search" class="input-icon-right"></i>
                 </div>
                 <button class="btn btn-primary" onclick="openModal('modal-fornecedor')">
-                    <i data-lucide="plus"></i> Novo Fornecedor
+                    <i data-lucide="plus"></i> <span>Novo</span><span class="btn-text-extra"> Fornecedor</span>
                 </button>
             </div>
             <div class="table-container">
@@ -1551,7 +1586,7 @@
                     <i data-lucide="search" class="input-icon-right"></i>
                 </div>
                 <button class="btn btn-primary" onclick="openModal('modal-veiculo')">
-                    <i data-lucide="plus"></i> Novo Veículo
+                    <i data-lucide="plus"></i> <span>Novo</span><span class="btn-text-extra"> Veículo</span>
                 </button>
             </div>
             <div class="table-container">
@@ -1637,7 +1672,7 @@
                     <i data-lucide="search" class="input-icon-right"></i>
                 </div>
                 <button class="btn btn-primary" onclick="window.abrirModalNovaCotacao()">
-                    <i data-lucide="plus"></i> Nova Cotação
+                    <i data-lucide="plus"></i> <span>Nova</span><span class="btn-text-extra"> Cotação</span>
                 </button>
             </div>
             <div class="table-container">
@@ -1666,7 +1701,7 @@
                     </div>
                 </div>
                 <button class="btn btn-primary" onclick="openModal('modal-novo-orcamento')">
-                    <i data-lucide="plus"></i> Novo<span class="hide-sm"> Orçamento</span>
+                    <i data-lucide="plus"></i> <span>Novo</span><span class="btn-text-extra"> Orçamento</span>
                 </button>
             </div>
             <div class="table-container">
@@ -1757,7 +1792,7 @@
             <div class="page-header">
                 <h3 style="margin:0;color:var(--text-main);">Dívidas</h3>
                 <button class="btn btn-primary" onclick="abrirModalNovaDivida()">
-                    <i data-lucide="plus"></i> Nova Dívida
+                    <i data-lucide="plus"></i> <span>Nova</span><span class="btn-text-extra"> Dívida</span>
                 </button>
             </div>
             <div class="dividas-cards-grid" id="dividas-cards-grid">
@@ -1801,7 +1836,7 @@
                     <i data-lucide="search" class="input-icon-right"></i>
                 </div>
                 <button type="button" class="btn btn-primary" onclick="openModal('modal-estoque')">
-                    <i data-lucide="package-plus"></i> Entrada / Saída
+                    <i data-lucide="package-plus"></i> <span>Entrada</span><span class="btn-text-extra"> / Saída</span>
                 </button>
             </div>
             <div class="table-container">
@@ -2773,6 +2808,27 @@
         // Inicializa Lucide Icons
         lucide.createIcons();
 
+        // --- Dynamic Search Placeholders on Mobile ---
+        function updateSearchPlaceholders() {
+            const inputs = document.querySelectorAll('.main-content input[type="text"][placeholder]');
+            const isMobile = window.innerWidth <= 479;
+            inputs.forEach(input => {
+                if (!input.hasAttribute('data-original-placeholder')) {
+                    input.setAttribute('data-original-placeholder', input.placeholder || '');
+                }
+                if (isMobile) {
+                    input.placeholder = 'Buscar';
+                } else {
+                    input.placeholder = input.getAttribute('data-original-placeholder');
+                }
+            });
+        }
+        window.addEventListener('resize', updateSearchPlaceholders);
+        document.addEventListener('DOMContentLoaded', updateSearchPlaceholders);
+        updateSearchPlaceholders();
+        setTimeout(updateSearchPlaceholders, 500);
+        setTimeout(updateSearchPlaceholders, 1500);
+
         // --- Sidebar Toggle ---
         function toggleSidebar() {
             const isClosed = document.body.classList.contains('sidebar-closed');
@@ -3372,13 +3428,6 @@
         }
 
         // --- Navegação entre Páginas ---
-        function _updateSmallScreenPlaceholders() {
-            const el = document.getElementById('proposta-search');
-            if (el) el.placeholder = window.innerWidth <= 479 ? 'Buscar' : 'Buscar Orçamento (Cliente, Placa)...';
-        }
-        window.addEventListener('resize', _updateSmallScreenPlaceholders);
-        _updateSmallScreenPlaceholders();
-
         function showPage(pageId) {
             // Esconde todas as páginas
             const contents = document.querySelectorAll('.main-content');
@@ -3409,6 +3458,11 @@
                 'configuracoes': 'Configurações do Sistema'
             };
             document.getElementById('header-title').innerText = titles[pageId] || pageId;
+
+            // Fechar sidebar automaticamente em telas <= 479px
+            if (window.innerWidth <= 479) {
+                document.body.classList.add('sidebar-closed');
+            }
         }
 
         // --- Controle de Modais ---
