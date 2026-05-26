@@ -1451,10 +1451,27 @@
             const valorDesconto = precoSemDesconto * descontoFrac;
             const precoComDesconto = precoSemDesconto - valorDesconto;
             document.getElementById('peca-proposta-venda-sem-desconto').value = 'R$ ' + precoSemDesconto.toFixed(2).replace('.', ',');
-            document.getElementById('peca-proposta-venda').value = 'R$ ' + precoComDesconto.toFixed(2).replace('.', ',');
+            document.getElementById('peca-proposta-venda').value = precoComDesconto.toFixed(2);
         } else {
             document.getElementById('peca-proposta-venda-sem-desconto').value = '';
             document.getElementById('peca-proposta-venda').value = '';
+        }
+    };
+
+    window.calcularLucroPecaOrcamentoProposta = function() {
+        const custo = parseFloat(document.getElementById('peca-proposta-custo').value) || 0;
+        const vendaFinal = parseFloat(document.getElementById('peca-proposta-venda').value) || 0;
+        const desconto = parseFloat(document.getElementById('peca-proposta-desconto').value) || 0;
+        const descontoFrac = desconto / 100;
+        if (custo > 0 && vendaFinal >= 0) {
+            const lucro = ((vendaFinal / custo) - 1) * 100;
+            document.getElementById('peca-proposta-lucro').value = lucro.toFixed(2);
+            if (descontoFrac < 1) {
+                const precoSemDesconto = vendaFinal / (1 - descontoFrac);
+                document.getElementById('peca-proposta-venda-sem-desconto').value = 'R$ ' + precoSemDesconto.toFixed(2).replace('.', ',');
+            } else {
+                document.getElementById('peca-proposta-venda-sem-desconto').value = '';
+            }
         }
     };
 
