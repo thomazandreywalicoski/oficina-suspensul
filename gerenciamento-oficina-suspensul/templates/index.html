@@ -1143,6 +1143,13 @@
         }
         @media (max-width: 768px) { .dividas-cards-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 480px) { .dividas-cards-grid { grid-template-columns: 1fr; } }
+
+        @media (max-width: 479px) {
+            .hide-sm { display: none !important; }
+            .page-title { font-size: 16px; }
+            #page-mandar-orcamento .search-input-wrap { width: auto; flex: 1; min-width: 0; }
+            #page-mandar-orcamento .search-input-wrap input { font-size: 13px; }
+        }
         .divida-person-card {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -1424,7 +1431,7 @@
         <header>
             <div class="page-title" id="header-title">Agendamentos</div>
             <div class="user-info">
-                <span>Admin Oficina Suspensul</span>
+                <span class="hide-sm">Admin Oficina Suspensul</span>
                 <button type="button" class="profile-button" onclick="toggleProfileDropdown()" aria-label="Abrir perfil">
                     <i data-lucide="user" style="width: 18px"></i>
                 </button>
@@ -1659,7 +1666,7 @@
                     </div>
                 </div>
                 <button class="btn btn-primary" onclick="openModal('modal-novo-orcamento')">
-                    <i data-lucide="plus"></i> Novo Orçamento
+                    <i data-lucide="plus"></i> Novo<span class="hide-sm"> Orçamento</span>
                 </button>
             </div>
             <div class="table-container">
@@ -3365,6 +3372,13 @@
         }
 
         // --- Navegação entre Páginas ---
+        function _updateSmallScreenPlaceholders() {
+            const el = document.getElementById('proposta-search');
+            if (el) el.placeholder = window.innerWidth <= 479 ? 'Buscar' : 'Buscar Orçamento (Cliente, Placa)...';
+        }
+        window.addEventListener('resize', _updateSmallScreenPlaceholders);
+        _updateSmallScreenPlaceholders();
+
         function showPage(pageId) {
             // Esconde todas as páginas
             const contents = document.querySelectorAll('.main-content');
