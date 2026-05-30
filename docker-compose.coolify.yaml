@@ -20,8 +20,6 @@ services:
     environment:
       PMA_HOST: mysql
       PMA_PORT: 3306
-      PMA_USER: root
-      PMA_PASSWORD: ${DB_ROOT_PASSWORD}
       UPLOAD_LIMIT: 100M
     depends_on:
       - mysql
