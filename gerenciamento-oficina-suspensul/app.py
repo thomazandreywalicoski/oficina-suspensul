@@ -1154,6 +1154,20 @@ def aprovar_proposta(pid):
     query("UPDATE orcamentos_propostas SET status='Aprovado', os_id=%s WHERE id=%s", (oid, pid), commit=True)
     return jsonify({'ok': True, 'os_id': oid, 'numero': numero})
 
+@app.route('/api/propostas/<int:pid>/desaprovar', methods=['POST'])
+def desaprovar_proposta(pid):
+    row = query("SELECT status, os_id FROM orcamentos_propostas WHERE id = %s", (pid,), fetch=True, one=True)
+    if not row:
+        return jsonify({'erro': 'Orçamento não encontrado'}), 404
+    if row['status'] != 'Aprovado':
+        return jsonify({'erro': 'Orçamento não está aprovado'}), 400
+    os_id = row['os_id']
+    if os_id:
+        # Delete associated order of service (comprovante). This deletes its parts due to CASCADE.
+        query("DELETE FROM ordens_servico WHERE id = %s", (os_id,), commit=True)
+    query("UPDATE orcamentos_propostas SET status='Pendente', os_id=NULL WHERE id = %s", (pid,), commit=True)
+    return jsonify({'ok': True})
+
 @app.route('/proposta/<int:pid>/imprimir')
 @login_required
 def imprimir_proposta(pid):

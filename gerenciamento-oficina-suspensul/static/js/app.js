@@ -1792,6 +1792,7 @@
                     <button class="btn-icon btn-action-green" title="Compartilhar" onclick="window.compartilharProposta(${p.id})"><i data-lucide="share-2"></i></button>
                     ${!isAprovado ? `<button class="btn-icon btn-action-purple" title="Editar" onclick="window.editarProposta(${p.id})"><i data-lucide="pencil"></i></button>` : ''}
                     ${!isAprovado ? `<button class="btn-icon btn-action-green" title="Aprovar" onclick="window.aprovarProposta(${p.id})"><i data-lucide="check-circle"></i></button>` : ''}
+                    ${isAprovado ? `<button class="btn-icon btn-action-red" title="Desaprovar" onclick="window.desaprovarProposta(${p.id})"><i data-lucide="x-circle"></i></button>` : ''}
                     ${!isAprovado ? `<button class="btn-icon btn-action-red" title="Excluir" onclick="window.excluirProposta(${p.id})"><i data-lucide="trash-2"></i></button>` : ''}
                 </td>
             </tr>`;
@@ -1944,6 +1945,19 @@
             const r = await api('POST', `/api/propostas/${id}/aprovar`);
             showToast('Orçamento aprovado! Comprovante Nº ' + String(r.numero).padStart(6, '0') + ' criado');
             await carregarPropostas();
+        } catch (e) { window.showAlert(e.message, 'Erro'); }
+        });
+    };
+
+    window.desaprovarProposta = async function(id) {
+        window.showConfirm('Deseja realmente desaprovar este orçamento? O comprovante associado será apagado.', async () => {
+        try {
+            await api('POST', `/api/propostas/${id}/desaprovar`);
+            showToast('Orçamento desaprovado. Comprovante excluído.');
+            await carregarPropostas();
+            if (window.carregarOS) {
+                await window.carregarOS();
+            }
         } catch (e) { window.showAlert(e.message, 'Erro'); }
         });
     };
