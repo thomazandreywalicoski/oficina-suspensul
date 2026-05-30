@@ -728,10 +728,23 @@
             justify-content: center;
             align-items: center;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
             backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+            pointer-events: none;
+            visibility: hidden;
         }
-        .modal-overlay.active { display: flex; opacity: 1; }
+        .modal-overlay.active { 
+            display: flex; 
+            opacity: 1; 
+            pointer-events: auto;
+            visibility: visible;
+        }
+        
+        /* Previne clique fantasma no Safari Mobile */
+        .modal-overlay * {
+            pointer-events: auto;
+        }
 
         .modal {
             background-color: var(--bg-card);
@@ -742,7 +755,9 @@
             overflow-y: auto;
             position: relative;
             transform: scale(0.9);
-            transition: transform 0.3s ease;
+            transition: transform 0.2s ease;
+            pointer-events: auto;
+            -webkit-overflow-scrolling: touch;
         }
         .modal-overlay.active .modal { transform: scale(1); }
 
