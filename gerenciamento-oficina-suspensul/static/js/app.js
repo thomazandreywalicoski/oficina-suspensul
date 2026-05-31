@@ -968,6 +968,9 @@
                 <td>${escapeHtml((o.marca||'') + ' ' + (o.modelo||''))}</td>
                 <td>${escapeHtml(o.placa || 'Não informado')}</td>
                 <td>${fmtDataBR(o.data_emissao)}</td>
+                <td>${fmtBRL(o.gastos_pecas || 0)}</td>
+                <td>${fmtBRL((Number(o.cobrado_pecas) || 0) + (Number(o.valor_mao_obra) || 0))}</td>
+                <td>${fmtBRL(((Number(o.cobrado_pecas) || 0) + (Number(o.valor_mao_obra) || 0)) - (Number(o.gastos_pecas) || 0))}</td>
                 <td><span class="badge ${o.status === 'Paga' ? 'badge-paga' : 'badge-pendente'}">${o.status}</span></td>
                 <td class="actions-cell">
                     <button class="btn-icon btn-action-blue" title="Visualizar" onclick="window.visualizarOS('${o.slug || o.id}')"><i data-lucide="eye"></i></button>
@@ -978,7 +981,7 @@
                     <button class="btn-icon ${o.status === 'Paga' ? 'btn-action-yellow' : 'btn-action-green'}" title="${o.status === 'Paga' ? 'Marcar Pendente' : 'Marcar Paga'}" onclick="alternarStatusOS(${o.id}, '${o.status}')"><i data-lucide="${o.status === 'Paga' ? 'rotate-ccw' : 'check'}"></i></button>
                     ${o.status === 'Paga' ? '' : `<button class="btn-icon btn-action-red" title="Excluir" onclick="excluirOS(${o.id})"><i data-lucide="trash-2"></i></button>`}
                 </td>
-            </tr>`).join('') : `<tr><td colspan="7" style="text-align:center;color:#777">Nenhum comprovante.</td></tr>`;
+            </tr>`).join('') : `<tr><td colspan="10" style="text-align:center;color:#777">Nenhum comprovante.</td></tr>`;
             renderPagination('os', current, total, renderOSTabela);
             refreshIcons();
         }
@@ -1785,6 +1788,9 @@
                 <td>${escapeHtml((p.marca || '') + ' ' + (p.modelo || ''))}</td>
                 <td>${escapeHtml(p.placa || 'Não informado')}</td>
                 <td>${fmtDataBR(p.criado_em)}</td>
+                <td>${fmtBRL(p.gastos_pecas || 0)}</td>
+                <td>${fmtBRL((Number(p.cobrado_pecas) || 0) + (Number(p.valor_mao_obra) || 0))}</td>
+                <td>${fmtBRL(((Number(p.cobrado_pecas) || 0) + (Number(p.valor_mao_obra) || 0)) - (Number(p.gastos_pecas) || 0))}</td>
                 <td><span class="badge ${statusClass}">${p.status}</span></td>
                 <td class="actions-cell">
                     <button class="btn-icon btn-action-blue" title="Visualizar" onclick="window.visualizarProposta(${p.id})"><i data-lucide="eye"></i></button>
@@ -1796,7 +1802,7 @@
                     ${!isAprovado ? `<button class="btn-icon btn-action-red" title="Excluir" onclick="window.excluirProposta(${p.id})"><i data-lucide="trash-2"></i></button>` : ''}
                 </td>
             </tr>`;
-        }).join('') : `<tr><td colspan="7" style="text-align:center;color:#777">Nenhum orçamento cadastrado.</td></tr>`;
+        }).join('') : `<tr><td colspan="10" style="text-align:center;color:#777">Nenhum orçamento cadastrado.</td></tr>`;
         renderPagination('propostas', current, total, renderPropostasTabela);
         refreshIcons();
     }

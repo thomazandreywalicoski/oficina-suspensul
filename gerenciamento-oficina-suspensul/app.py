@@ -991,7 +991,9 @@ def listar_os():
         where.append("(c.nome_completo LIKE %s OR c.cpf LIKE %s OR v.placa LIKE %s)")
         params.extend([f'%{search}%', f'%{search}%', f'%{search}%'])
     where_clause = (" WHERE " + " AND ".join(where)) if where else ""
-    rows = query(f"""SELECT os.*, c.nome_completo, c.cpf, v.placa, v.marca, v.modelo
+    rows = query(f"""SELECT os.*, c.nome_completo, c.cpf, v.placa, v.marca, v.modelo,
+                     (SELECT COALESCE(SUM(valor_custo * quantidade), 0) FROM ordens_servico_pecas WHERE ordem_id = os.id) as gastos_pecas,
+                     (SELECT COALESCE(SUM(valor_venda * quantidade), 0) FROM ordens_servico_pecas WHERE ordem_id = os.id) as cobrado_pecas
                      FROM ordens_servico os
                      JOIN clientes c ON os.cliente_id = c.id
                      JOIN veiculos v ON os.veiculo_id = v.id
@@ -1064,7 +1066,9 @@ def listar_propostas():
         where.append("(c.nome_completo LIKE %s OR v.placa LIKE %s)")
         params.extend([f'%{search}%', f'%{search}%'])
     where_clause = (" WHERE " + " AND ".join(where)) if where else ""
-    rows = query(f"""SELECT op.*, c.nome_completo, v.placa, v.marca, v.modelo
+    rows = query(f"""SELECT op.*, c.nome_completo, v.placa, v.marca, v.modelo,
+                    (SELECT COALESCE(SUM(valor_custo * quantidade), 0) FROM orcamentos_propostas_pecas WHERE proposta_id = op.id) as gastos_pecas,
+                    (SELECT COALESCE(SUM(valor_venda * quantidade), 0) FROM orcamentos_propostas_pecas WHERE proposta_id = op.id) as cobrado_pecas
                     FROM orcamentos_propostas op
                     JOIN clientes c ON op.cliente_id = c.id
                     JOIN veiculos v ON op.veiculo_id = v.id
