@@ -102,6 +102,12 @@
                 background-attachment: fixed;
             }
         }
+        
+        @media (max-width: 768px) {
+            .hero-gradient {
+                background-position: top center;
+            }
+        }
 
         .hero-overlay {
             position: absolute;
@@ -182,12 +188,12 @@
         /* Estilos Responsivos de Texto e Elementos para <= 768px */
         @media (max-width: 768px) {
             h1, h2, h3, .text-title-mobile {
-                font-size: 14px !important;
+                font-size: 18px !important;
                 text-transform: uppercase !important;
                 font-weight: 900 !important;
             }
             p, span:not(.no-mobile-resize), a:not(.no-mobile-resize), div:not(.no-mobile-resize) {
-                font-size: 12px !important;
+                font-size: 14px !important;
             }
             .no-mobile-resize-text {
                 font-size: inherit !important;
@@ -198,7 +204,7 @@
         .stats-carousel-track {
             display: flex;
             width: max-content;
-            animation: stats-scroll 25s linear infinite;
+            animation: stats-scroll 15s linear infinite;
         }
 
         @keyframes stats-scroll {
@@ -216,7 +222,16 @@
     <!-- Header / Navbar -->
     <nav class="sticky top-0 z-50 bg-black/90 backdrop-blur-md py-4 px-6 border-b border-white/5">
         <div class="max-w-7xl mx-auto flex justify-between items-center relative">
-            <div class="flex items-center gap-3">
+            
+            <!-- Botão Menu Hambúrguer (Mobile) - Fica na Esquerda -->
+            <div class="flex md:hidden items-center gap-3">
+                <button id="btn-hamburger" class="text-white focus:outline-none p-2" aria-label="Abrir Menu">
+                    <i data-lucide="menu" class="w-7 h-7"></i>
+                </button>
+            </div>
+
+            <!-- Logo - Fica na Direita no mobile, Esquerda no desktop -->
+            <div class="flex items-center gap-3 ml-auto md:ml-0">
                 <img src="logo-oficina-suspensul.png" alt="Oficina Suspensul" class="logo-img">
             </div>
             
@@ -228,20 +243,16 @@
                 <a href="#contato" class="hover:text-yellow-400 transition-colors">Contato</a>
             </div>
             
-            <div class="flex items-center gap-4">
+            <!-- Oculta botão do whatsapp na navbar para mobile -->
+            <div class="hidden md:flex items-center gap-4">
                 <a href="https://wa.me/5547999999999" target="_blank" class="yellow-bg text-black px-4 py-2 md:px-6 md:py-2 rounded-lg font-black text-xs md:text-sm btn-hover uppercase flex items-center gap-2 no-mobile-resize">
-                    <i class="fa-brands fa-whatsapp text-lg"></i> <span class="hidden sm:inline">WhatsApp</span>
+                    <i class="fa-brands fa-whatsapp text-lg"></i> <span>WhatsApp</span>
                 </a>
-                
-                <!-- Botão Menu Hambúrguer (Mobile) -->
-                <button id="btn-hamburger" class="md:hidden text-white focus:outline-none p-2" aria-label="Abrir Menu">
-                    <i data-lucide="menu" class="w-7 h-7"></i>
-                </button>
             </div>
         </div>
 
         <!-- Menu Lateral Gaveta (Drawer) Mobile -->
-        <div id="mobile-drawer" class="fixed inset-0 z-50 bg-black/95 transform translate-x-full transition-transform duration-300 ease-in-out md:hidden flex flex-col justify-between p-8">
+        <div id="mobile-drawer" class="fixed inset-0 z-50 bg-black/95 transform -translate-x-full transition-transform duration-300 ease-in-out md:hidden flex flex-col justify-between p-8">
             <div>
                 <div class="flex justify-between items-center mb-12">
                     <img src="logo-oficina-suspensul.png" alt="Oficina Suspensul" class="logo-img">
@@ -269,18 +280,18 @@
         <div class="hero-overlay"></div>
         <div class="max-w-4xl relative z-10">
             <h1 class="text-3xl md:text-7xl font-black uppercase mb-6 leading-tight tracking-wide text-title-mobile">
-                O Cuidado que seu <span class="yellow-text no-mobile-resize-text">veículo merece.</span>
+                O Cuidado que seu <br> <span class="yellow-text no-mobile-resize-text">veículo merece.</span>
             </h1>
             <p class="text-xs md:text-xl text-gray-100 mb-10 max-w-2xl mx-auto drop-shadow-md">
                 Especialistas em performance, segurança e manutenção automotiva de alto padrão. Traga seu carro para a Suspensul.
             </p>
             <!-- CTA Buttons - Sempre lado a lado -->
-            <div class="flex flex-row gap-3 justify-center items-center w-full max-w-md mx-auto sm:max-w-none">
-                <a href="#servicos" class="flex-1 sm:flex-initial text-center border-2 yellow-border yellow-text py-3 px-3 md:px-8 md:py-4 rounded-lg font-bold text-[10px] md:text-lg btn-hover bg-black/40 backdrop-blur-sm uppercase no-mobile-resize">
+            <div class="flex flex-row gap-3 justify-center items-stretch w-full max-w-md mx-auto sm:max-w-none flex-nowrap whitespace-nowrap">
+                <a href="#servicos" class="flex-1 flex items-center justify-center border-2 yellow-border yellow-text py-3 px-2 md:px-8 md:py-4 rounded-lg font-bold text-[10px] md:text-lg btn-hover bg-black/40 backdrop-blur-sm uppercase no-mobile-resize">
                     SERVIÇOS
                 </a>
-                <a href="https://wa.me/5547999999999" class="flex-1 sm:flex-initial text-center yellow-bg text-black py-3 px-3 md:px-8 md:py-4 rounded-lg font-bold text-[10px] md:text-lg btn-hover flex items-center justify-center gap-1.5 md:gap-2 uppercase tracking-tighter no-mobile-resize">
-                    <i class="fa-brands fa-whatsapp text-sm md:text-2xl"></i> AGENDAR AGORA
+                <a href="https://wa.me/5547999999999" class="flex-1 flex items-center justify-center yellow-bg text-black py-3 px-2 md:px-8 md:py-4 rounded-lg font-bold text-[10px] md:text-lg btn-hover gap-1.5 md:gap-2 uppercase tracking-tighter no-mobile-resize">
+                    <i class="fa-brands fa-whatsapp text-sm md:text-2xl"></i> AGENDAR
                 </a>
             </div>
         </div>
@@ -482,11 +493,11 @@
         const btnCloseDrawer = document.getElementById('btn-close-drawer');
 
         function openDrawer() {
-            drawer.classList.remove('translate-x-full');
+            drawer.classList.remove('-translate-x-full');
         }
 
         function closeDrawer() {
-            drawer.classList.add('translate-x-full');
+            drawer.classList.add('-translate-x-full');
         }
 
         if (btnHamburger) btnHamburger.addEventListener('click', openDrawer);
