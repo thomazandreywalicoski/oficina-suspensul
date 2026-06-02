@@ -380,11 +380,13 @@ def run_migrations():
         # Backfill slugs para registros existentes sem slug
         import re as _re, unicodedata as _ud
         def _make_slug(marca, modelo, ano, placa, numero):
+            import secrets
+            token = secrets.token_hex(8)
             partes = [marca or '', modelo or '', str(ano or ''), placa or '']
             base = '-'.join(p for p in partes if p)
             base = _ud.normalize('NFKD', base).encode('ascii', 'ignore').decode('ascii').lower()
             base = _re.sub(r'[^a-z0-9]+', '-', base).strip('-') or 'veiculo'
-            return f"{base}-{numero:06d}"
+            return f"{base}-{numero:06d}-{token}"
         # Backfill ordens_servico
         os_rows = query("SELECT os.id, os.numero, v.marca, v.modelo, v.ano, v.placa FROM ordens_servico os JOIN veiculos v ON os.veiculo_id=v.id WHERE os.slug IS NULL", fetch=True)
         if os_rows:
@@ -494,16 +496,17 @@ def query(sql, params=None, fetch=False, one=False, commit=False):
         raise e
 
 def gerar_slug(veiculo_id, numero):
-    """Gera slug SEO-friendly: marca-modelo-ano-placa-00000X (prefixo fica na URL)"""
-    import re, unicodedata
+    """Gera slug SEO-friendly: marca-modelo-ano-placa-00000X-token"""
+    import re, unicodedata, secrets
+    token = secrets.token_hex(8)
     veiculo = query("SELECT marca, modelo, ano, placa FROM veiculos WHERE id=%s", (veiculo_id,), fetch=True, one=True)
     if not veiculo:
-        return f"{numero:06d}"
+        return f"{numero:06d}-{token}"
     partes = [veiculo.get('marca') or '', veiculo.get('modelo') or '', str(veiculo.get('ano') or ''), veiculo.get('placa') or '']
     base = '-'.join(p for p in partes if p)
     base = unicodedata.normalize('NFKD', base).encode('ascii', 'ignore').decode('ascii').lower()
     base = re.sub(r'[^a-z0-9]+', '-', base).strip('-') or 'veiculo'
-    return f"{base}-{numero:06d}"
+    return f"{base}-{numero:06d}-{token}"
 
 def serialize(obj):
     if isinstance(obj, (datetime, date)):
