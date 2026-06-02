@@ -1036,7 +1036,7 @@
         }
         const fone = (cliente && cliente.whatsapp || '').replace(/\D/g, '');
         const slug = o.slug || id;
-        const baseUrl = window.PUBLIC_BASE_URL || window.location.origin;
+        const baseUrl = window.location.origin;
         const url = `${baseUrl}/comprovante-pagamento/${slug}?preview=1`;
         const msg = encodeURIComponent(`Olá ${o.nome_completo}, segue seu Comprovante Nº ${String(o.numero).padStart(6,'0')}: ${url}`);
         const wpp = fone ? `https://wa.me/55${fone}?text=${msg}` : `https://wa.me/?text=${msg}`;
@@ -1409,7 +1409,7 @@
             showToast('Permita pop-ups para abrir todas as abas', true);
         }
         try {
-            const baseUrl = window.PUBLIC_BASE_URL || window.location.origin;
+            const baseUrl = window.location.origin;
             const anexoUrl = baseUrl + '/solicitacao-orcamento/' + c.slug;
             const mensagemBase = c.mensagem || 'Opa, bom dia!\n\nGostaría de solicitar um orçamento para as peças/produtos do veículo abaixo';
             const msg = `${mensagemBase}\n\n${anexoUrl}`;
@@ -1890,7 +1890,7 @@
         }
         const fone = (cliente && cliente.whatsapp || '').replace(/\D/g, '');
         const slug = p.slug || id;
-        const baseUrl = window.PUBLIC_BASE_URL || window.location.origin;
+        const baseUrl = window.location.origin;
         const url = `${baseUrl}/orcamento/${slug}?preview=1`;
         const msg = encodeURIComponent(`Olá ${p.nome_completo}, segue seu Orçamento Nº ${String(p.numero).padStart(6,'0')}: ${url}`);
         const wpp = fone ? `https://wa.me/55${fone}?text=${msg}` : `https://wa.me/?text=${msg}`;
@@ -2618,7 +2618,7 @@
             state.financeiroFiltroAno = new Date().getFullYear();
             state.financeiroFiltroMes = 0;
             const label = document.getElementById('financial-period-label');
-            if (label) label.innerText = 'Todo o período';
+            if (label) label.innerText = 'Selecionar data';
             atualizarBotoesFiltroFinanceiro();
             carregarFinanceiro();
         };

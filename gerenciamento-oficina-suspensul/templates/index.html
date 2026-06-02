@@ -3140,7 +3140,7 @@
         let financeiroPickerMes = new Date().getMonth();
         window.financeiroAnoSelecionado = financeiroAnoSelecionado;
         window.financeiroMesSelecionado = 0;
-        (function(){ const l = document.getElementById('financial-period-label'); if(l) l.innerText = 'Todo o período'; })();
+        (function(){ const l = document.getElementById('financial-period-label'); if(l) l.innerText = 'Selecionar data'; })();
 
         function openFinancialPeriodModal() {
             financeiroPickerAno = financeiroAnoSelecionado;
@@ -3190,7 +3190,7 @@
 
         function aplicarTodoPeriodo() {
             const label = document.getElementById('financial-period-label');
-            if (label) label.innerText = 'Todo o período';
+            if (label) label.innerText = 'Selecionar data';
         }
 
         let despesasAnoSelecionado = new Date().getFullYear();
