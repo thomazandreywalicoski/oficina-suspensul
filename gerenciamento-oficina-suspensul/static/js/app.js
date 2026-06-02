@@ -120,7 +120,7 @@
         if (!el) {
             el = document.createElement('div');
             el.id = 'toast-msg';
-            el.style.cssText = 'position:fixed;bottom:30px;right:30px;padding:14px 20px;background:#ffe54c;color:#000;border-radius:8px;font-weight:500;z-index:9999;transition:opacity 0.3s;box-shadow:0 4px 12px rgba(0,0,0,0.4);';
+            el.style.cssText = 'position:fixed;bottom:30px;right:30px;padding:14px 20px;background:#ffe54c;color:#000;border-radius:8px;font-weight:500;z-index:9999;transition:opacity 0.3s;box-shadow:0 4px 12px rgba(0,0,0,0.4);pointer-events:none;';
             document.body.appendChild(el);
         }
         el.style.background = isError ? '#e74c3c' : '#ffe54c';
