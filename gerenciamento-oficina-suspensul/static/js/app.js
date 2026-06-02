@@ -165,7 +165,7 @@
         despesasFiltroMes: new Date().getMonth() + 1,
         dividas: [],
         financeiroFiltroAno: new Date().getFullYear(),
-        financeiroFiltroMes: new Date().getMonth() + 1,
+        financeiroFiltroMes: 0,
         osFiltroStatus: 'Todos',
         osFiltroBusca: '',
         mostrarInativosClientes: true,

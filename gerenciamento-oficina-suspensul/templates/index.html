@@ -1771,12 +1771,12 @@
         <div id="page-financeiro" class="main-content">
             <div class="page-header">
                 <div class="search-filter-bar">
+                    <button class="btn financial-all-period-btn" onclick="aplicarTodoPeriodo()">
+                        Todo o período
+                    </button>
                     <button class="btn calendar-period-trigger" onclick="openFinancialPeriodModal()">
                         <span id="financial-period-label">Mês - Ano</span>
                         <i data-lucide="chevron-down"></i>
-                    </button>
-                    <button class="btn financial-all-period-btn" onclick="aplicarTodoPeriodo()">
-                        Todo o período
                     </button>
                 </div>
                 <button type="button" class="btn btn-primary" id="btn-caixa" onclick="openModal('modal-caixa')">
@@ -3127,12 +3127,12 @@
         }
 
         let financeiroAnoSelecionado = new Date().getFullYear();
-        let financeiroMesSelecionado = new Date().getMonth();
+        let financeiroMesSelecionado = 0;
         let financeiroPickerAno = new Date().getFullYear();
         let financeiroPickerMes = new Date().getMonth();
         window.financeiroAnoSelecionado = financeiroAnoSelecionado;
-        window.financeiroMesSelecionado = financeiroMesSelecionado;
-        (function(){ const l = document.getElementById('financial-period-label'); if(l) l.innerText = `${mesesCalendario[financeiroMesSelecionado]} - ${financeiroAnoSelecionado}`; })();
+        window.financeiroMesSelecionado = 0;
+        (function(){ const l = document.getElementById('financial-period-label'); if(l) l.innerText = 'Todo o período'; })();
 
         function openFinancialPeriodModal() {
             financeiroPickerAno = financeiroAnoSelecionado;
