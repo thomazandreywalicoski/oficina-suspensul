@@ -1577,7 +1577,7 @@ def relatorio_financeiro():
                                (ano, mes), fetch=True, one=True)['total']
 
     if mes == 0:
-        a_receber_pecas = query("""
+        a_receber_os_pecas = query("""
             SELECT COALESCE(SUM(p.valor_venda * p.quantidade), 0) AS total
             FROM ordens_servico os
             JOIN ordens_servico_pecas p ON p.ordem_id = os.id
@@ -1585,14 +1585,29 @@ def relatorio_financeiro():
               AND YEAR(os.data_emissao) = %s
         """, (ano,), fetch=True, one=True)['total']
         
-        a_receber_mao_obra = query("""
+        a_receber_os_mao_obra = query("""
             SELECT COALESCE(SUM(valor_mao_obra), 0) AS total
             FROM ordens_servico
             WHERE status = 'Pendente' AND ativo = 1
               AND YEAR(data_emissao) = %s
         """, (ano,), fetch=True, one=True)['total']
+
+        a_receber_prop_pecas = query("""
+            SELECT COALESCE(SUM(p.valor_venda * p.quantidade), 0) AS total
+            FROM orcamentos_propostas op
+            JOIN orcamentos_propostas_pecas p ON p.proposta_id = op.id
+            WHERE op.status = 'Em andamento'
+              AND YEAR(op.criado_em) = %s
+        """, (ano,), fetch=True, one=True)['total']
+        
+        a_receber_prop_mao_obra = query("""
+            SELECT COALESCE(SUM(valor_mao_obra), 0) AS total
+            FROM orcamentos_propostas
+            WHERE status = 'Em andamento'
+              AND YEAR(criado_em) = %s
+        """, (ano,), fetch=True, one=True)['total']
     else:
-        a_receber_pecas = query("""
+        a_receber_os_pecas = query("""
             SELECT COALESCE(SUM(p.valor_venda * p.quantidade), 0) AS total
             FROM ordens_servico os
             JOIN ordens_servico_pecas p ON p.ordem_id = os.id
@@ -1600,14 +1615,30 @@ def relatorio_financeiro():
               AND YEAR(os.data_emissao) = %s AND MONTH(os.data_emissao) = %s
         """, (ano, mes), fetch=True, one=True)['total']
         
-        a_receber_mao_obra = query("""
+        a_receber_os_mao_obra = query("""
             SELECT COALESCE(SUM(valor_mao_obra), 0) AS total
             FROM ordens_servico
             WHERE status = 'Pendente' AND ativo = 1
               AND YEAR(data_emissao) = %s AND MONTH(data_emissao) = %s
         """, (ano, mes), fetch=True, one=True)['total']
 
-    valor_a_receber = float(a_receber_pecas or 0) + float(a_receber_mao_obra or 0)
+        a_receber_prop_pecas = query("""
+            SELECT COALESCE(SUM(p.valor_venda * p.quantidade), 0) AS total
+            FROM orcamentos_propostas op
+            JOIN orcamentos_propostas_pecas p ON p.proposta_id = op.id
+            WHERE op.status = 'Em andamento'
+              AND YEAR(op.criado_em) = %s AND MONTH(op.criado_em) = %s
+        """, (ano, mes), fetch=True, one=True)['total']
+        
+        a_receber_prop_mao_obra = query("""
+            SELECT COALESCE(SUM(valor_mao_obra), 0) AS total
+            FROM orcamentos_propostas
+            WHERE status = 'Em andamento'
+              AND YEAR(criado_em) = %s AND MONTH(criado_em) = %s
+        """, (ano, mes), fetch=True, one=True)['total']
+
+    valor_a_receber = (float(a_receber_os_pecas or 0) + float(a_receber_os_mao_obra or 0) +
+                       float(a_receber_prop_pecas or 0) + float(a_receber_prop_mao_obra or 0))
 
     total_recebido = float(total_recebido) + float(entradas_caixa_total)
     lucro_liquido = float(total_recebido) - float(total_gasto) - float(despesas_total)
