@@ -1513,15 +1513,23 @@ def relatorio_financeiro():
         """, (ano, mes), fetch=True)
 
     if mes == 0:
-        gasto_pendente = query("""
+        gasto_pendente_os = query("""
             SELECT COALESCE(SUM(p.valor_custo * p.quantidade), 0) AS total
             FROM ordens_servico os
             JOIN ordens_servico_pecas p ON p.ordem_id = os.id
             WHERE os.status = 'Pendente' AND os.ativo = 1
               AND YEAR(os.data_emissao) = %s
         """, (ano,), fetch=True, one=True)['total']
+        
+        gasto_em_andamento_propostas = query("""
+            SELECT COALESCE(SUM(p.valor_custo * p.quantidade), 0) AS total
+            FROM orcamentos_propostas op
+            JOIN orcamentos_propostas_pecas p ON p.proposta_id = op.id
+            WHERE op.status = 'Em andamento'
+              AND YEAR(op.criado_em) = %s
+        """, (ano,), fetch=True, one=True)['total']
     else:
-        gasto_pendente = query("""
+        gasto_pendente_os = query("""
             SELECT COALESCE(SUM(p.valor_custo * p.quantidade), 0) AS total
             FROM ordens_servico os
             JOIN ordens_servico_pecas p ON p.ordem_id = os.id
@@ -1529,7 +1537,16 @@ def relatorio_financeiro():
               AND YEAR(os.data_emissao) = %s AND MONTH(os.data_emissao) = %s
         """, (ano, mes), fetch=True, one=True)['total']
 
-    total_gasto = sum(d['valor_pecas_custo'] for d in detalhes) + float(gasto_pendente or 0)
+        gasto_em_andamento_propostas = query("""
+            SELECT COALESCE(SUM(p.valor_custo * p.quantidade), 0) AS total
+            FROM orcamentos_propostas op
+            JOIN orcamentos_propostas_pecas p ON p.proposta_id = op.id
+            WHERE op.status = 'Em andamento'
+              AND YEAR(op.criado_em) = %s AND MONTH(op.criado_em) = %s
+        """, (ano, mes), fetch=True, one=True)['total']
+
+    gasto_pendente = float(gasto_pendente_os or 0) + float(gasto_em_andamento_propostas or 0)
+    total_gasto = sum(d['valor_pecas_custo'] for d in detalhes) + gasto_pendente
     total_recebido = sum(d['total'] for d in detalhes)
 
     if mes == 0:
