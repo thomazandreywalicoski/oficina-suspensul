@@ -166,7 +166,8 @@
         dividas: [],
         financeiroFiltroAno: new Date().getFullYear(),
         financeiroFiltroMes: 0,
-        osFiltroStatus: 'Todos',
+        osFiltroStatus: 'Pendente',
+        propostaFiltroStatus: 'Pendente',
         osFiltroBusca: '',
         mostrarInativosClientes: true,
         mostrarInativosFornecedores: true,
@@ -956,6 +957,21 @@
         _setPage('os', 1);
         renderOSTabela();
     }
+
+    window.setOSStatusFilter = function(status) {
+        state.osFiltroStatus = status;
+        const container = document.getElementById('os-status-filter-group');
+        if (container) {
+            container.querySelectorAll('button[data-status]').forEach(btn => {
+                if (btn.dataset.status === status) {
+                    btn.className = 'btn btn-primary';
+                } else {
+                    btn.className = 'btn btn-secondary';
+                }
+            });
+        }
+        carregarOS();
+    };
     function renderOSTabela() {
         const rows = state.os;
         const tbody = document.querySelector('.os-table tbody');
@@ -1766,8 +1782,8 @@
     async function carregarPropostas(busca) {
         const params = new URLSearchParams();
         if (busca) params.set('q', busca);
-        const statusEl = document.getElementById('proposta-status-filter');
-        if (statusEl && statusEl.value !== 'Todos') params.set('status', statusEl.value);
+        const statusVal = state.propostaFiltroStatus || 'Todos';
+        if (statusVal && statusVal !== 'Todos') params.set('status', statusVal);
         const url = '/api/propostas' + (params.toString() ? '?' + params.toString() : '');
         const rows = await api('GET', url);
         rows.sort((a, b) => b.id - a.id);
@@ -1775,6 +1791,23 @@
         _setPage('propostas', 1);
         renderPropostasTabela();
     }
+
+    window.setPropostaStatusFilter = function(status) {
+        state.propostaFiltroStatus = status;
+        const container = document.getElementById('proposta-status-filter-group');
+        if (container) {
+            container.querySelectorAll('button[data-status]').forEach(btn => {
+                if (btn.dataset.status === status) {
+                    btn.className = 'btn btn-primary';
+                } else {
+                    btn.className = 'btn btn-secondary';
+                }
+            });
+        }
+        const inputBuscaPropostas = document.getElementById('proposta-search');
+        const busca = inputBuscaPropostas ? inputBuscaPropostas.value.trim() : '';
+        carregarPropostas(busca);
+    };
     function renderPropostasTabela() {
         const rows = state.orcamentosPropostas;
         const tbody = document.querySelector('.propostas-table tbody');
@@ -2674,14 +2707,8 @@
                 t = setTimeout(() => carregarPropostas(inputBuscaPropostas.value.trim()), 300);
             };
         }
-        const statusFilterPropostas = document.getElementById('proposta-status-filter');
-        if (statusFilterPropostas) {
-            statusFilterPropostas.onchange = () => {
-                const busca = inputBuscaPropostas ? inputBuscaPropostas.value.trim() : '';
-                carregarPropostas(busca);
-            };
-        }
-        const inputBuscaOS = document.querySelector('#page-os input[type="text"]');
+        // proposal status filter buttons trigger directly via setPropostaStatusFilter
+        const inputBuscaOS = document.getElementById('os-search');
         if (inputBuscaOS) {
             let t;
             inputBuscaOS.oninput = () => {

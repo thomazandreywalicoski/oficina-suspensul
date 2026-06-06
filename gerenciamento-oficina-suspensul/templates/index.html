@@ -1665,15 +1665,14 @@
 
         <div id="page-os" class="main-content">
             <div class="page-header">
-                <div class="search-filter-bar">
+                <div class="search-filter-bar" id="os-status-filter-group">
                     <div class="search-input-wrap">
-                        <input type="text" placeholder="Buscar">
+                        <input type="text" id="os-search" placeholder="Buscar">
                         <i data-lucide="search" class="input-icon-right"></i>
                     </div>
-                    <button class="btn calendar-period-trigger" style="min-width: 150px;" onclick="openOSStatusModal()">
-                        <span id="os-status-label">Todos Status</span>
-                        <i data-lucide="chevron-down"></i>
-                    </button>
+                    <button type="button" class="btn btn-secondary" data-status="Todos" onclick="setOSStatusFilter('Todos')">Todos</button>
+                    <button type="button" class="btn btn-primary" data-status="Pendente" onclick="setOSStatusFilter('Pendente')">Pendente</button>
+                    <button type="button" class="btn btn-secondary" data-status="Paga" onclick="setOSStatusFilter('Paga')">Pago</button>
                 </div>
             </div>
             <div class="table-container">
@@ -1743,17 +1742,15 @@
 
         <div id="page-mandar-orcamento" class="main-content">
             <div class="page-header">
-                <div class="search-filter-bar">
+                <div class="search-filter-bar" id="proposta-status-filter-group">
                     <div class="search-input-wrap">
                         <input type="text" id="proposta-search" placeholder="Buscar">
                         <i data-lucide="search" class="input-icon-right"></i>
                     </div>
-                    <select id="proposta-status-filter" class="btn" style="min-width: 150px; background-color: var(--bg-input); color: var(--text-main); border: 1px solid #222; border-radius: var(--border-radius); padding: 0 12px; height: 40px; cursor: pointer;">
-                        <option value="Todos" style="background: var(--bg-card); color: var(--text-main);">Todos Status</option>
-                        <option value="Pendente" style="background: var(--bg-card); color: var(--text-main);">Pendente</option>
-                        <option value="Em andamento" style="background: var(--bg-card); color: var(--text-main);">Em andamento</option>
-                        <option value="Concluido" style="background: var(--bg-card); color: var(--text-main);">Concluído</option>
-                    </select>
+                    <button type="button" class="btn btn-secondary" data-status="Todos" onclick="setPropostaStatusFilter('Todos')">Todos</button>
+                    <button type="button" class="btn btn-primary" data-status="Pendente" onclick="setPropostaStatusFilter('Pendente')">Pendente</button>
+                    <button type="button" class="btn btn-secondary" data-status="Em andamento" onclick="setPropostaStatusFilter('Em andamento')">Em andamento</button>
+                    <button type="button" class="btn btn-secondary" data-status="Concluido" onclick="setPropostaStatusFilter('Concluido')">Concluído</button>
                 </div>
                 <button class="btn btn-primary" onclick="openModal('modal-novo-orcamento')">
                     <i data-lucide="plus"></i> <span>Novo</span><span class="btn-text-extra"> Orçamento</span>
