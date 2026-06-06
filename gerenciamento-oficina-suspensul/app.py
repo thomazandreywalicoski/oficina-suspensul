@@ -1069,12 +1069,8 @@ def listar_propostas():
     if search:
         where.append("(c.nome_completo LIKE %s OR v.placa LIKE %s)")
         params.extend([f'%{search}%', f'%{search}%'])
-    if status == 'Pendente':
-        where.append("op.status = 'Pendente'")
-    elif status == 'Em andamento':
-        where.append("op.status = 'Aprovado' AND os.status = 'Pendente'")
-    elif status == 'Concluido':
-        where.append("op.status = 'Aprovado' AND os.status = 'Paga'")
+    if status in ('Pendente', 'Em andamento', 'Concluido'):
+        where.append(f"op.status = '{status}'")
     where_clause = (" WHERE " + " AND ".join(where)) if where else ""
     rows = query(f"""SELECT op.*, c.nome_completo, v.placa, v.marca, v.modelo, os.status AS os_status,
                     (SELECT COALESCE(SUM(valor_custo * quantidade), 0) FROM orcamentos_propostas_pecas WHERE proposta_id = op.id) as gastos_pecas,
@@ -1146,42 +1142,51 @@ def aprovar_proposta(pid):
                    WHERE op.id = %s""", (pid,), fetch=True, one=True)
     if not row:
         return jsonify({'erro': 'Proposta não encontrada'}), 404
-    if row['status'] == 'Aprovado':
-        return jsonify({'erro': 'Proposta já aprovada'}), 400
-    if not row.get('valor_mao_obra') or float(row['valor_mao_obra']) == 0:
-        return jsonify({'erro': 'Para aprovar um orçamento, inclua o valor da mão de obra'}), 400
-    valor_mao_obra_os = float(row.get('valor_mao_obra') or 0)
-    pecas = query("SELECT * FROM orcamentos_propostas_pecas WHERE proposta_id = %s", (pid,), fetch=True)
-    last = query("SELECT COALESCE(MAX(numero), 1000) AS m FROM ordens_servico", fetch=True, one=True)
-    numero = (last['m'] or 1000) + 1
-    slug = gerar_slug(row['veiculo_id'], numero)
-    oid = query("""INSERT INTO ordens_servico (numero, slug, cliente_id, veiculo_id, data_emissao, valor_mao_obra, status)
-                   VALUES (%s, %s, %s, %s, %s, %s, 'Pendente')""",
-                (numero, slug, row['cliente_id'], row['veiculo_id'],
-                 date.today().isoformat(), valor_mao_obra_os), commit=True)
-    for p in pecas:
-        query("""INSERT INTO ordens_servico_pecas (ordem_id, descricao, fornecedor_id, quantidade, valor_custo, lucro_percentual, desconto_percentual, valor_venda_sem_desconto, valor_desconto, valor_venda)
-                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
-              (oid, p['descricao'], p.get('fornecedor_id'),
-               p['quantidade'], p['valor_custo'], p['lucro_percentual'],
-               p['desconto_percentual'], p['valor_venda_sem_desconto'],
-               p['valor_desconto'], p['valor_venda']), commit=True)
-    query("UPDATE orcamentos_propostas SET status='Aprovado', os_id=%s WHERE id=%s", (oid, pid), commit=True)
-    return jsonify({'ok': True, 'os_id': oid, 'numero': numero})
+    status_atual = row['status']
+    if status_atual == 'Pendente':
+        query("UPDATE orcamentos_propostas SET status='Em andamento' WHERE id=%s", (pid,), commit=True)
+        return jsonify({'ok': True, 'status': 'Em andamento'})
+    elif status_atual == 'Em andamento':
+        if not row.get('valor_mao_obra') or float(row['valor_mao_obra']) == 0:
+            return jsonify({'erro': 'Para concluir um orçamento, inclua o valor da mão de obra'}), 400
+        valor_mao_obra_os = float(row.get('valor_mao_obra') or 0)
+        pecas = query("SELECT * FROM orcamentos_propostas_pecas WHERE proposta_id = %s", (pid,), fetch=True)
+        last = query("SELECT COALESCE(MAX(numero), 1000) AS m FROM ordens_servico", fetch=True, one=True)
+        numero = (last['m'] or 1000) + 1
+        slug = gerar_slug(row['veiculo_id'], numero)
+        oid = query("""INSERT INTO ordens_servico (numero, slug, cliente_id, veiculo_id, data_emissao, valor_mao_obra, status)
+                       VALUES (%s, %s, %s, %s, %s, %s, 'Pendente')""",
+                    (numero, slug, row['cliente_id'], row['veiculo_id'],
+                     date.today().isoformat(), valor_mao_obra_os), commit=True)
+        for p in pecas:
+            query("""INSERT INTO ordens_servico_pecas (ordem_id, descricao, fornecedor_id, quantidade, valor_custo, lucro_percentual, desconto_percentual, valor_venda_sem_desconto, valor_desconto, valor_venda)
+                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+                  (oid, p['descricao'], p.get('fornecedor_id'),
+                   p['quantidade'], p['valor_custo'], p['lucro_percentual'],
+                   p['desconto_percentual'], p['valor_venda_sem_desconto'],
+                   p['valor_desconto'], p['valor_venda']), commit=True)
+        query("UPDATE orcamentos_propostas SET status='Concluido', os_id=%s WHERE id=%s", (oid, pid), commit=True)
+        return jsonify({'ok': True, 'os_id': oid, 'numero': numero, 'status': 'Concluido'})
+    else:
+        return jsonify({'erro': 'Orçamento já concluído'}), 400
 
 @app.route('/api/propostas/<int:pid>/desaprovar', methods=['POST'])
 def desaprovar_proposta(pid):
     row = query("SELECT status, os_id FROM orcamentos_propostas WHERE id = %s", (pid,), fetch=True, one=True)
     if not row:
         return jsonify({'erro': 'Orçamento não encontrado'}), 404
-    if row['status'] != 'Aprovado':
-        return jsonify({'erro': 'Orçamento não está aprovado'}), 400
-    os_id = row['os_id']
-    if os_id:
-        # Delete associated order of service (comprovante). This deletes its parts due to CASCADE.
-        query("DELETE FROM ordens_servico WHERE id = %s", (os_id,), commit=True)
-    query("UPDATE orcamentos_propostas SET status='Pendente', os_id=NULL WHERE id = %s", (pid,), commit=True)
-    return jsonify({'ok': True})
+    status_atual = row['status']
+    if status_atual == 'Concluido':
+        os_id = row['os_id']
+        if os_id:
+            query("DELETE FROM ordens_servico WHERE id = %s", (os_id,), commit=True)
+        query("UPDATE orcamentos_propostas SET status='Em andamento', os_id=NULL WHERE id = %s", (pid,), commit=True)
+        return jsonify({'ok': True, 'status': 'Em andamento'})
+    elif status_atual == 'Em andamento':
+        query("UPDATE orcamentos_propostas SET status='Pendente' WHERE id = %s", (pid,), commit=True)
+        return jsonify({'ok': True, 'status': 'Pendente'})
+    else:
+        return jsonify({'erro': 'Orçamento já está Pendente'}), 400
 
 @app.route('/proposta/<int:pid>/imprimir')
 @login_required

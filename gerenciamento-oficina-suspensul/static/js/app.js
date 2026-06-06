@@ -1814,18 +1814,20 @@
         if (!tbody) return;
         const { paged, current, total } = paginateRows(rows, 'propostas');
         tbody.innerHTML = paged.length ? paged.map(p => {
-            const isAprovado = p.status === 'Aprovado';
-            let displayStatus = 'Pendente';
+            const isEditable = p.status !== 'Concluido';
+            const isPendente = p.status === 'Pendente';
+            const isConcluido = p.status === 'Concluido';
+            const isEmAndamento = p.status === 'Em andamento';
+            
+            let displayStatus = p.status;
             let statusClass = 'badge-pendente';
-            if (isAprovado) {
-                if (p.os_status === 'Paga') {
-                    displayStatus = 'Concluído';
-                    statusClass = 'badge-concluido';
-                } else {
-                    displayStatus = 'Em andamento';
-                    statusClass = 'badge-andamento';
-                }
+            if (isEmAndamento) {
+                statusClass = 'badge-andamento';
+            } else if (isConcluido) {
+                displayStatus = 'Concluído';
+                statusClass = 'badge-concluido';
             }
+            
             return `
             <tr>
                 <td><strong>${String(p.numero).padStart(6, '0')}</strong></td>
@@ -1841,10 +1843,10 @@
                     <button class="btn-icon btn-action-blue" title="Visualizar" onclick="window.visualizarProposta(${p.id})"><i data-lucide="eye"></i></button>
                     <button class="btn-icon btn-action-orange" title="Baixar PDF" onclick="window.baixarPropostaPDF(${p.id})"><i data-lucide="download"></i></button>
                     <button class="btn-icon btn-action-green" title="Compartilhar" onclick="window.compartilharProposta(${p.id})"><i data-lucide="share-2"></i></button>
-                    ${!isAprovado ? `<button class="btn-icon btn-action-purple" title="Editar" onclick="window.editarProposta(${p.id})"><i data-lucide="pencil"></i></button>` : ''}
-                    ${!isAprovado ? `<button class="btn-icon btn-action-green" title="Aprovar" onclick="window.aprovarProposta(${p.id})"><i data-lucide="check-circle"></i></button>` : ''}
-                    ${isAprovado ? `<button class="btn-icon btn-action-red" title="Desaprovar" onclick="window.desaprovarProposta(${p.id})"><i data-lucide="x-circle"></i></button>` : ''}
-                    ${!isAprovado ? `<button class="btn-icon btn-action-red" title="Excluir" onclick="window.excluirProposta(${p.id})"><i data-lucide="trash-2"></i></button>` : ''}
+                    ${isEditable ? `<button class="btn-icon btn-action-purple" title="Editar" onclick="window.editarProposta(${p.id})"><i data-lucide="pencil"></i></button>` : ''}
+                    ${!isConcluido ? `<button class="btn-icon btn-action-green" title="Aprovar" onclick="window.aprovarProposta(${p.id})"><i data-lucide="check-circle"></i></button>` : ''}
+                    ${!isPendente ? `<button class="btn-icon btn-action-red" title="Desaprovar" onclick="window.desaprovarProposta(${p.id})"><i data-lucide="x-circle"></i></button>` : ''}
+                    ${isPendente ? `<button class="btn-icon btn-action-red" title="Excluir" onclick="window.excluirProposta(${p.id})"><i data-lucide="trash-2"></i></button>` : ''}
                 </td>
             </tr>`;
         }).join('') : `<tr><td colspan="10" style="text-align:center;color:#777">Nenhum orçamento cadastrado.</td></tr>`;
@@ -1991,20 +1993,49 @@
     };
 
     window.aprovarProposta = async function(id) {
-        window.showConfirm('Ao aprovar, um comprovante será criado automaticamente. Confirma?', async () => {
+        const p = state.orcamentosPropostas.find(x => x.id === id);
+        const status = p ? p.status : 'Pendente';
+        let confirmMsg = 'Ao aprovar, um comprovante será criado automaticamente. Confirma?';
+        if (status === 'Pendente') {
+            confirmMsg = 'Deseja aprovar este orçamento para "Em andamento"?';
+        } else if (status === 'Em andamento') {
+            confirmMsg = 'Ao aprovar, o orçamento será concluído e um comprovante pendente será criado automaticamente. Confirma?';
+        }
+
+        window.showConfirm(confirmMsg, async () => {
         try {
             const r = await api('POST', `/api/propostas/${id}/aprovar`);
-            showToast('Orçamento aprovado! Comprovante Nº ' + String(r.numero).padStart(6, '0') + ' criado');
+            if (r.status === 'Em andamento') {
+                showToast('Orçamento aprovado para "Em andamento"!');
+            } else {
+                showToast('Orçamento concluído! Comprovante Nº ' + String(r.numero).padStart(6, '0') + ' criado');
+            }
             await carregarPropostas();
+            if (window.carregarOS) {
+                await window.carregarOS();
+            }
         } catch (e) { window.showAlert(e.message, 'Erro'); }
         });
     };
 
     window.desaprovarProposta = async function(id) {
-        window.showConfirm('Deseja realmente desaprovar este orçamento? O comprovante associado será apagado.', async () => {
+        const p = state.orcamentosPropostas.find(x => x.id === id);
+        const status = p ? p.status : 'Concluido';
+        let confirmMsg = 'Deseja realmente desaprovar este orçamento?';
+        if (status === 'Concluido') {
+            confirmMsg = 'Deseja realmente reverter este orçamento para "Em andamento"? O comprovante associado será apagado.';
+        } else if (status === 'Em andamento') {
+            confirmMsg = 'Deseja realmente reverter este orçamento para "Pendente"?';
+        }
+
+        window.showConfirm(confirmMsg, async () => {
         try {
-            await api('POST', `/api/propostas/${id}/desaprovar`);
-            showToast('Orçamento desaprovado. Comprovante excluído.');
+            const r = await api('POST', `/api/propostas/${id}/desaprovar`);
+            if (r.status === 'Pendente') {
+                showToast('Orçamento revertido para "Pendente"');
+            } else {
+                showToast('Orçamento desaprovado. Comprovante excluído.');
+            }
             await carregarPropostas();
             if (window.carregarOS) {
                 await window.carregarOS();
