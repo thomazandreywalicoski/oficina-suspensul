@@ -464,7 +464,11 @@ def run_migrations():
                          criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
                          atualizado_em DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci""")
+        # Migração: converter status antigo 'Aprovado' para 'Concluido' ou 'Em andamento'
+        cur.execute("UPDATE orcamentos_propostas SET status = 'Concluido' WHERE status = 'Aprovado' AND os_id IS NOT NULL")
+        cur.execute("UPDATE orcamentos_propostas SET status = 'Em andamento' WHERE status = 'Aprovado' AND os_id IS NULL")
         conn.commit()
+
         cur.close()
         conn.close()
         _migrations_done = True
