@@ -2456,11 +2456,18 @@
         const cardsRoot = document.querySelector('#page-financeiro .financeiro-cards');
         if (cardsRoot) {
             const c = data.cards;
-            cardsRoot.children[0].querySelector('.fin-card-value').innerText = c.veiculos;
-            cardsRoot.children[1].querySelector('.fin-card-value').innerText = fmtBRL(c.despesas);
-            cardsRoot.children[2].querySelector('.fin-card-value').innerText = fmtBRL(c.valor_gasto);
-            cardsRoot.children[3].querySelector('.fin-card-value').innerText = fmtBRL(c.valor_recebido);
-            cardsRoot.children[4].querySelector('.fin-card-value').innerText = fmtBRL(c.lucro);
+            const elVeiculos = cardsRoot.querySelector('.financeiro-card-veiculos .fin-card-value');
+            if (elVeiculos) elVeiculos.innerText = c.veiculos;
+            const elDespesas = cardsRoot.querySelector('.financeiro-card-despesas .fin-card-value');
+            if (elDespesas) elDespesas.innerText = fmtBRL(c.despesas);
+            const elGasto = cardsRoot.querySelector('.financeiro-card-gasto .fin-card-value');
+            if (elGasto) elGasto.innerText = fmtBRL(c.valor_gasto);
+            const elRecebido = cardsRoot.querySelector('.financeiro-card-recebido .fin-card-value');
+            if (elRecebido) elRecebido.innerText = fmtBRL(c.valor_recebido);
+            const elAReceber = cardsRoot.querySelector('.financeiro-card-a-receber .fin-card-value');
+            if (elAReceber) elAReceber.innerText = fmtBRL(c.valor_a_receber);
+            const elLucro = cardsRoot.querySelector('.financeiro-card-lucro .fin-card-value');
+            if (elLucro) elLucro.innerText = fmtBRL(c.lucro);
         }
         // Comprovantes pagos (cards)
         const compContainer = document.getElementById('financeiro-comprovantes-cards');

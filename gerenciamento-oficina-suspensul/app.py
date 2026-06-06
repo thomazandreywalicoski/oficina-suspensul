@@ -1576,6 +1576,39 @@ def relatorio_financeiro():
                                     AND YEAR(data_pagamento)=%s AND MONTH(data_pagamento)=%s""",
                                (ano, mes), fetch=True, one=True)['total']
 
+    if mes == 0:
+        a_receber_pecas = query("""
+            SELECT COALESCE(SUM(p.valor_venda * p.quantidade), 0) AS total
+            FROM ordens_servico os
+            JOIN ordens_servico_pecas p ON p.ordem_id = os.id
+            WHERE os.status = 'Pendente' AND os.ativo = 1
+              AND YEAR(os.data_emissao) = %s
+        """, (ano,), fetch=True, one=True)['total']
+        
+        a_receber_mao_obra = query("""
+            SELECT COALESCE(SUM(valor_mao_obra), 0) AS total
+            FROM ordens_servico
+            WHERE status = 'Pendente' AND ativo = 1
+              AND YEAR(data_emissao) = %s
+        """, (ano,), fetch=True, one=True)['total']
+    else:
+        a_receber_pecas = query("""
+            SELECT COALESCE(SUM(p.valor_venda * p.quantidade), 0) AS total
+            FROM ordens_servico os
+            JOIN ordens_servico_pecas p ON p.ordem_id = os.id
+            WHERE os.status = 'Pendente' AND os.ativo = 1
+              AND YEAR(os.data_emissao) = %s AND MONTH(os.data_emissao) = %s
+        """, (ano, mes), fetch=True, one=True)['total']
+        
+        a_receber_mao_obra = query("""
+            SELECT COALESCE(SUM(valor_mao_obra), 0) AS total
+            FROM ordens_servico
+            WHERE status = 'Pendente' AND ativo = 1
+              AND YEAR(data_emissao) = %s AND MONTH(data_emissao) = %s
+        """, (ano, mes), fetch=True, one=True)['total']
+
+    valor_a_receber = float(a_receber_pecas or 0) + float(a_receber_mao_obra or 0)
+
     total_recebido = float(total_recebido) + float(entradas_caixa_total)
     lucro_liquido = float(total_recebido) - float(total_gasto) - float(despesas_total)
 
@@ -1584,6 +1617,7 @@ def relatorio_financeiro():
             'veiculos': int(veiculos_count or 0),
             'valor_gasto': float(total_gasto),
             'valor_recebido': float(total_recebido),
+            'valor_a_receber': float(valor_a_receber),
             'despesas': float(despesas_total),
             'lucro': lucro_liquido,
         },
