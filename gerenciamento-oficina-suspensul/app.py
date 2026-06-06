@@ -1546,7 +1546,7 @@ def relatorio_financeiro():
         """, (ano, mes), fetch=True, one=True)['total']
 
     gasto_pendente = float(gasto_pendente_os or 0) + float(gasto_em_andamento_propostas or 0)
-    total_gasto = sum(d['valor_pecas_custo'] for d in detalhes) + gasto_pendente
+    total_gasto = float(sum(d['valor_pecas_custo'] for d in detalhes) or 0) + gasto_pendente
     total_recebido = sum(d['total'] for d in detalhes)
 
     if mes == 0:
