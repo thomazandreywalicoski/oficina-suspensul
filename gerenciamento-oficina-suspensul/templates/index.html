@@ -666,6 +666,7 @@
         .badge-cancelado { background-color: #e74c3c; color: #fff; }
         .badge-pendente { background-color: #f39c12; color: #fff; }
         .badge-paga { background-color: #2ecc71; color: #fff; }
+        .badge-andamento { background-color: #3498db; color: #fff; }
 
         /* --- Calendário (Simples) --- */
         .calendar-grid {
@@ -1747,6 +1748,12 @@
                         <input type="text" id="proposta-search" placeholder="Buscar">
                         <i data-lucide="search" class="input-icon-right"></i>
                     </div>
+                    <select id="proposta-status-filter" class="btn" style="min-width: 150px; background-color: var(--bg-input); color: var(--text-main); border: 1px solid #222; border-radius: var(--border-radius); padding: 0 12px; height: 40px; cursor: pointer;">
+                        <option value="Todos" style="background: var(--bg-card); color: var(--text-main);">Todos Status</option>
+                        <option value="Pendente" style="background: var(--bg-card); color: var(--text-main);">Pendente</option>
+                        <option value="Em andamento" style="background: var(--bg-card); color: var(--text-main);">Em andamento</option>
+                        <option value="Concluido" style="background: var(--bg-card); color: var(--text-main);">Concluído</option>
+                    </select>
                 </div>
                 <button class="btn btn-primary" onclick="openModal('modal-novo-orcamento')">
                     <i data-lucide="plus"></i> <span>Novo</span><span class="btn-text-extra"> Orçamento</span>

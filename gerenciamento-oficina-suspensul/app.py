@@ -1063,18 +1063,26 @@ def alternar_os(oid):
 @app.route('/api/propostas', methods=['GET'])
 def listar_propostas():
     search = request.args.get('q', '').strip()
+    status = request.args.get('status', '').strip()
     where = []
     params = []
     if search:
         where.append("(c.nome_completo LIKE %s OR v.placa LIKE %s)")
         params.extend([f'%{search}%', f'%{search}%'])
+    if status == 'Pendente':
+        where.append("op.status = 'Pendente'")
+    elif status == 'Em andamento':
+        where.append("op.status = 'Aprovado' AND os.status = 'Pendente'")
+    elif status == 'Concluido':
+        where.append("op.status = 'Aprovado' AND os.status = 'Paga'")
     where_clause = (" WHERE " + " AND ".join(where)) if where else ""
-    rows = query(f"""SELECT op.*, c.nome_completo, v.placa, v.marca, v.modelo,
+    rows = query(f"""SELECT op.*, c.nome_completo, v.placa, v.marca, v.modelo, os.status AS os_status,
                     (SELECT COALESCE(SUM(valor_custo * quantidade), 0) FROM orcamentos_propostas_pecas WHERE proposta_id = op.id) as gastos_pecas,
                     (SELECT COALESCE(SUM(valor_venda * quantidade), 0) FROM orcamentos_propostas_pecas WHERE proposta_id = op.id) as cobrado_pecas
                     FROM orcamentos_propostas op
                     JOIN clientes c ON op.cliente_id = c.id
                     JOIN veiculos v ON op.veiculo_id = v.id
+                    LEFT JOIN ordens_servico os ON op.os_id = os.id
                     {where_clause}
                     ORDER BY op.numero DESC""", tuple(params), fetch=True)
     return jsonify(to_json(rows))
@@ -1499,7 +1507,24 @@ def relatorio_financeiro():
             ORDER BY os.data_pagamento DESC, os.numero DESC
         """, (ano, mes), fetch=True)
 
-    total_gasto = sum(d['valor_pecas_custo'] for d in detalhes)
+    if mes == 0:
+        gasto_pendente = query("""
+            SELECT COALESCE(SUM(p.valor_custo * p.quantidade), 0) AS total
+            FROM ordens_servico os
+            JOIN ordens_servico_pecas p ON p.ordem_id = os.id
+            WHERE os.status = 'Pendente' AND os.ativo = 1
+              AND YEAR(os.data_emissao) = %s
+        """, (ano,), fetch=True, one=True)['total']
+    else:
+        gasto_pendente = query("""
+            SELECT COALESCE(SUM(p.valor_custo * p.quantidade), 0) AS total
+            FROM ordens_servico os
+            JOIN ordens_servico_pecas p ON p.ordem_id = os.id
+            WHERE os.status = 'Pendente' AND os.ativo = 1
+              AND YEAR(os.data_emissao) = %s AND MONTH(os.data_emissao) = %s
+        """, (ano, mes), fetch=True, one=True)['total']
+
+    total_gasto = sum(d['valor_pecas_custo'] for d in detalhes) + float(gasto_pendente or 0)
     total_recebido = sum(d['total'] for d in detalhes)
 
     if mes == 0:
