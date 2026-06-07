@@ -1489,12 +1489,22 @@
                 grid-column: 1 !important;
                 grid-row: 1 !important;
                 width: 100% !important;
+                max-width: none !important;
+                flex: 1 !important;
+            }
+            #page-mandar-orcamento .search-input-wrap input,
+            #page-os .search-input-wrap input {
+                width: 100% !important;
             }
             
             #page-mandar-orcamento .btn-primary {
                 grid-column: 2 !important;
                 grid-row: 1 !important;
                 margin: 0 !important;
+            }
+
+            .btn-text-extra {
+                display: none !important;
             }
 
             #page-mandar-orcamento .status-filter-group,
@@ -1517,7 +1527,10 @@
 
             #page-mandar-orcamento .status-filter-group button,
             #page-os .status-filter-group button {
-                flex-shrink: 0 !important;
+                flex: 1 1 0% !important;
+                min-width: max-content !important;
+                text-align: center !important;
+                justify-content: center !important;
             }
         }
 
