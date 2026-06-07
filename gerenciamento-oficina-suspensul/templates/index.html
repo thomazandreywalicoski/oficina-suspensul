@@ -1453,6 +1453,72 @@
                 flex-direction: row !important;
                 gap: 15px !important;
             }
+        /* Estilos base para headers com filtros */
+        .header-left-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex: 1;
+        }
+        .status-filter-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            #page-mandar-orcamento .page-header,
+            #page-os .page-header {
+                display: grid !important;
+                grid-template-columns: 1fr auto !important;
+                gap: 12px !important;
+                align-items: center !important;
+                width: 100% !important;
+            }
+            #page-os .page-header {
+                grid-template-columns: 1fr !important;
+            }
+            
+            #page-mandar-orcamento [data-left-group],
+            #page-os [data-left-group] {
+                display: contents !important;
+            }
+
+            #page-mandar-orcamento .search-input-wrap,
+            #page-os .search-input-wrap {
+                grid-column: 1 !important;
+                grid-row: 1 !important;
+                width: 100% !important;
+            }
+            
+            #page-mandar-orcamento .btn-primary {
+                grid-column: 2 !important;
+                grid-row: 1 !important;
+                margin: 0 !important;
+            }
+
+            #page-mandar-orcamento .status-filter-group,
+            #page-os .status-filter-group {
+                grid-column: span 2 !important;
+                grid-row: 2 !important;
+                display: flex !important;
+                gap: 8px !important;
+                overflow-x: auto !important;
+                white-space: nowrap !important;
+                padding-bottom: 8px !important;
+                margin-bottom: -8px !important;
+                -webkit-overflow-scrolling: touch !important;
+                width: 100% !important;
+            }
+            
+            #page-os .status-filter-group {
+                grid-column: 1 !important;
+            }
+
+            #page-mandar-orcamento .status-filter-group button,
+            #page-os .status-filter-group button {
+                flex-shrink: 0 !important;
+            }
         }
 
         @media print {
@@ -1666,14 +1732,16 @@
 
         <div id="page-os" class="main-content">
             <div class="page-header">
-                <div class="search-filter-bar" id="os-status-filter-group">
+                <div class="header-left-group" data-left-group>
                     <div class="search-input-wrap">
                         <input type="text" id="os-search" placeholder="Buscar">
                         <i data-lucide="search" class="input-icon-right"></i>
                     </div>
-                    <button type="button" class="btn btn-secondary" data-status="Todos" onclick="setOSStatusFilter('Todos')">Todos</button>
-                    <button type="button" class="btn btn-primary" data-status="Pendente" onclick="setOSStatusFilter('Pendente')">Pendente</button>
-                    <button type="button" class="btn btn-secondary" data-status="Paga" onclick="setOSStatusFilter('Paga')">Pago</button>
+                    <div class="status-filter-group" id="os-status-filter-group">
+                        <button type="button" class="btn btn-secondary" data-status="Todos" onclick="setOSStatusFilter('Todos')">Todos</button>
+                        <button type="button" class="btn btn-primary" data-status="Pendente" onclick="setOSStatusFilter('Pendente')">Pendente</button>
+                        <button type="button" class="btn btn-secondary" data-status="Paga" onclick="setOSStatusFilter('Paga')">Pago</button>
+                    </div>
                 </div>
             </div>
             <div class="table-container">
@@ -1743,15 +1811,17 @@
 
         <div id="page-mandar-orcamento" class="main-content">
             <div class="page-header">
-                <div class="search-filter-bar" id="proposta-status-filter-group">
+                <div class="header-left-group" data-left-group>
                     <div class="search-input-wrap">
                         <input type="text" id="proposta-search" placeholder="Buscar">
                         <i data-lucide="search" class="input-icon-right"></i>
                     </div>
-                    <button type="button" class="btn btn-secondary" data-status="Todos" onclick="setPropostaStatusFilter('Todos')">Todos</button>
-                    <button type="button" class="btn btn-primary" data-status="Pendente" onclick="setPropostaStatusFilter('Pendente')">Pendente</button>
-                    <button type="button" class="btn btn-secondary" data-status="Em andamento" onclick="setPropostaStatusFilter('Em andamento')">Em andamento</button>
-                    <button type="button" class="btn btn-secondary" data-status="Concluido" onclick="setPropostaStatusFilter('Concluido')">Concluído</button>
+                    <div class="status-filter-group" id="proposta-status-filter-group">
+                        <button type="button" class="btn btn-secondary" data-status="Todos" onclick="setPropostaStatusFilter('Todos')">Todos</button>
+                        <button type="button" class="btn btn-primary" data-status="Pendente" onclick="setPropostaStatusFilter('Pendente')">Pendente</button>
+                        <button type="button" class="btn btn-secondary" data-status="Em andamento" onclick="setPropostaStatusFilter('Em andamento')">Em andamento</button>
+                        <button type="button" class="btn btn-secondary" data-status="Concluido" onclick="setPropostaStatusFilter('Concluido')">Concluído</button>
+                    </div>
                 </div>
                 <button class="btn btn-primary" onclick="openModal('modal-novo-orcamento')">
                     <i data-lucide="plus"></i> <span>Novo</span><span class="btn-text-extra"> Orçamento</span>
