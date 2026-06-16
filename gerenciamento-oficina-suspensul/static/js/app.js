@@ -986,7 +986,7 @@
                 <td>${fmtDataBR(o.data_emissao)}</td>
                 <td style="color: #e74c3c; font-weight: 500;">${fmtBRL(o.gastos_pecas || 0)}</td>
                 <td style="color: #3498db; font-weight: 500;">${fmtBRL((Number(o.cobrado_pecas) || 0) + (Number(o.valor_mao_obra) || 0))}</td>
-                <td style="color: #2ecc71; font-weight: 500;">${fmtBRL(((Number(o.cobrado_pecas) || 0) + (Number(o.valor_mao_obra) || 0)) - (Number(o.gastos_pecas) || 0))}</td>
+                <td style="color: #2ecc71; font-weight: 500;">${fmtBRL(((Number(o.cobrado_pecas) || 0) + (Number(o.valor_mao_obra) || 0)) - ((Number(o.gastos_pecas) || 0) + (Number(o.valor_frete) || 0)))}</td>
                 <td><span class="badge ${o.status === 'Paga' ? 'badge-paga' : 'badge-pendente'}">${o.status}</span></td>
                 <td class="actions-cell">
                     <button class="btn-icon btn-action-blue" title="Visualizar" onclick="window.visualizarOS('${o.slug || o.id}')"><i data-lucide="eye"></i></button>
@@ -1837,7 +1837,7 @@
                 <td>${fmtDataBR(p.criado_em)}</td>
                 <td style="color: #e74c3c; font-weight: 500;">${fmtBRL(p.gastos_pecas || 0)}</td>
                 <td style="color: #3498db; font-weight: 500;">${fmtBRL((Number(p.cobrado_pecas) || 0) + (Number(p.valor_mao_obra) || 0))}</td>
-                <td style="color: #2ecc71; font-weight: 500;">${fmtBRL(((Number(p.cobrado_pecas) || 0) + (Number(p.valor_mao_obra) || 0)) - (Number(p.gastos_pecas) || 0))}</td>
+                <td style="color: #2ecc71; font-weight: 500;">${fmtBRL(((Number(p.cobrado_pecas) || 0) + (Number(p.valor_mao_obra) || 0)) - ((Number(p.gastos_pecas) || 0) + (Number(p.valor_frete) || 0)))}</td>
                 <td><span class="badge ${statusClass}">${displayStatus}</span></td>
                 <td class="actions-cell">
                     <button class="btn-icon btn-action-blue" title="Visualizar" onclick="window.visualizarProposta(${p.id})"><i data-lucide="eye"></i></button>
@@ -1872,6 +1872,7 @@
         if (!state.propostaCliente) return showToast('Selecione um cliente', true);
         if (!state.propostaVeiculo) return showToast('Selecione um veículo', true);
         const maoObra = parseFloat(document.getElementById('orcamento-proposta-mao-obra')?.value || 0);
+        const frete = parseFloat(document.getElementById('orcamento-proposta-frete')?.value || 0);
         const pecas = coletarPecasPropostasParaSalvar();
         const propostaId = document.getElementById('orcamento-proposta-id')?.value;
         try {
@@ -1880,6 +1881,7 @@
                     cliente_id: state.propostaCliente.id,
                     veiculo_id: state.propostaVeiculo.id,
                     valor_mao_obra: maoObra,
+                    valor_frete: frete,
                     pecas,
                 });
                 showToast('Orçamento atualizado');
@@ -1888,6 +1890,7 @@
                     cliente_id: state.propostaCliente.id,
                     veiculo_id: state.propostaVeiculo.id,
                     valor_mao_obra: maoObra,
+                    valor_frete: frete,
                     pecas,
                 });
                 showToast('Orçamento Nº ' + String(r.numero).padStart(6, '0') + ' criado');
@@ -1974,6 +1977,8 @@
             if (veiculoInput) veiculoInput.value = `${p.placa} - ${p.marca || ''} ${p.modelo || ''}`;
             const maoObraInput = document.getElementById('orcamento-proposta-mao-obra');
             if (maoObraInput) maoObraInput.value = p.valor_mao_obra;
+            const freteInput = document.getElementById('orcamento-proposta-frete');
+            if (freteInput) freteInput.value = p.valor_frete || 0;
             const btnSalvar = document.getElementById('btn-salvar-orcamento-proposta');
             if (btnSalvar) btnSalvar.innerText = 'Salvar Alterações';
             renderPecasOrcamentoPropostaLista();

@@ -4060,9 +4060,15 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
                     <div id="orcamento-proposta-pecas-lista" style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;max-height:245px;overflow-y:auto;padding-right:8px;"></div>
                     <button type="button" class="btn btn-secondary" onclick="openPecaOrcamentoProposta()" style="width:100%;justify-content:center;font-weight:400;font-size:14px;color:var(--text-muted);"><i data-lucide="plus"></i> Adicionar Peça / Produto</button>
                 </div>
-                <div class="form-group">
-                    <label>Mão de Obra (R$)</label>
-                    <input type="number" placeholder="0,00" id="orcamento-proposta-mao-obra" step="0.01">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Valor do Frete (R$)</label>
+                        <input type="number" placeholder="0,00" id="orcamento-proposta-frete" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Mão de Obra (R$)</label>
+                        <input type="number" placeholder="0,00" id="orcamento-proposta-mao-obra" step="0.01">
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
