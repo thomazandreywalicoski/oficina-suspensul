@@ -986,7 +986,7 @@
                 <td>${fmtDataBR(o.data_emissao)}</td>
                 <td style="color: #e74c3c; font-weight: 500;">${fmtBRL(o.gastos_pecas || 0)}</td>
                 <td style="color: #3498db; font-weight: 500;">${fmtBRL((Number(o.cobrado_pecas) || 0) + (Number(o.valor_mao_obra) || 0))}</td>
-                <td style="color: #2ecc71; font-weight: 500;">${fmtBRL(((Number(o.cobrado_pecas) || 0) + (Number(o.valor_mao_obra) || 0)) - ((Number(o.gastos_pecas) || 0) + (Number(o.valor_frete) || 0)))}</td>
+                <td style="color: #2ecc71; font-weight: 500;">${fmtBRL(((Number(o.cobrado_pecas) || 0) + (Number(o.valor_mao_obra) || 0)) - (Number(o.gastos_pecas) || 0))}</td>
                 <td><span class="badge ${o.status === 'Paga' ? 'badge-paga' : 'badge-pendente'}">${o.status}</span></td>
                 <td class="actions-cell">
                     <button class="btn-icon btn-action-blue" title="Visualizar" onclick="window.visualizarOS('${o.slug || o.id}')"><i data-lucide="eye"></i></button>
@@ -1837,7 +1837,7 @@
                 <td>${fmtDataBR(p.criado_em)}</td>
                 <td style="color: #e74c3c; font-weight: 500;">${fmtBRL(p.gastos_pecas || 0)}</td>
                 <td style="color: #3498db; font-weight: 500;">${fmtBRL((Number(p.cobrado_pecas) || 0) + (Number(p.valor_mao_obra) || 0))}</td>
-                <td style="color: #2ecc71; font-weight: 500;">${fmtBRL(((Number(p.cobrado_pecas) || 0) + (Number(p.valor_mao_obra) || 0)) - ((Number(p.gastos_pecas) || 0) + (Number(p.valor_frete) || 0)))}</td>
+                <td style="color: #2ecc71; font-weight: 500;">${fmtBRL(((Number(p.cobrado_pecas) || 0) + (Number(p.valor_mao_obra) || 0)) - (Number(p.gastos_pecas) || 0) - (Number(p.valor_frete) || 0))}</td>
                 <td><span class="badge ${statusClass}">${displayStatus}</span></td>
                 <td class="actions-cell">
                     <button class="btn-icon btn-action-blue" title="Visualizar" onclick="window.visualizarProposta(${p.id})"><i data-lucide="eye"></i></button>
@@ -1913,6 +1913,8 @@
         const idInput = document.getElementById('orcamento-proposta-id');
         if (idInput) idInput.value = '';
         m.querySelectorAll('input[type="text"], input[type="number"]').forEach(i => { i.value = ''; });
+        const freteInput = document.getElementById('orcamento-proposta-frete');
+        if (freteInput) freteInput.value = '0.00';
         const btnSalvar = document.getElementById('btn-salvar-orcamento-proposta');
         if (btnSalvar) btnSalvar.innerText = 'Criar Orçamento';
         renderPecasOrcamentoPropostaLista();

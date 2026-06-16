@@ -139,6 +139,7 @@ def run_migrations():
             veiculo_id INT NOT NULL,
             data_emissao DATE NOT NULL,
             valor_mao_obra DECIMAL(10,2) DEFAULT 0,
+            valor_frete DECIMAL(10,2) NOT NULL DEFAULT 0,
             status ENUM('Pendente', 'Paga') DEFAULT 'Pendente',
             observacoes TEXT,
             ativo TINYINT(1) NOT NULL DEFAULT 1,
@@ -321,9 +322,11 @@ def run_migrations():
         cur.execute("""CREATE TABLE IF NOT EXISTS orcamentos_propostas (
                          id INT AUTO_INCREMENT PRIMARY KEY,
                          numero INT NOT NULL,
+                         slug VARCHAR(255) NULL UNIQUE,
                          cliente_id INT NOT NULL,
                          veiculo_id INT NOT NULL,
                          valor_mao_obra DECIMAL(10,2) NOT NULL DEFAULT 0,
+                         valor_frete DECIMAL(10,2) NOT NULL DEFAULT 0,
                          mao_obra_texto VARCHAR(255) NULL,
                          status VARCHAR(20) NOT NULL DEFAULT 'Pendente',
                          os_id INT NULL,
@@ -464,32 +467,32 @@ def run_migrations():
                          criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
                          atualizado_em DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci""")
-        # Migração: adicionar coluna valor_frete em orcamentos_propostas
-        cur.execute("""SELECT COUNT(*) FROM information_schema.COLUMNS
-                       WHERE TABLE_SCHEMA = DATABASE()
-                         AND TABLE_NAME = 'orcamentos_propostas'
-                         AND COLUMN_NAME = 'valor_frete'""")
-        (has_frete_proposta,) = cur.fetchone()
-        if not has_frete_proposta:
-            cur.execute("ALTER TABLE orcamentos_propostas ADD COLUMN valor_frete DECIMAL(10,2) NOT NULL DEFAULT 0 AFTER valor_mao_obra")
-            conn.commit()
-            print("Migração: coluna valor_frete adicionada em orcamentos_propostas")
-
-        # Migração: adicionar coluna valor_frete em ordens_servico
-        cur.execute("""SELECT COUNT(*) FROM information_schema.COLUMNS
-                       WHERE TABLE_SCHEMA = DATABASE()
-                         AND TABLE_NAME = 'ordens_servico'
-                         AND COLUMN_NAME = 'valor_frete'""")
-        (has_frete_os,) = cur.fetchone()
-        if not has_frete_os:
-            cur.execute("ALTER TABLE ordens_servico ADD COLUMN valor_frete DECIMAL(10,2) NOT NULL DEFAULT 0 AFTER valor_mao_obra")
-            conn.commit()
-            print("Migração: coluna valor_frete adicionada em ordens_servico")
-
         # Migração: converter status antigo 'Aprovado' para 'Concluido' ou 'Em andamento'
         cur.execute("UPDATE orcamentos_propostas SET status = 'Concluido' WHERE status = 'Aprovado' AND os_id IS NOT NULL")
         cur.execute("UPDATE orcamentos_propostas SET status = 'Em andamento' WHERE status = 'Aprovado' AND os_id IS NULL")
         conn.commit()
+
+        # Migração: coluna valor_frete em orcamentos_propostas
+        cur.execute("""SELECT COUNT(*) FROM information_schema.COLUMNS
+                       WHERE TABLE_SCHEMA = DATABASE()
+                         AND TABLE_NAME = 'orcamentos_propostas'
+                         AND COLUMN_NAME = 'valor_frete'""")
+        (tem_frete_prop,) = cur.fetchone()
+        if not tem_frete_prop:
+            cur.execute("ALTER TABLE orcamentos_propostas ADD COLUMN valor_frete DECIMAL(10,2) NOT NULL DEFAULT 0 AFTER valor_mao_obra")
+            conn.commit()
+            print("Migração: coluna valor_frete adicionada em orcamentos_propostas")
+
+        # Migração: coluna valor_frete em ordens_servico
+        cur.execute("""SELECT COUNT(*) FROM information_schema.COLUMNS
+                       WHERE TABLE_SCHEMA = DATABASE()
+                         AND TABLE_NAME = 'ordens_servico'
+                         AND COLUMN_NAME = 'valor_frete'""")
+        (tem_frete_os,) = cur.fetchone()
+        if not tem_frete_os:
+            cur.execute("ALTER TABLE ordens_servico ADD COLUMN valor_frete DECIMAL(10,2) NOT NULL DEFAULT 0 AFTER valor_mao_obra")
+            conn.commit()
+            print("Migração: coluna valor_frete adicionada em ordens_servico")
 
         cur.close()
         conn.close()
@@ -1116,10 +1119,9 @@ def criar_proposta():
     numero = (last['m'] or 0) + 1
     slug = gerar_slug(d['veiculo_id'], numero)
     mao_obra_texto = d.get('mao_obra_texto') or None
-    valor_frete = float(d.get('valor_frete') or 0)
-    pid = query("""INSERT INTO orcamentos_propostas (numero, slug, cliente_id, veiculo_id, valor_mao_obra, mao_obra_texto, valor_frete, status)
-                   VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 'Pendente')""",
-                (numero, slug, d['cliente_id'], d['veiculo_id'], d.get('valor_mao_obra', 0), mao_obra_texto, valor_frete), commit=True)
+    pid = query("""INSERT INTO orcamentos_propostas (numero, slug, cliente_id, veiculo_id, valor_mao_obra, valor_frete, mao_obra_texto, status)
+                   VALUES (%s, %s, %s, %s, %s, %s, %s, 'Pendente')""",
+                (numero, slug, d['cliente_id'], d['veiculo_id'], d.get('valor_mao_obra', 0), d.get('valor_frete', 0), mao_obra_texto), commit=True)
     for p in d.get('pecas', []):
         query("""INSERT INTO orcamentos_propostas_pecas (proposta_id, descricao, fornecedor_id, quantidade, valor_custo, lucro_percentual, desconto_percentual, valor_venda_sem_desconto, valor_desconto, valor_venda)
                  VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
@@ -1143,9 +1145,8 @@ def obter_proposta(pid):
 def atualizar_proposta(pid):
     d = request.json
     mao_obra_texto = d.get('mao_obra_texto') or None
-    valor_frete = float(d.get('valor_frete') or 0)
-    query("""UPDATE orcamentos_propostas SET cliente_id=%s, veiculo_id=%s, valor_mao_obra=%s, mao_obra_texto=%s, valor_frete=%s WHERE id=%s""",
-          (d['cliente_id'], d['veiculo_id'], d.get('valor_mao_obra', 0), mao_obra_texto, valor_frete, pid), commit=True)
+    query("""UPDATE orcamentos_propostas SET cliente_id=%s, veiculo_id=%s, valor_mao_obra=%s, valor_frete=%s, mao_obra_texto=%s WHERE id=%s""",
+          (d['cliente_id'], d['veiculo_id'], d.get('valor_mao_obra', 0), d.get('valor_frete', 0), mao_obra_texto, pid), commit=True)
     query("DELETE FROM orcamentos_propostas_pecas WHERE proposta_id=%s", (pid,), commit=True)
     for p in d.get('pecas', []):
         query("""INSERT INTO orcamentos_propostas_pecas (proposta_id, descricao, fornecedor_id, quantidade, valor_custo, lucro_percentual, desconto_percentual, valor_venda_sem_desconto, valor_desconto, valor_venda)
@@ -1501,7 +1502,6 @@ def relatorio_financeiro():
     # Apenas OSs pagas no período
     # mes=0 significa "todo o período"
     if mes == 0:
-    if mes == 0:
         detalhes = query("""
             SELECT os.id, os.numero, os.data_pagamento, os.valor_frete,
                    CONCAT_WS(' ', v.marca, v.modelo) AS veiculo,
@@ -1518,7 +1518,7 @@ def relatorio_financeiro():
             WHERE os.status = 'Paga' AND os.ativo = 1
               AND os.data_pagamento IS NOT NULL
               AND YEAR(os.data_pagamento) = %s
-            GROUP BY os.id, os.numero, os.data_pagamento, v.marca, v.modelo, v.placa, os.valor_mao_obra, os.valor_frete
+            GROUP BY os.id, os.numero, os.data_pagamento, os.valor_frete, v.marca, v.modelo, v.placa, os.valor_mao_obra
             ORDER BY os.data_pagamento DESC, os.numero DESC
         """, (ano,), fetch=True)
     else:
@@ -1538,61 +1538,78 @@ def relatorio_financeiro():
             WHERE os.status = 'Paga' AND os.ativo = 1
               AND os.data_pagamento IS NOT NULL
               AND YEAR(os.data_pagamento) = %s AND MONTH(os.data_pagamento) = %s
-            GROUP BY os.id, os.numero, os.data_pagamento, v.marca, v.modelo, v.placa, os.valor_mao_obra, os.valor_frete
+            GROUP BY os.id, os.numero, os.data_pagamento, os.valor_frete, v.marca, v.modelo, v.placa, os.valor_mao_obra
             ORDER BY os.data_pagamento DESC, os.numero DESC
         """, (ano, mes), fetch=True)
 
     if mes == 0:
         gasto_pendente_os = query("""
-            SELECT 
-                (SELECT COALESCE(SUM(p.valor_custo * p.quantidade), 0) 
-                 FROM ordens_servico os 
-                 JOIN ordens_servico_pecas p ON p.ordem_id = os.id 
-                 WHERE os.status = 'Pendente' AND os.ativo = 1 AND YEAR(os.data_emissao) = %s)
-                +
-                (SELECT COALESCE(SUM(os.valor_frete), 0) 
-                 FROM ordens_servico os 
-                 WHERE os.status = 'Pendente' AND os.ativo = 1 AND YEAR(os.data_emissao) = %s) AS total
-        """, (ano, ano), fetch=True, one=True)['total']
+            SELECT COALESCE(SUM(p.valor_custo * p.quantidade), 0) AS total
+            FROM ordens_servico os
+            JOIN ordens_servico_pecas p ON p.ordem_id = os.id
+            WHERE os.status = 'Pendente' AND os.ativo = 1
+              AND YEAR(os.data_emissao) = %s
+        """, (ano,), fetch=True, one=True)['total']
         
         gasto_em_andamento_propostas = query("""
-            SELECT 
-                (SELECT COALESCE(SUM(p.valor_custo * p.quantidade), 0) 
-                 FROM orcamentos_propostas op 
-                 JOIN orcamentos_propostas_pecas p ON p.proposta_id = op.id 
-                 WHERE op.status = 'Em andamento' AND YEAR(op.criado_em) = %s)
-                +
-                (SELECT COALESCE(SUM(op.valor_frete), 0) 
-                 FROM orcamentos_propostas op 
-                 WHERE op.status = 'Em andamento' AND YEAR(op.criado_em) = %s) AS total
-        """, (ano, ano), fetch=True, one=True)['total']
+            SELECT COALESCE(SUM(p.valor_custo * p.quantidade), 0) AS total
+            FROM orcamentos_propostas op
+            JOIN orcamentos_propostas_pecas p ON p.proposta_id = op.id
+            WHERE op.status = 'Em andamento'
+              AND YEAR(op.criado_em) = %s
+        """, (ano,), fetch=True, one=True)['total']
+
+        frete_pendente_os = query("""
+            SELECT COALESCE(SUM(valor_frete), 0) AS total
+            FROM ordens_servico
+            WHERE status = 'Pendente' AND ativo = 1
+              AND YEAR(data_emissao) = %s
+        """, (ano,), fetch=True, one=True)['total']
+        
+        frete_em_andamento_propostas = query("""
+            SELECT COALESCE(SUM(valor_frete), 0) AS total
+            FROM orcamentos_propostas
+            WHERE status = 'Em andamento'
+              AND YEAR(criado_em) = %s
+        """, (ano,), fetch=True, one=True)['total']
     else:
         gasto_pendente_os = query("""
-            SELECT 
-                (SELECT COALESCE(SUM(p.valor_custo * p.quantidade), 0) 
-                 FROM ordens_servico os 
-                 JOIN ordens_servico_pecas p ON p.ordem_id = os.id 
-                 WHERE os.status = 'Pendente' AND os.ativo = 1 AND YEAR(os.data_emissao) = %s AND MONTH(os.data_emissao) = %s)
-                +
-                (SELECT COALESCE(SUM(os.valor_frete), 0) 
-                 FROM ordens_servico os 
-                 WHERE os.status = 'Pendente' AND os.ativo = 1 AND YEAR(os.data_emissao) = %s AND MONTH(os.data_emissao) = %s) AS total
-        """, (ano, mes, ano, mes), fetch=True, one=True)['total']
+            SELECT COALESCE(SUM(p.valor_custo * p.quantidade), 0) AS total
+            FROM ordens_servico os
+            JOIN ordens_servico_pecas p ON p.ordem_id = os.id
+            WHERE os.status = 'Pendente' AND os.ativo = 1
+              AND YEAR(os.data_emissao) = %s AND MONTH(os.data_emissao) = %s
+        """, (ano, mes), fetch=True, one=True)['total']
 
         gasto_em_andamento_propostas = query("""
-            SELECT 
-                (SELECT COALESCE(SUM(p.valor_custo * p.quantidade), 0) 
-                 FROM orcamentos_propostas op 
-                 JOIN orcamentos_propostas_pecas p ON p.proposta_id = op.id 
-                 WHERE op.status = 'Em andamento' AND YEAR(op.criado_em) = %s AND MONTH(op.criado_em) = %s)
-                +
-                (SELECT COALESCE(SUM(op.valor_frete), 0) 
-                 FROM orcamentos_propostas op 
-                 WHERE op.status = 'Em andamento' AND YEAR(op.criado_em) = %s AND MONTH(op.criado_em) = %s) AS total
-        """, (ano, mes, ano, mes), fetch=True, one=True)['total']
+            SELECT COALESCE(SUM(p.valor_custo * p.quantidade), 0) AS total
+            FROM orcamentos_propostas op
+            JOIN orcamentos_propostas_pecas p ON p.proposta_id = op.id
+            WHERE op.status = 'Em andamento'
+              AND YEAR(op.criado_em) = %s AND MONTH(op.criado_em) = %s
+        """, (ano, mes), fetch=True, one=True)['total']
+
+        frete_pendente_os = query("""
+            SELECT COALESCE(SUM(valor_frete), 0) AS total
+            FROM ordens_servico
+            WHERE status = 'Pendente' AND ativo = 1
+              AND YEAR(data_emissao) = %s AND MONTH(data_emissao) = %s
+        """, (ano, mes), fetch=True, one=True)['total']
+        
+        frete_em_andamento_propostas = query("""
+            SELECT COALESCE(SUM(valor_frete), 0) AS total
+            FROM orcamentos_propostas
+            WHERE status = 'Em andamento'
+              AND YEAR(criado_em) = %s AND MONTH(criado_em) = %s
+        """, (ano, mes), fetch=True, one=True)['total']
 
     gasto_pendente = float(gasto_pendente_os or 0) + float(gasto_em_andamento_propostas or 0)
-    total_gasto = float(sum(d['valor_pecas_custo'] + float(d.get('valor_frete') or 0) for d in detalhes) or 0) + gasto_pendente
+    
+    frete_pago = sum(float(d['valor_frete'] or 0) for d in detalhes)
+    frete_pendente = float(frete_pendente_os or 0) + float(frete_em_andamento_propostas or 0)
+    total_frete = frete_pago + frete_pendente
+
+    total_gasto = float(sum(d['valor_pecas_custo'] for d in detalhes) or 0) + gasto_pendente + total_frete
     total_recebido = sum(d['total'] for d in detalhes)
 
     if mes == 0:
