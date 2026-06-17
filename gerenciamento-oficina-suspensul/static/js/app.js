@@ -1872,7 +1872,7 @@
         if (!state.propostaCliente) return showToast('Selecione um cliente', true);
         if (!state.propostaVeiculo) return showToast('Selecione um veículo', true);
         const maoObra = parseFloat(document.getElementById('orcamento-proposta-mao-obra')?.value || 0);
-        const frete = parseFloat(document.getElementById('orcamento-proposta-frete')?.value || 0);
+        const frete = parseFloat(document.getElementById('orcamento-proposta-frete')?.value) || 0;
         const pecas = coletarPecasPropostasParaSalvar();
         const propostaId = document.getElementById('orcamento-proposta-id')?.value;
         try {
@@ -1914,7 +1914,7 @@
         if (idInput) idInput.value = '';
         m.querySelectorAll('input[type="text"], input[type="number"]').forEach(i => { i.value = ''; });
         const freteInput = document.getElementById('orcamento-proposta-frete');
-        if (freteInput) freteInput.value = '0.00';
+        if (freteInput) freteInput.value = '';
         const btnSalvar = document.getElementById('btn-salvar-orcamento-proposta');
         if (btnSalvar) btnSalvar.innerText = 'Criar Orçamento';
         renderPecasOrcamentoPropostaLista();
