@@ -265,18 +265,23 @@
 
     {% if proposta.valor_mao_obra and proposta.valor_mao_obra|float > 0 %}
     {% set subtotal = total_pecas.v + (proposta.valor_mao_obra|float) %}
+    {% set valor_com_juros = subtotal * 1.1341 %}
     <div class="print-secao-title">Total Peças / Produtos / Mão de Obra</div>
     <table class="print-table">
         <thead>
             <tr>
                 <th>Total</th>
-                <th class="right">Valor Total</th>
+                <th class="right" style="width: 140px;">Valor Total</th>
+                <th class="right" style="width: 140px;">Em até 12x</th>
+                <th class="right" style="width: 140px;">No PIX</th>
             </tr>
         </thead>
         <tbody>
             <tr>
                 <td>Total devido pelas peças/produtos e mão de obra</td>
-                <td class="right">R$ {{ '%.2f'|format(subtotal) | replace('.', ',') }}</td>
+                <td class="right">R$ {{ '%.2f'|format(valor_com_juros) | replace('.', ',') }}</td>
+                <td class="right">12x de R$ {{ '%.2f'|format(valor_com_juros / 12) | replace('.', ',') }}</td>
+                <td class="right" style="color: #27ae60; font-weight: bold;">R$ {{ '%.2f'|format(subtotal) | replace('.', ',') }}</td>
             </tr>
         </tbody>
     </table>
@@ -286,13 +291,15 @@
         <thead>
             <tr>
                 <th>Total</th>
-                <th class="right" style="min-width:220px;">Valor Total</th>
+                <th class="right" style="width: 140px;">Valor Total</th>
+                <th class="right" style="width: 140px;">Em até 12x</th>
+                <th class="right" style="width: 140px;">No PIX</th>
             </tr>
         </thead>
         <tbody>
             <tr>
                 <td>Total devido pelas peças/produtos e mão de obra</td>
-                <td class="right">Somente após avaliação do veículo</td>
+                <td colspan="3" class="right" style="text-align: right;">Somente após avaliação do veículo</td>
             </tr>
         </tbody>
     </table>
