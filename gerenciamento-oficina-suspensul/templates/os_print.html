@@ -264,15 +264,15 @@
             <tr>
                 <th>Total</th>
                 <th class="right" style="width: 140px;">Valor Total</th>
-                <th class="right" style="width: 140px;">Em até 12x</th>
+                <th class="right" style="width: 180px;">No cartão em até 12x</th>
                 <th class="right" style="width: 140px;">No PIX</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td>Total devido pelas peças/produtos e mão de obra</td>
+                <td>Total a pagar</td>
                 <td class="right">R$ {{ '%.2f'|format(valor_com_juros) | replace('.', ',') }}</td>
-                <td class="right">12x de R$ {{ '%.2f'|format(valor_com_juros / 12) | replace('.', ',') }}</td>
+                <td class="right">R$ {{ '%.2f'|format(valor_com_juros) | replace('.', ',') }}</td>
                 <td class="right" style="color: #27ae60; font-weight: bold;">R$ {{ '%.2f'|format(subtotal) | replace('.', ',') }}</td>
             </tr>
         </tbody>
