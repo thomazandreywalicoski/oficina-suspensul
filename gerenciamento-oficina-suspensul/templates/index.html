@@ -1448,6 +1448,7 @@
                 white-space: nowrap !important;
             }
             #modal-peca-orcamento-proposta .form-row,
+            #modal-peca-os .form-row,
             #modal-novo-agendamento .form-row,
             #modal-veiculo .form-row {
                 flex-direction: row !important;
@@ -2588,7 +2589,7 @@
                 
                 <div class="form-group">
                     <label>Peças / Produtos</label>
-                    <div id="os-pecas-lista" style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;"></div>
+                    <div id="os-pecas-lista" style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;overflow-x:auto;"></div>
                     <button type="button" class="btn btn-secondary" onclick="openPecaOSModal()" style="width: 100%; justify-content: center; font-weight: 400; font-size: 14px; color: var(--text-muted);"><i data-lucide="plus"></i> Adicionar Peça / Produto</button>
                 </div>
 
@@ -2634,18 +2635,24 @@
                     <label>Nome da Peça / Produto</label>
                     <input type="text" id="peca-os-nome" placeholder="Ex: Amortecedor Dianteiro">
                 </div>
-                <div class="form-group peca-row">
-                    <label>Fornecedor</label>
-                    <div style="display:flex;gap:8px;align-items:stretch;">
-                        <button type="button" class="btn custom-picker-trigger" id="peca-os-fornecedor-btn" onclick="abrirSeletorFornecedor(this)" style="flex:1;">
-                            <span class="peca-fornecedor-label" style="color: var(--text-muted);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left;">Selecione...</span>
-                            <i data-lucide="chevron-down"></i>
-                        </button>
-                        <button type="button" class="btn" title="Cadastrar novo fornecedor" onclick="openNovoFornecedorDaPeca()" style="padding:0;width:42px;flex:0 0 42px;display:inline-flex;align-items:center;justify-content:center;background:var(--primary);color:#000;">
-                            <i data-lucide="plus"></i>
-                        </button>
+                <div class="form-row">
+                    <div class="form-group peca-row" style="flex:1;min-width:0;">
+                        <label>Fornecedor</label>
+                        <div style="display:flex;gap:8px;align-items:stretch;">
+                            <button type="button" class="btn custom-picker-trigger" id="peca-os-fornecedor-btn" onclick="abrirSeletorFornecedor(this)" style="flex:1;">
+                                <span class="peca-fornecedor-label" style="color: var(--text-muted);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left;">Selecione...</span>
+                                <i data-lucide="chevron-down"></i>
+                            </button>
+                            <button type="button" class="btn" title="Cadastrar novo fornecedor" onclick="openNovoFornecedorDaPeca()" style="padding:0;width:42px;flex:0 0 42px;display:inline-flex;align-items:center;justify-content:center;background:var(--primary);color:#000;">
+                                <i data-lucide="plus"></i>
+                            </button>
+                        </div>
+                        <input type="hidden" class="peca-fornecedor-id" id="peca-os-fornecedor-id">
                     </div>
-                    <input type="hidden" class="peca-fornecedor-id" id="peca-os-fornecedor-id">
+                    <div class="form-group" style="flex:1;min-width:0;">
+                        <label>Marca <span id="peca-os-marca-obrigatorio" style="color:var(--primary);display:none;">*</span></label>
+                        <input type="text" id="peca-os-marca" placeholder="Ex: Cofap">
+                    </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
@@ -3846,6 +3853,7 @@
             document.getElementById('peca-os-venda-sem-desconto').value = '';
             document.getElementById('peca-os-venda').value = '';
             document.getElementById('peca-os-fornecedor-id').value = '';
+            document.getElementById('peca-os-marca').value = '';
             const lbl = document.querySelector('#peca-os-fornecedor-btn .peca-fornecedor-label');
             if (lbl) { lbl.textContent = 'Selecione...'; lbl.style.color = 'var(--text-muted)'; }
             
@@ -3853,6 +3861,7 @@
             document.getElementById('peca-os-custo').disabled = false;
             document.getElementById('peca-os-lucro').disabled = false;
             document.getElementById('peca-os-desconto').disabled = false;
+            if (window.atualizarObrigatoriedadeMarcaPeca) window.atualizarObrigatoriedadeMarcaPeca('os');
             
             openModal('modal-peca-os');
         }
@@ -3866,14 +3875,16 @@
             const fornecedorId = document.getElementById('peca-os-fornecedor-id').value || null;
             const fornecedorLabel = document.querySelector('#peca-os-fornecedor-btn .peca-fornecedor-label')?.textContent || '';
             const clienteTrouxe = (fornecedorId === 'cliente');
+            const marca = document.getElementById('peca-os-marca').value.trim();
 
             if (!nome) { showAlert('Informe o nome da peça/produto.'); return; }
             if (qtd <= 0) { showAlert('Informe a quantidade.'); return; }
+            if (!clienteTrouxe && !marca) { showAlert('Informe a marca da peça/produto.'); return; }
             if (!clienteTrouxe && custo <= 0) { showAlert('Informe o valor de compra.'); return; }
 
             const valores = clienteTrouxe ? { precoSemDesconto: 0, valorDesconto: 0, precoComDesconto: 0 } : calcularPrecoVenda(custo, lucro, desconto);
             pecasOS.push({
-                nome, qtd, custo: clienteTrouxe ? 0 : custo, lucro: clienteTrouxe ? 0 : lucro, desconto: clienteTrouxe ? 0 : desconto,
+                nome, qtd, marca: clienteTrouxe ? '' : marca, custo: clienteTrouxe ? 0 : custo, lucro: clienteTrouxe ? 0 : lucro, desconto: clienteTrouxe ? 0 : desconto,
                 vendaSemDesconto: valores.precoSemDesconto,
                 valorDesconto: valores.valorDesconto,
                 venda: valores.precoComDesconto,
@@ -3890,31 +3901,51 @@
             renderPecasOSLista();
         }
 
+        function renderPecaOSValores(p) {
+            if (p.cliente_trouxe) {
+                return { marca: '-', valor: '-', desconto: '-', final: 'Sem garantia', total: '-' };
+            }
+            const total = (p.venda || 0) * (p.qtd || 0);
+            return {
+                marca: p.marca || '-',
+                valor: formatBRL(p.vendaSemDesconto),
+                desconto: formatBRL(p.valorDesconto),
+                final: formatBRL(p.venda),
+                total: formatBRL(total),
+            };
+        }
+
         function renderPecasOSLista() {
             const cont = document.getElementById('os-pecas-lista');
             if (!cont) return;
+            const grid = '48px minmax(140px,2fr) 72px 95px 95px 95px 95px 90px';
             cont.innerHTML = `
-                <div style="background:var(--bg-input);border-radius:8px;overflow:hidden;">
-                    <div style="display:grid;grid-template-columns:minmax(180px,2fr) 56px 110px 130px 110px 110px 90px;gap:10px;align-items:center;padding:12px;background:var(--primary);color:#000;font-size:12px;font-weight:700;text-transform:uppercase;border-bottom:1px solid rgba(0,0,0,0.08);text-align:center;">
-                        <div style="text-align:center;">Produto</div>
-                        <div style="text-align:center;">Qtd</div>
-                        <div style="text-align:center;">Compra</div>
-                        <div style="text-align:center;">Sem desconto</div>
-                        <div style="text-align:center;">Desconto</div>
-                        <div style="text-align:center;">Venda</div>
-                        <div style="text-align:center;">Ações</div>
+                <div style="background:var(--bg-input);border-radius:8px;overflow:hidden;min-width:720px;">
+                    <div style="display:grid;grid-template-columns:${grid};gap:8px;align-items:center;padding:12px;background:var(--primary);color:#000;font-size:11px;font-weight:700;text-transform:uppercase;border-bottom:1px solid rgba(0,0,0,0.08);text-align:center;">
+                        <div>Qtd</div>
+                        <div>Descrição</div>
+                        <div>Marca</div>
+                        <div>Valor (und)</div>
+                        <div>Desconto (und)</div>
+                        <div>Valor final (und)</div>
+                        <div>Total</div>
+                        <div>Ações</div>
                     </div>
-                    ${pecasOS.map((p, i) => `
-                        <div style="display:grid;grid-template-columns:minmax(180px,2fr) 56px 110px 130px 110px 110px 90px;gap:10px;align-items:center;padding:12px;border-top:1px solid rgba(255,255,255,0.04);">
-                            <div style="text-align:center;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500;color:var(--text-main);" title="${p.nome}">${truncarNomePeca(p.nome)}</div>
+                    ${pecasOS.map((p, i) => {
+                        const vals = renderPecaOSValores(p);
+                        const desc = p.nome.length > 22 ? p.nome.slice(0, 22) + '...' : p.nome;
+                        return `
+                        <div style="display:grid;grid-template-columns:${grid};gap:8px;align-items:center;padding:12px;border-top:1px solid rgba(255,255,255,0.04);font-size:13px;">
                             <div style="text-align:center;color:var(--text-main);font-weight:600;">${p.qtd}</div>
-                            <div style="text-align:center;color:var(--text-main);font-weight:600;">${p.cliente_trouxe ? 'Cliente trouxe' : formatBRL(p.custo)}</div>
-                            <div style="text-align:center;color:var(--text-main);font-weight:600;">${p.cliente_trouxe ? '-' : formatBRL(p.vendaSemDesconto)}</div>
-                            <div style="text-align:center;color:var(--text-main);font-weight:600;">${p.cliente_trouxe ? '-' : formatBRL(p.valorDesconto)}</div>
-                            <div style="text-align:center;color:#22c55e;font-weight:700;">${p.cliente_trouxe ? 'Sem garantia' : formatBRL(p.venda)}</div>
+                            <div style="text-align:center;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500;color:var(--text-main);" title="${p.nome}">${desc}</div>
+                            <div style="text-align:center;color:var(--text-main);font-weight:500;">${vals.marca}</div>
+                            <div style="text-align:center;color:var(--text-main);font-weight:600;">${vals.valor}</div>
+                            <div style="text-align:center;color:var(--text-main);font-weight:600;">${vals.desconto}</div>
+                            <div style="text-align:center;color:#22c55e;font-weight:700;">${vals.final}</div>
+                            <div style="text-align:center;color:var(--text-main);font-weight:700;">${vals.total}</div>
                             <button type="button" class="btn-icon" onclick="removerPecaOS(${i})" title="Remover" style="color:#e74c3c;justify-self:center;"><i data-lucide="trash-2"></i></button>
-                        </div>
-                    `).join('')}
+                        </div>`;
+                    }).join('')}
                     ${pecasOS.length === 0 ? `
                         <div style="height:68px;display:flex;align-items:center;justify-content:center;padding:0 12px;color:var(--text-muted);font-size:13px;text-align:center;border-top:1px solid rgba(255,255,255,0.04);">Nenhum produto adicionado</div>
                     ` : ''}
@@ -4071,7 +4102,7 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
                 </div>
                 <div class="form-group">
                     <label>Peças / Produtos</label>
-                    <div id="orcamento-proposta-pecas-lista" style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;max-height:245px;overflow-y:auto;padding-right:8px;"></div>
+                    <div id="orcamento-proposta-pecas-lista" style="display:flex;flex-direction:column;gap:6px;margin-bottom:10px;max-height:245px;overflow:auto;padding-right:8px;"></div>
                     <button type="button" class="btn btn-secondary" onclick="openPecaOrcamentoProposta()" style="width:100%;justify-content:center;font-weight:400;font-size:14px;color:var(--text-muted);"><i data-lucide="plus"></i> Adicionar Peça / Produto</button>
                 </div>
                 <div class="form-row">
@@ -4108,16 +4139,22 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
                     <label>Nome da Peça / Produto</label>
                     <input type="text" id="peca-proposta-nome" placeholder="Ex: Amortecedor Dianteiro">
                 </div>
-                <div class="form-group peca-row">
-                    <label>Fornecedor</label>
-                    <div style="display:flex;gap:8px;align-items:stretch;">
-                        <button type="button" class="btn custom-picker-trigger" id="peca-proposta-fornecedor-btn" onclick="abrirSeletorFornecedor(this)" style="flex:1;">
-                            <span class="peca-fornecedor-label" style="color:var(--text-muted);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left;">Selecione...</span>
-                            <i data-lucide="chevron-down"></i>
-                        </button>
-                        <button type="button" class="btn" title="Cadastrar novo fornecedor" onclick="openNovoFornecedorDaPeca()" style="padding:0;width:42px;flex:0 0 42px;display:inline-flex;align-items:center;justify-content:center;background:var(--primary);color:#000;"><i data-lucide="plus"></i></button>
+                <div class="form-row">
+                    <div class="form-group peca-row" style="flex:1;min-width:0;">
+                        <label>Fornecedor</label>
+                        <div style="display:flex;gap:8px;align-items:stretch;">
+                            <button type="button" class="btn custom-picker-trigger" id="peca-proposta-fornecedor-btn" onclick="abrirSeletorFornecedor(this)" style="flex:1;">
+                                <span class="peca-fornecedor-label" style="color:var(--text-muted);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left;">Selecione...</span>
+                                <i data-lucide="chevron-down"></i>
+                            </button>
+                            <button type="button" class="btn" title="Cadastrar novo fornecedor" onclick="openNovoFornecedorDaPeca()" style="padding:0;width:42px;flex:0 0 42px;display:inline-flex;align-items:center;justify-content:center;background:var(--primary);color:#000;"><i data-lucide="plus"></i></button>
+                        </div>
+                        <input type="hidden" class="peca-fornecedor-id" id="peca-proposta-fornecedor-id">
                     </div>
-                    <input type="hidden" class="peca-fornecedor-id" id="peca-proposta-fornecedor-id">
+                    <div class="form-group" style="flex:1;min-width:0;">
+                        <label>Marca <span id="peca-proposta-marca-obrigatorio" style="color:var(--primary);display:none;">*</span></label>
+                        <input type="text" id="peca-proposta-marca" placeholder="Ex: Cofap">
+                    </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">

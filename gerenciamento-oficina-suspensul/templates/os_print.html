@@ -210,8 +210,9 @@
     <table class="print-table">
         <thead>
             <tr>
+                <th style="width:48px;">Qtd</th>
                 <th>Descrição</th>
-                <th>Qtd</th>
+                <th style="width:90px;">Marca</th>
                 <th class="right" style="width: 110px;">Valor (und)</th>
                 <th class="right">Desconto (und)</th>
                 <th class="right" style="width: 125px;">Valor final (und)</th>
@@ -223,8 +224,9 @@
             {% for p in pecas %}
                 {% if p.cliente_trouxe %}
                 <tr>
-                    <td>{{ (p.descricao[:22] ~ '...') if p.descricao and (p.descricao|length) > 22 else p.descricao }}</td>
                     <td>{{ p.quantidade }}</td>
+                    <td>{{ (p.descricao[:22] ~ '...') if p.descricao and (p.descricao|length) > 22 else p.descricao }}</td>
+                    <td>{{ p.marca or '-' }}</td>
                     <td colspan="4" class="right" style="text-align: center; color: #000; font-weight: normal;">Peça fornecida pelo cliente (sem garantia)</td>
                 </tr>
                 {% else %}
@@ -234,8 +236,9 @@
                     {% set sub = (p.valor_venda|float) * (p.quantidade|int) %}
                     {% set total_pecas.v = total_pecas.v + sub %}
                     <tr>
-                        <td>{{ (p.descricao[:22] ~ '...') if p.descricao and (p.descricao|length) > 22 else p.descricao }}</td>
                         <td>{{ p.quantidade }}</td>
+                        <td>{{ (p.descricao[:22] ~ '...') if p.descricao and (p.descricao|length) > 22 else p.descricao }}</td>
+                        <td>{{ p.marca or '-' }}</td>
                         <td class="right">R$ {{ '%.2f'|format(valor_unidade) | replace('.', ',') }}</td>
                         <td class="right">R$ {{ '%.2f'|format(desconto_unidade) | replace('.', ',') }}</td>
                         <td class="right">R$ {{ '%.2f'|format(valor_final_unidade) | replace('.', ',') }}</td>
@@ -243,7 +246,7 @@
                     </tr>
                 {% endif %}
             {% else %}
-                <tr><td colspan="6" style="text-align:center;color:#777">Nenhuma peça registrada.</td></tr>
+                <tr><td colspan="7" style="text-align:center;color:#777">Nenhuma peça registrada.</td></tr>
             {% endfor %}
         </tbody>
     </table>

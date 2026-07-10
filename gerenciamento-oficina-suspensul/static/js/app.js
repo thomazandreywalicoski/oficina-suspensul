@@ -1137,6 +1137,7 @@
                 if (lucro.value === '') lucro.value = '20';
                 if (desconto.value === '') desconto.value = '5';
             }
+            atualizarObrigatoriedadeMarcaPeca('proposta');
             window.calcularVendaPecaOrcamentoProposta();
         } else {
             const custo = document.getElementById('peca-os-custo');
@@ -1156,10 +1157,24 @@
                 if (lucro.value === '') lucro.value = '20';
                 if (desconto.value === '') desconto.value = '5';
             }
+            atualizarObrigatoriedadeMarcaPeca('os');
             window.calcularVendaPecaOS();
         }
         window.closeModal('modal-seletor-fornecedor');
     }
+
+    function atualizarObrigatoriedadeMarcaPeca(prefix) {
+        const fornecedorId = document.getElementById(`peca-${prefix}-fornecedor-id`)?.value;
+        const obrigatorio = document.getElementById(`peca-${prefix}-marca-obrigatorio`);
+        const marcaInput = document.getElementById(`peca-${prefix}-marca`);
+        const isCliente = fornecedorId === 'cliente';
+        if (obrigatorio) obrigatorio.style.display = isCliente ? 'none' : 'inline';
+        if (marcaInput) {
+            marcaInput.disabled = isCliente;
+            if (isCliente) marcaInput.value = '';
+        }
+    }
+    window.atualizarObrigatoriedadeMarcaPeca = atualizarObrigatoriedadeMarcaPeca;
 
     window.limparFornecedorSelecionado = function() {
         if (!_fornecedorPickerTarget) return;
@@ -1178,6 +1193,7 @@
             desconto.disabled = false;
             if (lucro.value === '') lucro.value = '20';
             if (desconto.value === '') desconto.value = '5';
+            atualizarObrigatoriedadeMarcaPeca('proposta');
             window.calcularVendaPecaOrcamentoProposta();
         } else {
             const custo = document.getElementById('peca-os-custo');
@@ -1188,6 +1204,7 @@
             desconto.disabled = false;
             if (lucro.value === '') lucro.value = '20';
             if (desconto.value === '') desconto.value = '5';
+            atualizarObrigatoriedadeMarcaPeca('os');
             window.calcularVendaPecaOS();
         }
         window.closeModal('modal-seletor-fornecedor');
@@ -1645,6 +1662,7 @@
         const arr = window.pecasOS || [];
         return arr.map(p => ({
             descricao: p.nome,
+            marca: p.marca || null,
             fornecedor_id: (p.fornecedor_id === 'cliente' || !p.fornecedor_id) ? null : p.fornecedor_id,
             quantidade: p.qtd,
             valor_custo: p.custo,
@@ -1692,6 +1710,28 @@
 
     window.pecasOrcamentoProposta = [];
 
+    const PECAS_LISTA_GRID = '48px minmax(140px,2fr) 72px 95px 95px 95px 95px 90px';
+
+    function renderPecaListaValores(p) {
+        if (p.cliente_trouxe) {
+            return {
+                marca: '-',
+                valor: '-',
+                desconto: '-',
+                final: 'Sem garantia',
+                total: '-',
+            };
+        }
+        const total = (p.venda || 0) * (p.qtd || 0);
+        return {
+            marca: p.marca || '-',
+            valor: fmtBRL(p.vendaSemDesconto),
+            desconto: fmtBRL(p.valorDesconto),
+            final: fmtBRL(p.venda),
+            total: fmtBRL(total),
+        };
+    }
+
     function renderPecasOrcamentoPropostaLista() {
         const cont = document.getElementById('orcamento-proposta-pecas-lista');
         if (!cont) return;
@@ -1700,24 +1740,28 @@
             cont.innerHTML = '<div style="background:var(--bg-input);border-radius:8px;padding:20px;text-align:center;color:var(--text-muted);font-size:13px;">Nenhum produto adicionado</div>';
         } else {
             cont.innerHTML = `
-                <div style="background:var(--bg-input);border-radius:8px;">
-                    <div style="display:grid;grid-template-columns:minmax(180px,2fr) 56px 110px 130px 110px 110px 90px;gap:10px;align-items:center;padding:12px;background:var(--primary);color:#000;font-size:12px;font-weight:700;text-transform:uppercase;text-align:center;position:sticky;top:0;z-index:1;border-radius:8px 8px 0 0;">
-                        <div>Produto</div><div>Qtd</div><div>Compra</div><div>Sem desconto</div><div>Desconto</div><div>Venda</div><div>Ações</div>
+                <div style="background:var(--bg-input);border-radius:8px;min-width:720px;">
+                    <div style="display:grid;grid-template-columns:${PECAS_LISTA_GRID};gap:8px;align-items:center;padding:12px;background:var(--primary);color:#000;font-size:11px;font-weight:700;text-transform:uppercase;text-align:center;position:sticky;top:0;z-index:1;border-radius:8px 8px 0 0;">
+                        <div>Qtd</div><div>Descrição</div><div>Marca</div><div>Valor (und)</div><div>Desconto (und)</div><div>Valor final (und)</div><div>Total</div><div>Ações</div>
                     </div>
-                    ${pecas.map((p, i) => `
-                        <div style="display:grid;grid-template-columns:minmax(180px,2fr) 56px 110px 130px 110px 110px 90px;gap:10px;align-items:center;padding:12px;border-top:1px solid rgba(255,255,255,0.04);">
-                            <div style="text-align:center;font-weight:500;color:var(--text-main);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${p.nome}">${p.nome.length > 25 ? p.nome.slice(0, 25) + '...' : p.nome}</div>
+                    ${pecas.map((p, i) => {
+                        const vals = renderPecaListaValores(p);
+                        const desc = p.nome.length > 22 ? p.nome.slice(0, 22) + '...' : p.nome;
+                        return `
+                        <div style="display:grid;grid-template-columns:${PECAS_LISTA_GRID};gap:8px;align-items:center;padding:12px;border-top:1px solid rgba(255,255,255,0.04);font-size:13px;">
                             <div style="text-align:center;font-weight:600;">${p.qtd}</div>
-                            <div style="text-align:center;font-weight:600;">${p.cliente_trouxe ? 'Cliente trouxe' : fmtBRL(p.custo)}</div>
-                            <div style="text-align:center;font-weight:600;">${p.cliente_trouxe ? '-' : fmtBRL(p.vendaSemDesconto)}</div>
-                            <div style="text-align:center;font-weight:600;">${p.cliente_trouxe ? '-' : fmtBRL(p.valorDesconto)}</div>
-                            <div style="text-align:center;color:#22c55e;font-weight:700;">${p.cliente_trouxe ? 'Sem garantia' : fmtBRL(p.venda)}</div>
+                            <div style="text-align:center;font-weight:500;color:var(--text-main);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escapeHtml(p.nome)}">${escapeHtml(desc)}</div>
+                            <div style="text-align:center;font-weight:500;">${escapeHtml(vals.marca)}</div>
+                            <div style="text-align:center;font-weight:600;">${vals.valor}</div>
+                            <div style="text-align:center;font-weight:600;">${vals.desconto}</div>
+                            <div style="text-align:center;color:#22c55e;font-weight:700;">${vals.final}</div>
+                            <div style="text-align:center;font-weight:700;">${vals.total}</div>
                             <div style="display:flex;gap:8px;justify-content:center;">
                                 <button type="button" class="btn-icon" onclick="window.editarPecaOrcamentoProposta(${i})" title="Editar" style="color:#f1c40f;"><i data-lucide="pencil" style="width:16px;height:16px;"></i></button>
                                 <button type="button" class="btn-icon" onclick="window.removerPecaOrcamentoProposta(${i})" title="Remover" style="color:#e74c3c;"><i data-lucide="trash-2" style="width:16px;height:16px;"></i></button>
                             </div>
-                        </div>
-                    `).join('')}
+                        </div>`;
+                    }).join('')}
                 </div>`;
         }
         refreshIcons();
@@ -1738,6 +1782,7 @@
         document.getElementById('peca-proposta-custo').value = p.custo;
         document.getElementById('peca-proposta-lucro').value = p.lucro;
         document.getElementById('peca-proposta-desconto').value = p.desconto;
+        document.getElementById('peca-proposta-marca').value = p.marca || '';
         
         document.getElementById('peca-proposta-venda-sem-desconto').value = p.cliente_trouxe ? '' : 'R$ ' + p.vendaSemDesconto.toFixed(2).replace('.', ',');
         document.getElementById('peca-proposta-venda').value = p.cliente_trouxe ? '' : p.venda.toFixed(2);
@@ -1762,6 +1807,7 @@
             lucro.disabled = false;
             desconto.disabled = false;
         }
+        atualizarObrigatoriedadeMarcaPeca('proposta');
         
         const modal = document.getElementById('modal-peca-orcamento-proposta');
         if (modal) {
@@ -1781,6 +1827,7 @@
         document.getElementById('peca-proposta-venda-sem-desconto').value = '';
         document.getElementById('peca-proposta-venda').value = '';
         document.getElementById('peca-proposta-fornecedor-id').value = '';
+        document.getElementById('peca-proposta-marca').value = '';
         const lbl = document.querySelector('#peca-proposta-fornecedor-btn .peca-fornecedor-label');
         if (lbl) { lbl.textContent = 'Selecione...'; lbl.style.color = 'var(--text-muted)'; }
         
@@ -1788,6 +1835,7 @@
         document.getElementById('peca-proposta-custo').disabled = false;
         document.getElementById('peca-proposta-lucro').disabled = false;
         document.getElementById('peca-proposta-desconto').disabled = false;
+        atualizarObrigatoriedadeMarcaPeca('proposta');
 
         const modal = document.getElementById('modal-peca-orcamento-proposta');
         if (modal) {
@@ -1853,9 +1901,11 @@
         const fornecedorId = document.getElementById('peca-proposta-fornecedor-id').value || null;
         const fornecedorLabel = document.querySelector('#peca-proposta-fornecedor-btn .peca-fornecedor-label')?.textContent || '';
         const clienteTrouxe = (fornecedorId === 'cliente');
+        const marca = document.getElementById('peca-proposta-marca').value.trim();
 
         if (!nome) { showToast('Informe o nome da peça/produto', true); return; }
         if (qtd <= 0) { showToast('Informe a quantidade', true); return; }
+        if (!clienteTrouxe && !marca) { showToast('Informe a marca da peça/produto', true); return; }
         if (!clienteTrouxe && custo <= 0) { showToast('Informe o valor de compra', true); return; }
         const lucroFrac = lucro / 100;
         const descontoFrac = desconto / 100;
@@ -1867,7 +1917,7 @@
         }
         
         const peca = {
-            nome, qtd, custo: clienteTrouxe ? 0 : custo, lucro: clienteTrouxe ? 0 : lucro, desconto: clienteTrouxe ? 0 : desconto,
+            nome, qtd, marca: clienteTrouxe ? '' : marca, custo: clienteTrouxe ? 0 : custo, lucro: clienteTrouxe ? 0 : lucro, desconto: clienteTrouxe ? 0 : desconto,
             vendaSemDesconto: precoSemDesconto,
             valorDesconto,
             venda: precoComDesconto,
@@ -1965,6 +2015,7 @@
     function coletarPecasPropostasParaSalvar() {
         return (window.pecasOrcamentoProposta || []).map(p => ({
             descricao: p.nome,
+            marca: p.marca || null,
             fornecedor_id: (p.fornecedor_id === 'cliente' || !p.fornecedor_id) ? null : p.fornecedor_id,
             quantidade: p.qtd,
             valor_custo: p.custo,
@@ -2071,6 +2122,7 @@
             state.propostaVeiculo = { id: p.veiculo_id, placa: p.placa, marca: p.marca, modelo: p.modelo };
             window.pecasOrcamentoProposta = pecas.map(pc => ({
                 nome: pc.descricao,
+                marca: pc.marca || '',
                 qtd: pc.quantidade,
                 custo: Number(pc.valor_custo),
                 lucro: Number(pc.lucro_percentual),

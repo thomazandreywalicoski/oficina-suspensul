@@ -67,7 +67,7 @@ def init_pool(retries=30, delay=2):
 
 pool = None
 _migrations_done = False
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 _schema_version_checked = None
 ORCAMENTOS_TEMP = {}
 
@@ -110,6 +110,10 @@ def ensure_schema_columns(force=False):
                                'cliente_trouxe TINYINT(1) NOT NULL DEFAULT 0')
         _add_column_if_missing(cur, conn, 'orcamentos_propostas_pecas', 'cliente_trouxe',
                                'cliente_trouxe TINYINT(1) NOT NULL DEFAULT 0')
+        _add_column_if_missing(cur, conn, 'ordens_servico_pecas', 'marca',
+                               'marca VARCHAR(80) NULL AFTER descricao')
+        _add_column_if_missing(cur, conn, 'orcamentos_propostas_pecas', 'marca',
+                               'marca VARCHAR(80) NULL AFTER descricao')
         _schema_version_checked = SCHEMA_VERSION
     except Exception as e:
         print(f"Erro em ensure_schema_columns: {e}")
@@ -206,6 +210,7 @@ def run_migrations():
             ordem_id INT NOT NULL,
             codigo VARCHAR(50),
             descricao VARCHAR(200) NOT NULL,
+            marca VARCHAR(80) NULL,
             fornecedor_id INT NULL,
             quantidade INT NOT NULL DEFAULT 1,
             valor_custo DECIMAL(10,2) NOT NULL DEFAULT 0,
@@ -394,6 +399,7 @@ def run_migrations():
                          id INT AUTO_INCREMENT PRIMARY KEY,
                          proposta_id INT NOT NULL,
                          descricao VARCHAR(255) NOT NULL,
+                         marca VARCHAR(80) NULL,
                          fornecedor_id INT NULL,
                          quantidade INT NOT NULL DEFAULT 1,
                          valor_custo DECIMAL(10,2) NOT NULL DEFAULT 0,
@@ -1171,9 +1177,9 @@ def criar_os():
                  d.get('data_emissao') or date.today().isoformat(),
                  d.get('valor_mao_obra', 0), d.get('observacoes')), commit=True)
     for p in d.get('pecas', []):
-        query("""INSERT INTO ordens_servico_pecas (ordem_id, codigo, descricao, fornecedor_id, quantidade, valor_custo, lucro_percentual, desconto_percentual, valor_venda_sem_desconto, valor_desconto, valor_venda, cliente_trouxe)
-                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
-              (oid, p.get('codigo'), p['descricao'], p.get('fornecedor_id') or None,
+        query("""INSERT INTO ordens_servico_pecas (ordem_id, codigo, descricao, marca, fornecedor_id, quantidade, valor_custo, lucro_percentual, desconto_percentual, valor_venda_sem_desconto, valor_desconto, valor_venda, cliente_trouxe)
+                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+              (oid, p.get('codigo'), p['descricao'], p.get('marca') or None, p.get('fornecedor_id') or None,
                p.get('quantidade', 1),
                p.get('valor_custo', 0), p.get('lucro_percentual', 0), p.get('desconto_percentual', 0), p.get('valor_venda_sem_desconto', 0), p.get('valor_desconto', 0), p.get('valor_venda', 0),
                1 if p.get('cliente_trouxe') else 0), commit=True)
@@ -1238,9 +1244,9 @@ def criar_proposta():
                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 'Pendente')""",
                 (numero, slug, d['cliente_id'], d['veiculo_id'], d.get('valor_mao_obra', 0), d.get('valor_frete', 0), d.get('gastos_variados', 0), mao_obra_texto), commit=True)
     for p in d.get('pecas', []):
-        query("""INSERT INTO orcamentos_propostas_pecas (proposta_id, descricao, fornecedor_id, quantidade, valor_custo, lucro_percentual, desconto_percentual, valor_venda_sem_desconto, valor_desconto, valor_venda, cliente_trouxe)
-                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
-              (pid, p['descricao'], p.get('fornecedor_id') or None,
+        query("""INSERT INTO orcamentos_propostas_pecas (proposta_id, descricao, marca, fornecedor_id, quantidade, valor_custo, lucro_percentual, desconto_percentual, valor_venda_sem_desconto, valor_desconto, valor_venda, cliente_trouxe)
+                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+              (pid, p['descricao'], p.get('marca') or None, p.get('fornecedor_id') or None,
                p.get('quantidade', 1), p.get('valor_custo', 0), p.get('lucro_percentual', 0),
                p.get('desconto_percentual', 0), p.get('valor_venda_sem_desconto', 0),
                p.get('valor_desconto', 0), p.get('valor_venda', 0),
@@ -1265,9 +1271,9 @@ def atualizar_proposta(pid):
           (d['cliente_id'], d['veiculo_id'], d.get('valor_mao_obra', 0), d.get('valor_frete', 0), d.get('gastos_variados', 0), mao_obra_texto, pid), commit=True)
     query("DELETE FROM orcamentos_propostas_pecas WHERE proposta_id=%s", (pid,), commit=True)
     for p in d.get('pecas', []):
-        query("""INSERT INTO orcamentos_propostas_pecas (proposta_id, descricao, fornecedor_id, quantidade, valor_custo, lucro_percentual, desconto_percentual, valor_venda_sem_desconto, valor_desconto, valor_venda, cliente_trouxe)
-                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
-              (pid, p['descricao'], p.get('fornecedor_id') or None,
+        query("""INSERT INTO orcamentos_propostas_pecas (proposta_id, descricao, marca, fornecedor_id, quantidade, valor_custo, lucro_percentual, desconto_percentual, valor_venda_sem_desconto, valor_desconto, valor_venda, cliente_trouxe)
+                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+              (pid, p['descricao'], p.get('marca') or None, p.get('fornecedor_id') or None,
                p.get('quantidade', 1), p.get('valor_custo', 0), p.get('lucro_percentual', 0),
                p.get('desconto_percentual', 0), p.get('valor_venda_sem_desconto', 0),
                p.get('valor_desconto', 0), p.get('valor_venda', 0),
@@ -1307,9 +1313,9 @@ def aprovar_proposta(pid):
                     (numero, slug, row['cliente_id'], row['veiculo_id'],
                      date.today().isoformat(), valor_mao_obra_os, valor_frete_os, gastos_variados_os), commit=True)
         for p in pecas:
-            query("""INSERT INTO ordens_servico_pecas (ordem_id, descricao, fornecedor_id, quantidade, valor_custo, lucro_percentual, desconto_percentual, valor_venda_sem_desconto, valor_desconto, valor_venda, cliente_trouxe)
-                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
-                  (oid, p['descricao'], p.get('fornecedor_id'),
+            query("""INSERT INTO ordens_servico_pecas (ordem_id, descricao, marca, fornecedor_id, quantidade, valor_custo, lucro_percentual, desconto_percentual, valor_venda_sem_desconto, valor_desconto, valor_venda, cliente_trouxe)
+                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+                  (oid, p['descricao'], p.get('marca'), p.get('fornecedor_id'),
                    p['quantidade'], p['valor_custo'], p['lucro_percentual'],
                    p['desconto_percentual'], p['valor_venda_sem_desconto'],
                    p['valor_desconto'], p['valor_venda'],
