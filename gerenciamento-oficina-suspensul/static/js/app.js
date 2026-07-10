@@ -1653,6 +1653,7 @@
             valor_venda_sem_desconto: p.vendaSemDesconto,
             valor_desconto: p.valorDesconto,
             valor_venda: p.venda,
+            cliente_trouxe: p.cliente_trouxe || 0,
         }));
     }
 
@@ -1972,6 +1973,7 @@
             valor_venda_sem_desconto: p.vendaSemDesconto,
             valor_desconto: p.valorDesconto,
             valor_venda: p.venda,
+            cliente_trouxe: p.cliente_trouxe || 0,
         }));
     }
 
@@ -2073,9 +2075,9 @@
                 vendaSemDesconto: Number(pc.valor_venda_sem_desconto),
                 valorDesconto: Number(pc.valor_desconto),
                 venda: Number(pc.valor_venda),
-                fornecedor_id: pc.fornecedor_id,
-                fornecedor_nome: '',
-                cliente_trouxe: !!pc.cliente_trouxe
+                fornecedor_id: pc.cliente_trouxe ? 'cliente' : pc.fornecedor_id,
+                fornecedor_nome: pc.cliente_trouxe ? 'Cliente' : '',
+                cliente_trouxe: pc.cliente_trouxe ? 1 : 0
             }));
             const titulo = document.getElementById('modal-novo-orcamento-titulo');
             if (titulo) titulo.innerText = 'Editar Orçamento';
