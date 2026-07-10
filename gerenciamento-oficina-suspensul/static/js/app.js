@@ -1645,7 +1645,7 @@
         const arr = window.pecasOS || [];
         return arr.map(p => ({
             descricao: p.nome,
-            fornecedor_id: p.fornecedor_id || null,
+            fornecedor_id: (p.fornecedor_id === 'cliente' || !p.fornecedor_id) ? null : p.fornecedor_id,
             quantidade: p.qtd,
             valor_custo: p.custo,
             lucro_percentual: p.lucro,
@@ -1965,7 +1965,7 @@
     function coletarPecasPropostasParaSalvar() {
         return (window.pecasOrcamentoProposta || []).map(p => ({
             descricao: p.nome,
-            fornecedor_id: p.fornecedor_id || null,
+            fornecedor_id: (p.fornecedor_id === 'cliente' || !p.fornecedor_id) ? null : p.fornecedor_id,
             quantidade: p.qtd,
             valor_custo: p.custo,
             lucro_percentual: p.lucro,
