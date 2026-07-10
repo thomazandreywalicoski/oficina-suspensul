@@ -67,6 +67,8 @@ def init_pool(retries=30, delay=2):
 
 pool = None
 _migrations_done = False
+SCHEMA_VERSION = 2
+_schema_version_checked = None
 ORCAMENTOS_TEMP = {}
 
 def get_db():
@@ -74,6 +76,54 @@ def get_db():
     if pool is None:
         pool = init_pool()
     return pool.get_connection()
+
+def _add_column_if_missing(cur, conn, table, column, ddl):
+    cur.execute("""SELECT COUNT(*) FROM information_schema.COLUMNS
+                   WHERE TABLE_SCHEMA = DATABASE()
+                     AND TABLE_NAME = %s
+                     AND COLUMN_NAME = %s""", (table, column))
+    (exists,) = cur.fetchone()
+    if not exists:
+        cur.execute(f"ALTER TABLE {table} ADD COLUMN {ddl}")
+        conn.commit()
+        print(f"Migração: coluna {column} adicionada em {table}")
+
+def ensure_schema_columns(force=False):
+    """Garante colunas incrementais mesmo quando migrações pesadas já rodaram."""
+    global _schema_version_checked
+    if not force and _schema_version_checked == SCHEMA_VERSION:
+        return
+    conn = None
+    cur = None
+    try:
+        conn = get_db()
+        cur = conn.cursor()
+        _add_column_if_missing(cur, conn, 'orcamentos_propostas', 'valor_frete',
+                               'valor_frete DECIMAL(10,2) NOT NULL DEFAULT 0 AFTER valor_mao_obra')
+        _add_column_if_missing(cur, conn, 'ordens_servico', 'valor_frete',
+                               'valor_frete DECIMAL(10,2) NOT NULL DEFAULT 0 AFTER valor_mao_obra')
+        _add_column_if_missing(cur, conn, 'orcamentos_propostas', 'gastos_variados',
+                               'gastos_variados DECIMAL(10,2) NOT NULL DEFAULT 0 AFTER valor_frete')
+        _add_column_if_missing(cur, conn, 'ordens_servico', 'gastos_variados',
+                               'gastos_variados DECIMAL(10,2) NOT NULL DEFAULT 0 AFTER valor_frete')
+        _add_column_if_missing(cur, conn, 'ordens_servico_pecas', 'cliente_trouxe',
+                               'cliente_trouxe TINYINT(1) NOT NULL DEFAULT 0')
+        _add_column_if_missing(cur, conn, 'orcamentos_propostas_pecas', 'cliente_trouxe',
+                               'cliente_trouxe TINYINT(1) NOT NULL DEFAULT 0')
+        _schema_version_checked = SCHEMA_VERSION
+    except Exception as e:
+        print(f"Erro em ensure_schema_columns: {e}")
+    finally:
+        if cur:
+            try:
+                cur.close()
+            except Exception:
+                pass
+        if conn:
+            try:
+                conn.close()
+            except Exception:
+                pass
 
 def run_migrations():
     global _migrations_done
@@ -142,6 +192,7 @@ def run_migrations():
             data_emissao DATE NOT NULL,
             valor_mao_obra DECIMAL(10,2) DEFAULT 0,
             valor_frete DECIMAL(10,2) NOT NULL DEFAULT 0,
+            gastos_variados DECIMAL(10,2) NOT NULL DEFAULT 0,
             status ENUM('Pendente', 'Paga') DEFAULT 'Pendente',
             observacoes TEXT,
             ativo TINYINT(1) NOT NULL DEFAULT 1,
@@ -330,6 +381,7 @@ def run_migrations():
                          veiculo_id INT NOT NULL,
                          valor_mao_obra DECIMAL(10,2) NOT NULL DEFAULT 0,
                          valor_frete DECIMAL(10,2) NOT NULL DEFAULT 0,
+                         gastos_variados DECIMAL(10,2) NOT NULL DEFAULT 0,
                          mao_obra_texto VARCHAR(255) NULL,
                          status VARCHAR(20) NOT NULL DEFAULT 'Pendente',
                          os_id INT NULL,
@@ -557,7 +609,7 @@ def run_migrations():
             except Exception:
                 pass
 
-def query(sql, params=None, fetch=False, one=False, commit=False):
+def query(sql, params=None, fetch=False, one=False, commit=False, _schema_retry=False):
     conn = get_db()
     cursor = conn.cursor(dictionary=True)
     try:
@@ -579,6 +631,11 @@ def query(sql, params=None, fetch=False, one=False, commit=False):
         conn.rollback()
         cursor.close()
         conn.close()
+        if (not _schema_retry
+                and isinstance(e, mysql.connector.errors.ProgrammingError)
+                and getattr(e, 'errno', None) == 1054):
+            ensure_schema_columns(force=True)
+            return query(sql, params, fetch, one, commit, _schema_retry=True)
         raise e
 
 def gerar_slug(veiculo_id, numero):
@@ -1816,6 +1873,7 @@ def atualizar_config():
 
 @app.before_request
 def _ensure_migrations():
+    ensure_schema_columns()
     if not _migrations_done:
         run_migrations()
 
