@@ -1112,7 +1112,7 @@ def criar_os():
                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 'Pendente', %s)""",
                 (numero, slug, d['cliente_id'], d['veiculo_id'],
                  d.get('data_emissao') or date.today().isoformat(),
-                 d.get('valor_mao_obra', 0), d.get('valor_frete', 0), d.get('gastos_variados', 0), d.get('observacoes')), commit=True)
+                 float(d.get('valor_mao_obra') or 0), float(d.get('valor_frete') or 0), float(d.get('gastos_variados') or 0), d.get('observacoes')), commit=True)
     for p in d.get('pecas', []):
         query("""INSERT INTO ordens_servico_pecas (ordem_id, codigo, descricao, fornecedor_id, quantidade, valor_custo, lucro_percentual, desconto_percentual, valor_venda_sem_desconto, valor_desconto, valor_venda, cliente_trouxe)
                  VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
@@ -1179,7 +1179,7 @@ def criar_proposta():
     mao_obra_texto = d.get('mao_obra_texto') or None
     pid = query("""INSERT INTO orcamentos_propostas (numero, slug, cliente_id, veiculo_id, valor_mao_obra, valor_frete, gastos_variados, mao_obra_texto, status)
                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 'Pendente')""",
-                (numero, slug, d['cliente_id'], d['veiculo_id'], d.get('valor_mao_obra', 0), d.get('valor_frete', 0), d.get('gastos_variados', 0), mao_obra_texto), commit=True)
+                (numero, slug, d['cliente_id'], d['veiculo_id'], float(d.get('valor_mao_obra') or 0), float(d.get('valor_frete') or 0), float(d.get('gastos_variados') or 0), mao_obra_texto), commit=True)
     for p in d.get('pecas', []):
         query("""INSERT INTO orcamentos_propostas_pecas (proposta_id, descricao, fornecedor_id, quantidade, valor_custo, lucro_percentual, desconto_percentual, valor_venda_sem_desconto, valor_desconto, valor_venda, cliente_trouxe)
                  VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
@@ -1205,7 +1205,7 @@ def atualizar_proposta(pid):
     d = request.json
     mao_obra_texto = d.get('mao_obra_texto') or None
     query("""UPDATE orcamentos_propostas SET cliente_id=%s, veiculo_id=%s, valor_mao_obra=%s, valor_frete=%s, gastos_variados=%s, mao_obra_texto=%s WHERE id=%s""",
-          (d['cliente_id'], d['veiculo_id'], d.get('valor_mao_obra', 0), d.get('valor_frete', 0), d.get('gastos_variados', 0), mao_obra_texto, pid), commit=True)
+          (d['cliente_id'], d['veiculo_id'], float(d.get('valor_mao_obra') or 0), float(d.get('valor_frete') or 0), float(d.get('gastos_variados') or 0), mao_obra_texto, pid), commit=True)
     query("DELETE FROM orcamentos_propostas_pecas WHERE proposta_id=%s", (pid,), commit=True)
     for p in d.get('pecas', []):
         query("""INSERT INTO orcamentos_propostas_pecas (proposta_id, descricao, fornecedor_id, quantidade, valor_custo, lucro_percentual, desconto_percentual, valor_venda_sem_desconto, valor_desconto, valor_venda, cliente_trouxe)
@@ -1565,7 +1565,7 @@ def relatorio_financeiro():
     # mes=0 significa "todo o período"
     if mes == 0:
         detalhes = query("""
-            SELECT os.id, os.numero, os.data_pagamento, os.valor_frete,
+            SELECT os.id, os.numero, os.data_pagamento, os.valor_frete, os.gastos_variados,
                    CONCAT_WS(' ', v.marca, v.modelo) AS veiculo,
                    v.placa AS placa,
                    COALESCE(SUM(p.valor_custo * p.quantidade), 0) AS valor_pecas_custo,
@@ -1573,19 +1573,20 @@ def relatorio_financeiro():
                    COALESCE(os.valor_mao_obra, 0) AS valor_mao_obra,
                    (COALESCE(SUM(p.valor_venda * p.quantidade), 0) + COALESCE(os.valor_mao_obra, 0)) AS total,
                    (COALESCE(SUM(p.valor_venda * p.quantidade), 0) + COALESCE(os.valor_mao_obra, 0)
-                    - COALESCE(SUM(p.valor_custo * p.quantidade), 0) - COALESCE(os.valor_frete, 0)) AS lucro
+                    - COALESCE(SUM(p.valor_custo * p.quantidade), 0) - COALESCE(os.valor_frete, 0)
+                    - COALESCE(os.gastos_variados, 0)) AS lucro
             FROM ordens_servico os
             LEFT JOIN veiculos v ON v.id = os.veiculo_id
             LEFT JOIN ordens_servico_pecas p ON p.ordem_id = os.id
             WHERE os.status = 'Paga' AND os.ativo = 1
               AND os.data_pagamento IS NOT NULL
               AND YEAR(os.data_pagamento) = %s
-            GROUP BY os.id, os.numero, os.data_pagamento, os.valor_frete, v.marca, v.modelo, v.placa, os.valor_mao_obra
+            GROUP BY os.id, os.numero, os.data_pagamento, os.valor_frete, os.gastos_variados, v.marca, v.modelo, v.placa, os.valor_mao_obra
             ORDER BY os.data_pagamento DESC, os.numero DESC
         """, (ano,), fetch=True)
     else:
         detalhes = query("""
-            SELECT os.id, os.numero, os.data_pagamento, os.valor_frete,
+            SELECT os.id, os.numero, os.data_pagamento, os.valor_frete, os.gastos_variados,
                    CONCAT_WS(' ', v.marca, v.modelo) AS veiculo,
                    v.placa AS placa,
                    COALESCE(SUM(p.valor_custo * p.quantidade), 0) AS valor_pecas_custo,
@@ -1593,14 +1594,15 @@ def relatorio_financeiro():
                    COALESCE(os.valor_mao_obra, 0) AS valor_mao_obra,
                    (COALESCE(SUM(p.valor_venda * p.quantidade), 0) + COALESCE(os.valor_mao_obra, 0)) AS total,
                    (COALESCE(SUM(p.valor_venda * p.quantidade), 0) + COALESCE(os.valor_mao_obra, 0)
-                    - COALESCE(SUM(p.valor_custo * p.quantidade), 0) - COALESCE(os.valor_frete, 0)) AS lucro
+                    - COALESCE(SUM(p.valor_custo * p.quantidade), 0) - COALESCE(os.valor_frete, 0)
+                    - COALESCE(os.gastos_variados, 0)) AS lucro
             FROM ordens_servico os
             LEFT JOIN veiculos v ON v.id = os.veiculo_id
             LEFT JOIN ordens_servico_pecas p ON p.ordem_id = os.id
             WHERE os.status = 'Paga' AND os.ativo = 1
               AND os.data_pagamento IS NOT NULL
               AND YEAR(os.data_pagamento) = %s AND MONTH(os.data_pagamento) = %s
-            GROUP BY os.id, os.numero, os.data_pagamento, os.valor_frete, v.marca, v.modelo, v.placa, os.valor_mao_obra
+            GROUP BY os.id, os.numero, os.data_pagamento, os.valor_frete, os.gastos_variados, v.marca, v.modelo, v.placa, os.valor_mao_obra
             ORDER BY os.data_pagamento DESC, os.numero DESC
         """, (ano, mes), fetch=True)
 
@@ -1671,7 +1673,8 @@ def relatorio_financeiro():
     frete_pendente = float(frete_pendente_os or 0) + float(frete_em_andamento_propostas or 0)
     total_frete = frete_pago + frete_pendente
 
-    total_gasto = float(sum(d['valor_pecas_custo'] for d in detalhes) or 0) + gasto_pendente + total_frete
+    gastos_variados_pago = sum(float(d['gastos_variados'] or 0) for d in detalhes)
+    total_gasto = float(sum(d['valor_pecas_custo'] for d in detalhes) or 0) + gasto_pendente + total_frete + gastos_variados_pago
     total_recebido = sum(d['total'] for d in detalhes)
 
     if mes == 0:
