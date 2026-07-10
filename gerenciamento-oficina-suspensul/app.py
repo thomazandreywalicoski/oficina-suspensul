@@ -499,48 +499,36 @@ def run_migrations():
             print("Migração: coluna valor_frete adicionada em ordens_servico")
 
         # Migração: coluna cliente_trouxe em ordens_servico_pecas
-        cur.execute("""SELECT COUNT(*) FROM information_schema.COLUMNS
-                       WHERE TABLE_SCHEMA = DATABASE()
-                         AND TABLE_NAME = 'ordens_servico_pecas'
-                         AND COLUMN_NAME = 'cliente_trouxe'""")
-        (tem_trouxe_os_peca,) = cur.fetchone()
-        if not tem_trouxe_os_peca:
+        try:
             cur.execute("ALTER TABLE ordens_servico_pecas ADD COLUMN cliente_trouxe TINYINT(1) NOT NULL DEFAULT 0")
             conn.commit()
             print("Migração: coluna cliente_trouxe adicionada em ordens_servico_pecas")
+        except Exception:
+            pass
 
         # Migração: coluna cliente_trouxe em orcamentos_propostas_pecas
-        cur.execute("""SELECT COUNT(*) FROM information_schema.COLUMNS
-                       WHERE TABLE_SCHEMA = DATABASE()
-                         AND TABLE_NAME = 'orcamentos_propostas_pecas'
-                         AND COLUMN_NAME = 'cliente_trouxe'""")
-        (tem_trouxe_prop_peca,) = cur.fetchone()
-        if not tem_trouxe_prop_peca:
+        try:
             cur.execute("ALTER TABLE orcamentos_propostas_pecas ADD COLUMN cliente_trouxe TINYINT(1) NOT NULL DEFAULT 0")
             conn.commit()
             print("Migração: coluna cliente_trouxe adicionada em orcamentos_propostas_pecas")
+        except Exception:
+            pass
 
         # Migração: coluna gastos_variados em ordens_servico
-        cur.execute("""SELECT COUNT(*) FROM information_schema.COLUMNS
-                       WHERE TABLE_SCHEMA = DATABASE()
-                         AND TABLE_NAME = 'ordens_servico'
-                         AND COLUMN_NAME = 'gastos_variados'""")
-        (tem_gastos_os,) = cur.fetchone()
-        if not tem_gastos_os:
+        try:
             cur.execute("ALTER TABLE ordens_servico ADD COLUMN gastos_variados DECIMAL(10,2) NOT NULL DEFAULT 0")
             conn.commit()
             print("Migração: coluna gastos_variados adicionada em ordens_servico")
+        except Exception:
+            pass
 
         # Migração: coluna gastos_variados em orcamentos_propostas
-        cur.execute("""SELECT COUNT(*) FROM information_schema.COLUMNS
-                       WHERE TABLE_SCHEMA = DATABASE()
-                         AND TABLE_NAME = 'orcamentos_propostas'
-                         AND COLUMN_NAME = 'gastos_variados'""")
-        (tem_gastos_prop,) = cur.fetchone()
-        if not tem_gastos_prop:
+        try:
             cur.execute("ALTER TABLE orcamentos_propostas ADD COLUMN gastos_variados DECIMAL(10,2) NOT NULL DEFAULT 0")
             conn.commit()
             print("Migração: coluna gastos_variados adicionada em orcamentos_propostas")
+        except Exception:
+            pass
 
         _migrations_done = True
     except Exception as e:
