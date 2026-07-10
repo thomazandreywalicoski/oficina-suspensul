@@ -2611,8 +2611,9 @@
                 <button class="btn-icon" onclick="closeModal('modal-seletor-fornecedor')"><i data-lucide="x"></i></button>
             </div>
             <div class="modal-body">
-                <div class="form-group">
-                    <input type="text" id="seletor-fornecedor-busca" placeholder="Buscar">
+                <div class="form-group" style="display:flex;gap:8px;align-items:stretch;">
+                    <input type="text" id="seletor-fornecedor-busca" placeholder="Buscar" style="flex:1;">
+                    <button type="button" class="btn btn-primary" onclick="window.selecionarFornecedorCliente()" style="background:#8e44ad;color:#fff;font-weight:600;padding:0 16px;">Cliente</button>
                 </div>
                 <div id="seletor-fornecedor-lista" style="max-height: 360px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;"></div>
             </div>
@@ -2634,7 +2635,7 @@
                     <label>Nome da Peça / Produto</label>
                     <input type="text" id="peca-os-nome" placeholder="Ex: Amortecedor Dianteiro">
                 </div>
-                <div class="form-group" style="margin-bottom: 12px;">
+                <div class="form-group" style="margin-bottom: 12px; display: none;">
                     <label style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
                         <input type="checkbox" id="peca-os-cliente-trouxe" onchange="window.toggleClienteTrouxePecaOS()" style="width: 16px; height: 16px; accent-color: var(--primary);">
                         <span style="font-size: 14px; font-weight: 500; color: var(--text-main);">Cliente trouxe a peça</span>
@@ -4130,7 +4131,7 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
                     <label>Nome da Peça / Produto</label>
                     <input type="text" id="peca-proposta-nome" placeholder="Ex: Amortecedor Dianteiro">
                 </div>
-                <div class="form-group" style="margin-bottom: 12px;">
+                <div class="form-group" style="margin-bottom: 12px; display: none;">
                     <label style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
                         <input type="checkbox" id="peca-proposta-cliente-trouxe" onchange="window.toggleClienteTrouxePecaOrcamentoProposta()" style="width: 16px; height: 16px; accent-color: var(--primary);">
                         <span style="font-size: 14px; font-weight: 500; color: var(--text-main);">Cliente trouxe a peça</span>

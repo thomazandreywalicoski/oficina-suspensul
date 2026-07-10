@@ -1096,6 +1096,37 @@
         window.openModal('modal-seletor-fornecedor');
     };
 
+    window.selecionarFornecedorCliente = function() {
+        if (!_fornecedorPickerTarget) return;
+        const hidden = _fornecedorPickerTarget.querySelector('.peca-fornecedor-id');
+        const label = _fornecedorPickerTarget.querySelector('.peca-fornecedor-label');
+        if (hidden) hidden.value = '';
+        if (label) {
+            label.textContent = 'Cliente';
+            label.title = 'Cliente';
+            label.style.color = 'var(--text-main)';
+            label.style.whiteSpace = 'nowrap';
+            label.style.overflow = 'hidden';
+            label.style.textOverflow = 'ellipsis';
+        }
+        
+        const isProposal = _fornecedorPickerTarget.querySelector('#peca-proposta-fornecedor-id') !== null;
+        if (isProposal) {
+            const chk = document.getElementById('peca-proposta-cliente-trouxe');
+            if (chk) {
+                chk.checked = true;
+                window.toggleClienteTrouxePecaOrcamentoProposta();
+            }
+        } else {
+            const chk = document.getElementById('peca-os-cliente-trouxe');
+            if (chk) {
+                chk.checked = true;
+                window.toggleClienteTrouxePecaOS();
+            }
+        }
+        window.closeModal('modal-seletor-fornecedor');
+    };
+
     function selecionarFornecedor(id, nome) {
         if (!_fornecedorPickerTarget) return;
         const hidden = _fornecedorPickerTarget.querySelector('.peca-fornecedor-id');
@@ -1104,9 +1135,25 @@
         if (label) {
             label.textContent = nome;
             label.title = nome;
+            label.style.color = 'var(--text-main)';
             label.style.whiteSpace = 'nowrap';
             label.style.overflow = 'hidden';
             label.style.textOverflow = 'ellipsis';
+        }
+        
+        const isProposal = _fornecedorPickerTarget.querySelector('#peca-proposta-fornecedor-id') !== null;
+        if (isProposal) {
+            const chk = document.getElementById('peca-proposta-cliente-trouxe');
+            if (chk) {
+                chk.checked = false;
+                window.toggleClienteTrouxePecaOrcamentoProposta();
+            }
+        } else {
+            const chk = document.getElementById('peca-os-cliente-trouxe');
+            if (chk) {
+                chk.checked = false;
+                window.toggleClienteTrouxePecaOS();
+            }
         }
         window.closeModal('modal-seletor-fornecedor');
     }
@@ -1117,6 +1164,21 @@
         const label = _fornecedorPickerTarget.querySelector('.peca-fornecedor-label');
         if (hidden) hidden.value = '';
         if (label) { label.textContent = 'Selecione...'; label.style.color = 'var(--text-muted)'; }
+        
+        const isProposal = _fornecedorPickerTarget.querySelector('#peca-proposta-fornecedor-id') !== null;
+        if (isProposal) {
+            const chk = document.getElementById('peca-proposta-cliente-trouxe');
+            if (chk) {
+                chk.checked = false;
+                window.toggleClienteTrouxePecaOrcamentoProposta();
+            }
+        } else {
+            const chk = document.getElementById('peca-os-cliente-trouxe');
+            if (chk) {
+                chk.checked = false;
+                window.toggleClienteTrouxePecaOS();
+            }
+        }
         window.closeModal('modal-seletor-fornecedor');
     };
 
