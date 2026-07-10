@@ -520,27 +520,27 @@ def run_migrations():
             conn.commit()
             print("Migração: coluna cliente_trouxe adicionada em orcamentos_propostas_pecas")
 
-        # Migração: coluna gastos_variados em orcamentos_propostas
-        cur.execute("""SELECT COUNT(*) FROM information_schema.COLUMNS
-                       WHERE TABLE_SCHEMA = DATABASE()
-                         AND TABLE_NAME = 'orcamentos_propostas'
-                         AND COLUMN_NAME = 'gastos_variados'""")
-        (tem_gastos_variados_prop,) = cur.fetchone()
-        if not tem_gastos_variados_prop:
-            cur.execute("ALTER TABLE orcamentos_propostas ADD COLUMN gastos_variados DECIMAL(10,2) NOT NULL DEFAULT 0")
-            conn.commit()
-            print("Migração: coluna gastos_variados adicionada em orcamentos_propostas")
-
         # Migração: coluna gastos_variados em ordens_servico
         cur.execute("""SELECT COUNT(*) FROM information_schema.COLUMNS
                        WHERE TABLE_SCHEMA = DATABASE()
                          AND TABLE_NAME = 'ordens_servico'
                          AND COLUMN_NAME = 'gastos_variados'""")
-        (tem_gastos_variados_os,) = cur.fetchone()
-        if not tem_gastos_variados_os:
+        (tem_gastos_os,) = cur.fetchone()
+        if not tem_gastos_os:
             cur.execute("ALTER TABLE ordens_servico ADD COLUMN gastos_variados DECIMAL(10,2) NOT NULL DEFAULT 0")
             conn.commit()
             print("Migração: coluna gastos_variados adicionada em ordens_servico")
+
+        # Migração: coluna gastos_variados em orcamentos_propostas
+        cur.execute("""SELECT COUNT(*) FROM information_schema.COLUMNS
+                       WHERE TABLE_SCHEMA = DATABASE()
+                         AND TABLE_NAME = 'orcamentos_propostas'
+                         AND COLUMN_NAME = 'gastos_variados'""")
+        (tem_gastos_prop,) = cur.fetchone()
+        if not tem_gastos_prop:
+            cur.execute("ALTER TABLE orcamentos_propostas ADD COLUMN gastos_variados DECIMAL(10,2) NOT NULL DEFAULT 0")
+            conn.commit()
+            print("Migração: coluna gastos_variados adicionada em orcamentos_propostas")
 
         _migrations_done = True
     except Exception as e:
@@ -558,7 +558,6 @@ def run_migrations():
                 pass
 
 def query(sql, params=None, fetch=False, one=False, commit=False):
-    global _migrations_done
     conn = get_db()
     cursor = conn.cursor(dictionary=True)
     try:
@@ -576,20 +575,6 @@ def query(sql, params=None, fetch=False, one=False, commit=False):
             return data
         cursor.close()
         conn.close()
-    except mysql.connector.Error as e:
-        # Erro 1054 (coluna inexistente) ou 1146 (tabela inexistente)
-        if e.errno in (1054, 1146):
-            cursor.close()
-            conn.close()
-            print(f"Detectado erro de DB {e.errno}. Forçando execução de novas migrações...")
-            _migrations_done = False
-            run_migrations()
-            # Tenta executar novamente
-            return query(sql, params, fetch, one, commit)
-        conn.rollback()
-        cursor.close()
-        conn.close()
-        raise e
     except Exception as e:
         conn.rollback()
         cursor.close()
@@ -1123,11 +1108,11 @@ def criar_os():
     last = query("SELECT COALESCE(MAX(numero), 1000) AS m FROM ordens_servico", fetch=True, one=True)
     numero = (last['m'] or 1000) + 1
     slug = gerar_slug(d['veiculo_id'], numero)
-    oid = query("""INSERT INTO ordens_servico (numero, slug, cliente_id, veiculo_id, data_emissao, valor_mao_obra, valor_frete, gastos_variados, status, observacoes)
-                   VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 'Pendente', %s)""",
+    oid = query("""INSERT INTO ordens_servico (numero, slug, cliente_id, veiculo_id, data_emissao, valor_mao_obra, gastos_variados, status, observacoes)
+                   VALUES (%s, %s, %s, %s, %s, %s, %s, 'Pendente', %s)""",
                 (numero, slug, d['cliente_id'], d['veiculo_id'],
                  d.get('data_emissao') or date.today().isoformat(),
-                 float(d.get('valor_mao_obra') or 0), float(d.get('valor_frete') or 0), float(d.get('gastos_variados') or 0), d.get('observacoes')), commit=True)
+                 d.get('valor_mao_obra', 0), d.get('gastos_variados', 0), d.get('observacoes')), commit=True)
     for p in d.get('pecas', []):
         query("""INSERT INTO ordens_servico_pecas (ordem_id, codigo, descricao, fornecedor_id, quantidade, valor_custo, lucro_percentual, desconto_percentual, valor_venda_sem_desconto, valor_desconto, valor_venda, cliente_trouxe)
                  VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
@@ -1194,7 +1179,7 @@ def criar_proposta():
     mao_obra_texto = d.get('mao_obra_texto') or None
     pid = query("""INSERT INTO orcamentos_propostas (numero, slug, cliente_id, veiculo_id, valor_mao_obra, valor_frete, gastos_variados, mao_obra_texto, status)
                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 'Pendente')""",
-                (numero, slug, d['cliente_id'], d['veiculo_id'], float(d.get('valor_mao_obra') or 0), float(d.get('valor_frete') or 0), float(d.get('gastos_variados') or 0), mao_obra_texto), commit=True)
+                (numero, slug, d['cliente_id'], d['veiculo_id'], d.get('valor_mao_obra', 0), d.get('valor_frete', 0), d.get('gastos_variados', 0), mao_obra_texto), commit=True)
     for p in d.get('pecas', []):
         query("""INSERT INTO orcamentos_propostas_pecas (proposta_id, descricao, fornecedor_id, quantidade, valor_custo, lucro_percentual, desconto_percentual, valor_venda_sem_desconto, valor_desconto, valor_venda, cliente_trouxe)
                  VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
@@ -1220,7 +1205,7 @@ def atualizar_proposta(pid):
     d = request.json
     mao_obra_texto = d.get('mao_obra_texto') or None
     query("""UPDATE orcamentos_propostas SET cliente_id=%s, veiculo_id=%s, valor_mao_obra=%s, valor_frete=%s, gastos_variados=%s, mao_obra_texto=%s WHERE id=%s""",
-          (d['cliente_id'], d['veiculo_id'], float(d.get('valor_mao_obra') or 0), float(d.get('valor_frete') or 0), float(d.get('gastos_variados') or 0), mao_obra_texto, pid), commit=True)
+          (d['cliente_id'], d['veiculo_id'], d.get('valor_mao_obra', 0), d.get('valor_frete', 0), d.get('gastos_variados', 0), mao_obra_texto, pid), commit=True)
     query("DELETE FROM orcamentos_propostas_pecas WHERE proposta_id=%s", (pid,), commit=True)
     for p in d.get('pecas', []):
         query("""INSERT INTO orcamentos_propostas_pecas (proposta_id, descricao, fornecedor_id, quantidade, valor_custo, lucro_percentual, desconto_percentual, valor_venda_sem_desconto, valor_desconto, valor_venda, cliente_trouxe)
@@ -1259,11 +1244,11 @@ def aprovar_proposta(pid):
         last = query("SELECT COALESCE(MAX(numero), 1000) AS m FROM ordens_servico", fetch=True, one=True)
         numero = (last['m'] or 1000) + 1
         slug = gerar_slug(row['veiculo_id'], numero)
-        valor_gastos_variados_os = float(row.get('gastos_variados') or 0)
+        valor_gastos_variados = float(row.get('gastos_variados') or 0)
         oid = query("""INSERT INTO ordens_servico (numero, slug, cliente_id, veiculo_id, data_emissao, valor_mao_obra, valor_frete, gastos_variados, status)
                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 'Pendente')""",
                     (numero, slug, row['cliente_id'], row['veiculo_id'],
-                     date.today().isoformat(), valor_mao_obra_os, valor_frete_os, valor_gastos_variados_os), commit=True)
+                     date.today().isoformat(), valor_mao_obra_os, valor_frete_os, valor_gastos_variados), commit=True)
         for p in pecas:
             query("""INSERT INTO ordens_servico_pecas (ordem_id, descricao, fornecedor_id, quantidade, valor_custo, lucro_percentual, desconto_percentual, valor_venda_sem_desconto, valor_desconto, valor_venda, cliente_trouxe)
                      VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
@@ -1688,8 +1673,8 @@ def relatorio_financeiro():
     frete_pendente = float(frete_pendente_os or 0) + float(frete_em_andamento_propostas or 0)
     total_frete = frete_pago + frete_pendente
 
-    gastos_variados_pago = sum(float(d['gastos_variados'] or 0) for d in detalhes)
-    total_gasto = float(sum(d['valor_pecas_custo'] for d in detalhes) or 0) + gasto_pendente + total_frete + gastos_variados_pago
+    total_gastos_variados = sum(float(d.get('gastos_variados') or 0) for d in detalhes)
+    total_gasto = float(sum(d['valor_pecas_custo'] for d in detalhes) or 0) + gasto_pendente + total_frete + total_gastos_variados
     total_recebido = sum(d['total'] for d in detalhes)
 
     if mes == 0:
