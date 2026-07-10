@@ -75,9 +75,9 @@ def get_db():
         pool = init_pool()
     return pool.get_connection()
 
-def run_migrations(force=False):
+def run_migrations():
     global _migrations_done
-    if _migrations_done and not force:
+    if _migrations_done:
         return
     conn = None
     cur = None
@@ -479,8 +479,8 @@ def run_migrations(force=False):
         # Migração: coluna valor_frete em orcamentos_propostas
         cur.execute("""SELECT COUNT(*) FROM information_schema.COLUMNS
                        WHERE TABLE_SCHEMA = DATABASE()
-                       AND TABLE_NAME = 'orcamentos_propostas'
-                       AND COLUMN_NAME = 'valor_frete'""")
+                         AND TABLE_NAME = 'orcamentos_propostas'
+                         AND COLUMN_NAME = 'valor_frete'""")
         (tem_frete_prop,) = cur.fetchone()
         if not tem_frete_prop:
             cur.execute("ALTER TABLE orcamentos_propostas ADD COLUMN valor_frete DECIMAL(10,2) NOT NULL DEFAULT 0 AFTER valor_mao_obra")
@@ -490,8 +490,8 @@ def run_migrations(force=False):
         # Migração: coluna valor_frete em ordens_servico
         cur.execute("""SELECT COUNT(*) FROM information_schema.COLUMNS
                        WHERE TABLE_SCHEMA = DATABASE()
-                       AND TABLE_NAME = 'ordens_servico'
-                       AND COLUMN_NAME = 'valor_frete'""")
+                         AND TABLE_NAME = 'ordens_servico'
+                         AND COLUMN_NAME = 'valor_frete'""")
         (tem_frete_os,) = cur.fetchone()
         if not tem_frete_os:
             cur.execute("ALTER TABLE ordens_servico ADD COLUMN valor_frete DECIMAL(10,2) NOT NULL DEFAULT 0 AFTER valor_mao_obra")
@@ -557,9 +557,8 @@ def run_migrations(force=False):
             except Exception:
                 pass
 
-
-
-def query(sql, params=None, fetch=False, one=False, commit=False, retry_on_migration=True):
+def query(sql, params=None, fetch=False, one=False, commit=False):
+    global _migrations_done
     conn = get_db()
     cursor = conn.cursor(dictionary=True)
     try:
@@ -577,17 +576,24 @@ def query(sql, params=None, fetch=False, one=False, commit=False, retry_on_migra
             return data
         cursor.close()
         conn.close()
+    except mysql.connector.Error as e:
+        # Erro 1054 (coluna inexistente) ou 1146 (tabela inexistente)
+        if e.errno in (1054, 1146):
+            cursor.close()
+            conn.close()
+            print(f"Detectado erro de DB {e.errno}. Forçando execução de novas migrações...")
+            _migrations_done = False
+            run_migrations()
+            # Tenta executar novamente
+            return query(sql, params, fetch, one, commit)
+        conn.rollback()
+        cursor.close()
+        conn.close()
+        raise e
     except Exception as e:
         conn.rollback()
         cursor.close()
         conn.close()
-        if retry_on_migration and hasattr(e, 'errno') and e.errno == 1054:
-            print("Desvio de coluna nao encontrada (1054). Forcando migracao e tentando novamente...")
-            try:
-                run_migrations(force=True)
-            except Exception as migration_error:
-                print(f"Erro ao forcar migracao no retry: {migration_error}")
-            return query(sql, params, fetch, one, commit, retry_on_migration=False)
         raise e
 
 def gerar_slug(veiculo_id, numero):
