@@ -1075,13 +1075,21 @@
         const arr = (state.fornecedores || []).filter(f => f.ativo);
         const f = (filtro || '').toLowerCase().trim();
         const itens = f ? arr.filter(x => (x.nome || '').toLowerCase().includes(f) || (x.cnpj || '').includes(f)) : arr;
-        lista.innerHTML = itens.length
+        
+        let specialClienteHtml = `
+            <button type="button" class="btn" data-id="cliente" data-nome="Cliente" style="justify-content:center;text-align:center;width:100%;background:#ffe54c;color:#000;font-weight:bold;margin-bottom:6px;border:none;border-radius:4px;padding:10px 14px;">
+                <span>Cliente (Peça fornecida pelo cliente)</span>
+            </button>
+        `;
+        
+        lista.innerHTML = specialClienteHtml + (itens.length
             ? itens.map(x => `
                 <button type="button" class="btn btn-secondary" data-id="${x.id}" data-nome="${escapeHtml(x.nome)}" style="justify-content:space-between;text-align:left;width:100%;">
                     <span>${escapeHtml(x.nome)}</span>
                     <span style="color:var(--text-muted);font-size:12px;">${escapeHtml(x.cnpj || '')}</span>
                 </button>`).join('')
-            : '<div style="color:var(--text-muted);text-align:center;padding:20px;">Nenhum fornecedor encontrado</div>';
+            : '<div style="color:var(--text-muted);text-align:center;padding:20px;">Nenhum fornecedor encontrado</div>');
+            
         lista.querySelectorAll('button[data-id]').forEach(btn => {
             btn.onclick = () => selecionarFornecedor(btn.dataset.id, btn.dataset.nome);
         });
@@ -1096,37 +1104,6 @@
         window.openModal('modal-seletor-fornecedor');
     };
 
-    window.selecionarFornecedorCliente = function() {
-        if (!_fornecedorPickerTarget) return;
-        const hidden = _fornecedorPickerTarget.querySelector('.peca-fornecedor-id');
-        const label = _fornecedorPickerTarget.querySelector('.peca-fornecedor-label');
-        if (hidden) hidden.value = '';
-        if (label) {
-            label.textContent = 'Cliente';
-            label.title = 'Cliente';
-            label.style.color = 'var(--text-main)';
-            label.style.whiteSpace = 'nowrap';
-            label.style.overflow = 'hidden';
-            label.style.textOverflow = 'ellipsis';
-        }
-        
-        const isProposal = _fornecedorPickerTarget.querySelector('#peca-proposta-fornecedor-id') !== null;
-        if (isProposal) {
-            const chk = document.getElementById('peca-proposta-cliente-trouxe');
-            if (chk) {
-                chk.checked = true;
-                window.toggleClienteTrouxePecaOrcamentoProposta();
-            }
-        } else {
-            const chk = document.getElementById('peca-os-cliente-trouxe');
-            if (chk) {
-                chk.checked = true;
-                window.toggleClienteTrouxePecaOS();
-            }
-        }
-        window.closeModal('modal-seletor-fornecedor');
-    };
-
     function selecionarFornecedor(id, nome) {
         if (!_fornecedorPickerTarget) return;
         const hidden = _fornecedorPickerTarget.querySelector('.peca-fornecedor-id');
@@ -1135,25 +1112,51 @@
         if (label) {
             label.textContent = nome;
             label.title = nome;
-            label.style.color = 'var(--text-main)';
             label.style.whiteSpace = 'nowrap';
             label.style.overflow = 'hidden';
             label.style.textOverflow = 'ellipsis';
+            label.style.color = (id === 'cliente') ? '#ffe54c' : 'var(--text-main)';
         }
-        
-        const isProposal = _fornecedorPickerTarget.querySelector('#peca-proposta-fornecedor-id') !== null;
-        if (isProposal) {
-            const chk = document.getElementById('peca-proposta-cliente-trouxe');
-            if (chk) {
-                chk.checked = false;
-                window.toggleClienteTrouxePecaOrcamentoProposta();
+
+        const isProposta = _fornecedorPickerTarget.id.includes('proposta') || _fornecedorPickerTarget.querySelector('#peca-proposta-fornecedor-id') || document.getElementById('modal-peca-orcamento-proposta').classList.contains('active');
+        if (isProposta) {
+            const custo = document.getElementById('peca-proposta-custo');
+            const lucro = document.getElementById('peca-proposta-lucro');
+            const desconto = document.getElementById('peca-proposta-desconto');
+            if (id === 'cliente') {
+                custo.value = '';
+                lucro.value = '';
+                desconto.value = '';
+                custo.disabled = true;
+                lucro.disabled = true;
+                desconto.disabled = true;
+            } else {
+                custo.disabled = false;
+                lucro.disabled = false;
+                desconto.disabled = false;
+                if (lucro.value === '') lucro.value = '20';
+                if (desconto.value === '') desconto.value = '5';
             }
+            window.calcularVendaPecaOrcamentoProposta();
         } else {
-            const chk = document.getElementById('peca-os-cliente-trouxe');
-            if (chk) {
-                chk.checked = false;
-                window.toggleClienteTrouxePecaOS();
+            const custo = document.getElementById('peca-os-custo');
+            const lucro = document.getElementById('peca-os-lucro');
+            const desconto = document.getElementById('peca-os-desconto');
+            if (id === 'cliente') {
+                custo.value = '';
+                lucro.value = '';
+                desconto.value = '';
+                custo.disabled = true;
+                lucro.disabled = true;
+                desconto.disabled = true;
+            } else {
+                custo.disabled = false;
+                lucro.disabled = false;
+                desconto.disabled = false;
+                if (lucro.value === '') lucro.value = '20';
+                if (desconto.value === '') desconto.value = '5';
             }
+            window.calcularVendaPecaOS();
         }
         window.closeModal('modal-seletor-fornecedor');
     }
@@ -1165,19 +1168,27 @@
         if (hidden) hidden.value = '';
         if (label) { label.textContent = 'Selecione...'; label.style.color = 'var(--text-muted)'; }
         
-        const isProposal = _fornecedorPickerTarget.querySelector('#peca-proposta-fornecedor-id') !== null;
-        if (isProposal) {
-            const chk = document.getElementById('peca-proposta-cliente-trouxe');
-            if (chk) {
-                chk.checked = false;
-                window.toggleClienteTrouxePecaOrcamentoProposta();
-            }
+        const isProposta = _fornecedorPickerTarget.id.includes('proposta') || _fornecedorPickerTarget.querySelector('#peca-proposta-fornecedor-id') || document.getElementById('modal-peca-orcamento-proposta').classList.contains('active');
+        if (isProposta) {
+            const custo = document.getElementById('peca-proposta-custo');
+            const lucro = document.getElementById('peca-proposta-lucro');
+            const desconto = document.getElementById('peca-proposta-desconto');
+            custo.disabled = false;
+            lucro.disabled = false;
+            desconto.disabled = false;
+            if (lucro.value === '') lucro.value = '20';
+            if (desconto.value === '') desconto.value = '5';
+            window.calcularVendaPecaOrcamentoProposta();
         } else {
-            const chk = document.getElementById('peca-os-cliente-trouxe');
-            if (chk) {
-                chk.checked = false;
-                window.toggleClienteTrouxePecaOS();
-            }
+            const custo = document.getElementById('peca-os-custo');
+            const lucro = document.getElementById('peca-os-lucro');
+            const desconto = document.getElementById('peca-os-desconto');
+            custo.disabled = false;
+            lucro.disabled = false;
+            desconto.disabled = false;
+            if (lucro.value === '') lucro.value = '20';
+            if (desconto.value === '') desconto.value = '5';
+            window.calcularVendaPecaOS();
         }
         window.closeModal('modal-seletor-fornecedor');
     };
@@ -1727,18 +1738,28 @@
         document.getElementById('peca-proposta-lucro').value = p.lucro;
         document.getElementById('peca-proposta-desconto').value = p.desconto;
         
-        const chk = document.getElementById('peca-proposta-cliente-trouxe');
-        if (chk) chk.checked = !!p.cliente_trouxe;
-        window.toggleClienteTrouxePecaOrcamentoProposta();
-        
         document.getElementById('peca-proposta-venda-sem-desconto').value = p.cliente_trouxe ? '' : 'R$ ' + p.vendaSemDesconto.toFixed(2).replace('.', ',');
         document.getElementById('peca-proposta-venda').value = p.cliente_trouxe ? '' : p.venda.toFixed(2);
         
-        document.getElementById('peca-proposta-fornecedor-id').value = p.fornecedor_id || '';
+        document.getElementById('peca-proposta-fornecedor-id').value = p.fornecedor_id || (p.cliente_trouxe ? 'cliente' : '');
         const lbl = document.querySelector('#peca-proposta-fornecedor-btn .peca-fornecedor-label');
         if (lbl) {
-            lbl.textContent = p.fornecedor_nome || 'Selecione...';
-            lbl.style.color = p.fornecedor_nome ? 'var(--text-main)' : 'var(--text-muted)';
+            lbl.textContent = p.cliente_trouxe ? 'Cliente' : (p.fornecedor_name || 'Selecione...');
+            lbl.style.color = (p.cliente_trouxe || p.fornecedor_name) ? (p.cliente_trouxe ? '#ffe54c' : 'var(--text-main)') : 'var(--text-muted)';
+        }
+
+        // Apply disabled states based on loaded supplier
+        const custo = document.getElementById('peca-proposta-custo');
+        const lucro = document.getElementById('peca-proposta-lucro');
+        const desconto = document.getElementById('peca-proposta-desconto');
+        if (p.cliente_trouxe) {
+            custo.disabled = true;
+            lucro.disabled = true;
+            desconto.disabled = true;
+        } else {
+            custo.disabled = false;
+            lucro.disabled = false;
+            desconto.disabled = false;
         }
         
         const modal = document.getElementById('modal-peca-orcamento-proposta');
@@ -1759,12 +1780,14 @@
         document.getElementById('peca-proposta-venda-sem-desconto').value = '';
         document.getElementById('peca-proposta-venda').value = '';
         document.getElementById('peca-proposta-fornecedor-id').value = '';
-        const chk = document.getElementById('peca-proposta-cliente-trouxe');
-        if (chk) chk.checked = false;
-        window.toggleClienteTrouxePecaOrcamentoProposta();
         const lbl = document.querySelector('#peca-proposta-fornecedor-btn .peca-fornecedor-label');
         if (lbl) { lbl.textContent = 'Selecione...'; lbl.style.color = 'var(--text-muted)'; }
         
+        // Reset disabled states
+        document.getElementById('peca-proposta-custo').disabled = false;
+        document.getElementById('peca-proposta-lucro').disabled = false;
+        document.getElementById('peca-proposta-desconto').disabled = false;
+
         const modal = document.getElementById('modal-peca-orcamento-proposta');
         if (modal) {
             modal.querySelector('.modal-title').textContent = 'Adicionar Peça/Produto';
@@ -1773,31 +1796,8 @@
         window.openModal('modal-peca-orcamento-proposta');
     };
 
-    window.toggleClienteTrouxePecaOrcamentoProposta = function() {
-        const trouxe = document.getElementById('peca-proposta-cliente-trouxe').checked;
-        const custo = document.getElementById('peca-proposta-custo');
-        const lucro = document.getElementById('peca-proposta-lucro');
-        const desconto = document.getElementById('peca-proposta-desconto');
-
-        if (trouxe) {
-            custo.value = '';
-            lucro.value = '';
-            desconto.value = '';
-            custo.disabled = true;
-            lucro.disabled = true;
-            desconto.disabled = true;
-        } else {
-            custo.disabled = false;
-            lucro.disabled = false;
-            desconto.disabled = false;
-            if (lucro.value === '') lucro.value = '20';
-            if (desconto.value === '') desconto.value = '5';
-        }
-        window.calcularVendaPecaOrcamentoProposta();
-    };
-
     window.calcularVendaPecaOrcamentoProposta = function() {
-        const trouxe = document.getElementById('peca-proposta-cliente-trouxe').checked;
+        const trouxe = (document.getElementById('peca-proposta-fornecedor-id').value === 'cliente');
         if (trouxe) {
             document.getElementById('peca-proposta-venda-sem-desconto').value = '';
             document.getElementById('peca-proposta-venda').value = '';
@@ -1821,7 +1821,7 @@
     };
 
     window.calcularLucroPecaOrcamentoProposta = function() {
-        const trouxe = document.getElementById('peca-proposta-cliente-trouxe').checked;
+        const trouxe = (document.getElementById('peca-proposta-fornecedor-id').value === 'cliente');
         if (trouxe) {
             document.getElementById('peca-proposta-venda-sem-desconto').value = '';
             document.getElementById('peca-proposta-venda').value = '';
@@ -1851,7 +1851,7 @@
         const desconto = parseFloat(document.getElementById('peca-proposta-desconto').value) || 0;
         const fornecedorId = document.getElementById('peca-proposta-fornecedor-id').value || null;
         const fornecedorLabel = document.querySelector('#peca-proposta-fornecedor-btn .peca-fornecedor-label')?.textContent || '';
-        const clienteTrouxe = document.getElementById('peca-proposta-cliente-trouxe').checked;
+        const clienteTrouxe = (fornecedorId === 'cliente');
 
         if (!nome) { showToast('Informe o nome da peça/produto', true); return; }
         if (qtd <= 0) { showToast('Informe a quantidade', true); return; }
@@ -1870,8 +1870,8 @@
             vendaSemDesconto: precoSemDesconto,
             valorDesconto,
             venda: precoComDesconto,
-            fornecedor_id: fornecedorId,
-            fornecedor_nome: fornecedorLabel === 'Selecione...' ? '' : fornecedorLabel,
+            fornecedor_id: clienteTrouxe ? null : fornecedorId,
+            fornecedor_nome: clienteTrouxe ? 'Cliente' : (fornecedorLabel === 'Selecione...' ? '' : fornecedorLabel),
             cliente_trouxe: clienteTrouxe ? 1 : 0
         };
 
