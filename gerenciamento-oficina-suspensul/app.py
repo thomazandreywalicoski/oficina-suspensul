@@ -1820,7 +1820,7 @@ def health():
         return jsonify({'status': 'erro', 'erro': str(e), 'tipo': type(e).__name__}), 500
 
 
-@app.route('/admin/migrar')
+@app.route('/api/migrar-colunas')
 @login_required
 def forcar_migracoes():
     """Força todas as migrações de colunas a rodar novamente, ignorando a flag."""
