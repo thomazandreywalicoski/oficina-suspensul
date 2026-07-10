@@ -97,6 +97,75 @@
         .print-table th { background: #eee; padding: 8px; font-weight: bold; text-align: left; border: 0; box-shadow: inset -1px 0 0 #ddd, inset 0 -1px 0 #ddd; }
         .print-table td { padding: 8px; border: 0; box-shadow: inset -1px 0 0 #ddd, inset 0 -1px 0 #ddd; }
         .print-table .right { text-align: right; }
+        .print-table-pecas {
+            table-layout: fixed;
+            width: 100%;
+            font-size: 11px;
+        }
+        .print-table-pecas th,
+        .print-table-pecas td {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            vertical-align: middle;
+            padding: 5px 4px;
+            line-height: 1.25;
+        }
+        .print-table-pecas thead th {
+            font-size: 9px;
+            font-weight: 700;
+            white-space: nowrap;
+            padding: 6px 4px;
+        }
+        .print-table-pecas .col-qtd,
+        .print-table-pecas th.col-qtd,
+        .print-table-pecas td.col-qtd {
+            width: 30px;
+            min-width: 30px;
+            max-width: 30px;
+            text-align: center !important;
+            padding-left: 2px;
+            padding-right: 2px;
+        }
+        .print-table-pecas .col-desc,
+        .print-table-pecas th.col-desc,
+        .print-table-pecas td.col-desc {
+            text-align: left !important;
+            width: auto;
+        }
+        .print-table-pecas .col-marca,
+        .print-table-pecas th.col-marca,
+        .print-table-pecas td.col-marca {
+            width: 48px;
+            min-width: 48px;
+            max-width: 56px;
+            text-align: center !important;
+        }
+        .print-table-pecas .col-valor,
+        .print-table-pecas .col-desconto,
+        .print-table-pecas .col-final,
+        .print-table-pecas .col-total,
+        .print-table-pecas th.col-valor,
+        .print-table-pecas th.col-desconto,
+        .print-table-pecas th.col-final,
+        .print-table-pecas th.col-total,
+        .print-table-pecas td.col-valor,
+        .print-table-pecas td.col-desconto,
+        .print-table-pecas td.col-final,
+        .print-table-pecas td.col-total {
+            width: 1%;
+            white-space: nowrap;
+            text-align: right !important;
+            padding-left: 3px;
+            padding-right: 4px;
+        }
+        .print-table-pecas .col-msg-cliente {
+            text-align: center !important;
+            font-weight: normal;
+            color: #000;
+            white-space: nowrap;
+            font-size: 10px;
+        }
         .print-table th:last-child, .print-table td:last-child { box-shadow: inset 0 -1px 0 #ddd; }
         .print-table tbody tr:last-child td { box-shadow: inset -1px 0 0 #ddd; }
         .print-table tbody tr:last-child td:last-child { box-shadow: none; }
@@ -207,16 +276,25 @@
     </div>
 
     <div class="print-secao-title">Produtos / Peças Orçadas</div>
-    <table class="print-table">
+    <table class="print-table print-table-pecas">
+        <colgroup>
+            <col style="width:30px">
+            <col>
+            <col style="width:50px">
+            <col style="width:62px">
+            <col style="width:68px">
+            <col style="width:72px">
+            <col style="width:62px">
+        </colgroup>
         <thead>
             <tr>
-                <th style="width:48px;">Qtd</th>
-                <th>Descrição</th>
-                <th style="width:90px;">Marca</th>
-                <th class="right" style="width: 110px;">Valor (und)</th>
-                <th class="right">Desconto (und)</th>
-                <th class="right" style="width: 125px;">Valor final (und)</th>
-                <th class="right" style="width: 105px;">Total</th>
+                <th class="col-qtd">Qtd</th>
+                <th class="col-desc">Descrição</th>
+                <th class="col-marca">Marca</th>
+                <th class="col-valor">Valor (und)</th>
+                <th class="col-desconto">Desconto (und)</th>
+                <th class="col-final">Valor final (und)</th>
+                <th class="col-total">Total</th>
             </tr>
         </thead>
         <tbody>
@@ -224,10 +302,10 @@
             {% for p in pecas %}
                 {% if p.cliente_trouxe %}
                 <tr>
-                    <td>{{ p.quantidade }}</td>
-                    <td>{{ (p.descricao[:22] ~ '...') if p.descricao and (p.descricao|length) > 22 else p.descricao }}</td>
-                    <td>{{ p.marca or '-' }}</td>
-                    <td colspan="4" class="right" style="text-align: center; color: #000; font-weight: normal;">Peça fornecida pelo cliente (sem garantia)</td>
+                    <td class="col-qtd">{{ p.quantidade }}</td>
+                    <td class="col-desc" title="{{ p.descricao }}">{{ p.descricao }}</td>
+                    <td class="col-marca">{{ p.marca or '-' }}</td>
+                    <td colspan="4" class="col-msg-cliente">Peça fornecida pelo cliente (sem garantia)</td>
                 </tr>
                 {% else %}
                     {% set valor_unidade = (p.valor_venda_sem_desconto|float) if p.valor_venda_sem_desconto is defined and (p.valor_venda_sem_desconto|float) > 0 else ((p.valor_venda|float) + ((p.valor_desconto|float) if p.valor_desconto is defined and p.valor_desconto is not none else 0)) %}
@@ -236,13 +314,13 @@
                     {% set sub = (p.valor_venda|float) * (p.quantidade|int) %}
                     {% set total_pecas.v = total_pecas.v + sub %}
                     <tr>
-                        <td>{{ p.quantidade }}</td>
-                        <td>{{ (p.descricao[:22] ~ '...') if p.descricao and (p.descricao|length) > 22 else p.descricao }}</td>
-                        <td>{{ p.marca or '-' }}</td>
-                        <td class="right">R$ {{ '%.2f'|format(valor_unidade) | replace('.', ',') }}</td>
-                        <td class="right">R$ {{ '%.2f'|format(desconto_unidade) | replace('.', ',') }}</td>
-                        <td class="right">R$ {{ '%.2f'|format(valor_final_unidade) | replace('.', ',') }}</td>
-                        <td class="right">R$ {{ '%.2f'|format(sub) | replace('.', ',') }}</td>
+                        <td class="col-qtd">{{ p.quantidade }}</td>
+                        <td class="col-desc" title="{{ p.descricao }}">{{ p.descricao }}</td>
+                        <td class="col-marca">{{ p.marca or '-' }}</td>
+                        <td class="col-valor">R$ {{ '%.2f'|format(valor_unidade) | replace('.', ',') }}</td>
+                        <td class="col-desconto">R$ {{ '%.2f'|format(desconto_unidade) | replace('.', ',') }}</td>
+                        <td class="col-final">R$ {{ '%.2f'|format(valor_final_unidade) | replace('.', ',') }}</td>
+                        <td class="col-total">R$ {{ '%.2f'|format(sub) | replace('.', ',') }}</td>
                     </tr>
                 {% endif %}
             {% else %}
