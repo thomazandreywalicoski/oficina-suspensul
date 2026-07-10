@@ -79,6 +79,8 @@ def run_migrations():
     global _migrations_done
     if _migrations_done:
         return
+    conn = None
+    cur = None
     try:
         conn = get_db()
         cur = conn.cursor()
@@ -518,11 +520,20 @@ def run_migrations():
             conn.commit()
             print("Migração: coluna cliente_trouxe adicionada em orcamentos_propostas_pecas")
 
-        cur.close()
-        conn.close()
         _migrations_done = True
     except Exception as e:
         print(f"Erro em run_migrations: {e}")
+    finally:
+        if cur:
+            try:
+                cur.close()
+            except Exception:
+                pass
+        if conn:
+            try:
+                conn.close()
+            except Exception:
+                pass
 
 def query(sql, params=None, fetch=False, one=False, commit=False):
     conn = get_db()
