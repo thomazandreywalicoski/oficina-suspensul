@@ -1083,7 +1083,7 @@ def criar_os():
     for p in d.get('pecas', []):
         query("""INSERT INTO ordens_servico_pecas (ordem_id, codigo, descricao, fornecedor_id, quantidade, valor_custo, lucro_percentual, desconto_percentual, valor_venda_sem_desconto, valor_desconto, valor_venda, cliente_trouxe)
                  VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
-              (oid, p.get('codigo'), p['descricao'], p.get('fornecedor_id') or None,
+              (oid, p.get('codigo'), p['descricao'], (p.get('fornecedor_id') if p.get('fornecedor_id') != 'cliente' else None) or None,
                p.get('quantidade', 1),
                p.get('valor_custo', 0), p.get('lucro_percentual', 0), p.get('desconto_percentual', 0), p.get('valor_venda_sem_desconto', 0), p.get('valor_desconto', 0), p.get('valor_venda', 0),
                1 if p.get('cliente_trouxe') else 0), commit=True)
@@ -1150,7 +1150,7 @@ def criar_proposta():
     for p in d.get('pecas', []):
         query("""INSERT INTO orcamentos_propostas_pecas (proposta_id, descricao, fornecedor_id, quantidade, valor_custo, lucro_percentual, desconto_percentual, valor_venda_sem_desconto, valor_desconto, valor_venda, cliente_trouxe)
                  VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
-              (pid, p['descricao'], p.get('fornecedor_id') or None,
+              (pid, p['descricao'], (p.get('fornecedor_id') if p.get('fornecedor_id') != 'cliente' else None) or None,
                p.get('quantidade', 1), p.get('valor_custo', 0), p.get('lucro_percentual', 0),
                p.get('desconto_percentual', 0), p.get('valor_venda_sem_desconto', 0),
                p.get('valor_desconto', 0), p.get('valor_venda', 0),
@@ -1177,7 +1177,7 @@ def atualizar_proposta(pid):
     for p in d.get('pecas', []):
         query("""INSERT INTO orcamentos_propostas_pecas (proposta_id, descricao, fornecedor_id, quantidade, valor_custo, lucro_percentual, desconto_percentual, valor_venda_sem_desconto, valor_desconto, valor_venda, cliente_trouxe)
                  VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
-              (pid, p['descricao'], p.get('fornecedor_id') or None,
+              (pid, p['descricao'], (p.get('fornecedor_id') if p.get('fornecedor_id') != 'cliente' else None) or None,
                p.get('quantidade', 1), p.get('valor_custo', 0), p.get('lucro_percentual', 0),
                p.get('desconto_percentual', 0), p.get('valor_venda_sem_desconto', 0),
                p.get('valor_desconto', 0), p.get('valor_venda', 0),

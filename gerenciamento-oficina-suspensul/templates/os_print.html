@@ -225,7 +225,7 @@
                 <tr>
                     <td>{{ (p.descricao[:22] ~ '...') if p.descricao and (p.descricao|length) > 22 else p.descricao }}</td>
                     <td>{{ p.quantidade }}</td>
-                    <td colspan="4" class="right" style="text-align: center; font-style: italic; color: #555; font-weight: 500;">Peça fornecida pelo cliente (sem garantia)</td>
+                    <td colspan="4" class="right" style="text-align: center; font-weight: 500;">Peça fornecida pelo cliente (sem garantia)</td>
                 </tr>
                 {% else %}
                     {% set valor_unidade = (p.valor_venda_sem_desconto|float) if p.valor_venda_sem_desconto is defined and (p.valor_venda_sem_desconto|float) > 0 else ((p.valor_venda|float) + ((p.valor_desconto|float) if p.valor_desconto is defined and p.valor_desconto is not none else 0)) %}
