@@ -2634,6 +2634,12 @@
                     <label>Nome da Peça / Produto</label>
                     <input type="text" id="peca-os-nome" placeholder="Ex: Amortecedor Dianteiro">
                 </div>
+                <div class="form-group" style="margin-bottom: 12px;">
+                    <label style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
+                        <input type="checkbox" id="peca-os-cliente-trouxe" onchange="window.toggleClienteTrouxePecaOS()" style="width: 16px; height: 16px; accent-color: var(--primary);">
+                        <span style="font-size: 14px; font-weight: 500; color: var(--text-main);">Cliente trouxe a peça</span>
+                    </label>
+                </div>
                 <div class="form-group peca-row">
                     <label>Fornecedor</label>
                     <div style="display:flex;gap:8px;align-items:stretch;">
@@ -3822,7 +3828,36 @@
             return { precoSemDesconto, valorDesconto, precoComDesconto };
         }
 
+        function toggleClienteTrouxePecaOS() {
+            const trouxe = document.getElementById('peca-os-cliente-trouxe').checked;
+            const custo = document.getElementById('peca-os-custo');
+            const lucro = document.getElementById('peca-os-lucro');
+            const desconto = document.getElementById('peca-os-desconto');
+
+            if (trouxe) {
+                custo.value = '';
+                lucro.value = '';
+                desconto.value = '';
+                custo.disabled = true;
+                lucro.disabled = true;
+                desconto.disabled = true;
+            } else {
+                custo.disabled = false;
+                lucro.disabled = false;
+                desconto.disabled = false;
+                if (lucro.value === '') lucro.value = '20';
+                if (desconto.value === '') desconto.value = '5';
+            }
+            calcularVendaPecaOS();
+        }
+
         function calcularVendaPecaOS() {
+            const trouxe = document.getElementById('peca-os-cliente-trouxe').checked;
+            if (trouxe) {
+                document.getElementById('peca-os-venda-sem-desconto').value = '';
+                document.getElementById('peca-os-venda').value = '';
+                return;
+            }
             const custo = parseFloat(document.getElementById('peca-os-custo').value) || 0;
             const lucro = parseFloat(document.getElementById('peca-os-lucro').value) || 0;
             const desconto = parseFloat(document.getElementById('peca-os-desconto').value) || 0;
@@ -3840,6 +3875,9 @@
             document.getElementById('peca-os-venda-sem-desconto').value = '';
             document.getElementById('peca-os-venda').value = '';
             document.getElementById('peca-os-fornecedor-id').value = '';
+            const chk = document.getElementById('peca-os-cliente-trouxe');
+            if (chk) chk.checked = false;
+            toggleClienteTrouxePecaOS();
             const lbl = document.querySelector('#peca-os-fornecedor-btn .peca-fornecedor-label');
             if (lbl) { lbl.textContent = 'Selecione...'; lbl.style.color = 'var(--text-muted)'; }
             openModal('modal-peca-os');
@@ -3853,19 +3891,21 @@
             const desconto = parseFloat(document.getElementById('peca-os-desconto').value) || 0;
             const fornecedorId = document.getElementById('peca-os-fornecedor-id').value || null;
             const fornecedorLabel = document.querySelector('#peca-os-fornecedor-btn .peca-fornecedor-label')?.textContent || '';
+            const clienteTrouxe = document.getElementById('peca-os-cliente-trouxe').checked;
 
             if (!nome) { showAlert('Informe o nome da peça/produto.'); return; }
             if (qtd <= 0) { showAlert('Informe a quantidade.'); return; }
-            if (custo <= 0) { showAlert('Informe o valor de compra.'); return; }
+            if (!clienteTrouxe && custo <= 0) { showAlert('Informe o valor de compra.'); return; }
 
-            const valores = calcularPrecoVenda(custo, lucro, desconto);
+            const valores = clienteTrouxe ? { precoSemDesconto: 0, valorDesconto: 0, precoComDesconto: 0 } : calcularPrecoVenda(custo, lucro, desconto);
             pecasOS.push({
-                nome, qtd, custo, lucro, desconto,
+                nome, qtd, custo: clienteTrouxe ? 0 : custo, lucro: clienteTrouxe ? 0 : lucro, desconto: clienteTrouxe ? 0 : desconto,
                 vendaSemDesconto: valores.precoSemDesconto,
                 valorDesconto: valores.valorDesconto,
                 venda: valores.precoComDesconto,
                 fornecedor_id: fornecedorId,
-                fornecedor_nome: fornecedorLabel === 'Selecione...' ? '' : fornecedorLabel
+                fornecedor_nome: fornecedorLabel === 'Selecione...' ? '' : fornecedorLabel,
+                cliente_trouxe: clienteTrouxe ? 1 : 0
             });
             renderPecasOSLista();
             closeModal('modal-peca-os');
@@ -3894,10 +3934,10 @@
                         <div style="display:grid;grid-template-columns:minmax(180px,2fr) 56px 110px 130px 110px 110px 90px;gap:10px;align-items:center;padding:12px;border-top:1px solid rgba(255,255,255,0.04);">
                             <div style="text-align:center;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500;color:var(--text-main);" title="${p.nome}">${truncarNomePeca(p.nome)}</div>
                             <div style="text-align:center;color:var(--text-main);font-weight:600;">${p.qtd}</div>
-                            <div style="text-align:center;color:var(--text-main);font-weight:600;">${formatBRL(p.custo)}</div>
-                            <div style="text-align:center;color:var(--text-main);font-weight:600;">${formatBRL(p.vendaSemDesconto)}</div>
-                            <div style="text-align:center;color:var(--text-main);font-weight:600;">${formatBRL(p.valorDesconto)}</div>
-                            <div style="text-align:center;color:#22c55e;font-weight:700;">${formatBRL(p.venda)}</div>
+                            <div style="text-align:center;color:var(--text-main);font-weight:600;">${p.cliente_trouxe ? 'Cliente trouxe' : formatBRL(p.custo)}</div>
+                            <div style="text-align:center;color:var(--text-main);font-weight:600;">${p.cliente_trouxe ? '-' : formatBRL(p.vendaSemDesconto)}</div>
+                            <div style="text-align:center;color:var(--text-main);font-weight:600;">${p.cliente_trouxe ? '-' : formatBRL(p.valorDesconto)}</div>
+                            <div style="text-align:center;color:#22c55e;font-weight:700;">${p.cliente_trouxe ? 'Sem garantia' : formatBRL(p.venda)}</div>
                             <button type="button" class="btn-icon" onclick="removerPecaOS(${i})" title="Remover" style="color:#e74c3c;justify-self:center;"><i data-lucide="trash-2"></i></button>
                         </div>
                     `).join('')}
@@ -4089,6 +4129,12 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
                 <div class="form-group">
                     <label>Nome da Peça / Produto</label>
                     <input type="text" id="peca-proposta-nome" placeholder="Ex: Amortecedor Dianteiro">
+                </div>
+                <div class="form-group" style="margin-bottom: 12px;">
+                    <label style="display: inline-flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;">
+                        <input type="checkbox" id="peca-proposta-cliente-trouxe" onchange="window.toggleClienteTrouxePecaOrcamentoProposta()" style="width: 16px; height: 16px; accent-color: var(--primary);">
+                        <span style="font-size: 14px; font-weight: 500; color: var(--text-main);">Cliente trouxe a peça</span>
+                    </label>
                 </div>
                 <div class="form-group peca-row">
                     <label>Fornecedor</label>

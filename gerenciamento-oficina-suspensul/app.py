@@ -159,6 +159,7 @@ def run_migrations():
             lucro_percentual DECIMAL(6,2) NOT NULL DEFAULT 0,
             desconto_percentual DECIMAL(6,2) NOT NULL DEFAULT 0,
             valor_venda DECIMAL(10,2) NOT NULL DEFAULT 0,
+            cliente_trouxe TINYINT(1) NOT NULL DEFAULT 0,
             FOREIGN KEY (ordem_id) REFERENCES ordens_servico(id) ON DELETE CASCADE,
             FOREIGN KEY (fornecedor_id) REFERENCES fornecedores(id) ON DELETE SET NULL
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci""")
@@ -347,6 +348,7 @@ def run_migrations():
                          valor_venda_sem_desconto DECIMAL(10,2) NOT NULL DEFAULT 0,
                          valor_desconto DECIMAL(10,2) NOT NULL DEFAULT 0,
                          valor_venda DECIMAL(10,2) NOT NULL DEFAULT 0,
+                         cliente_trouxe TINYINT(1) NOT NULL DEFAULT 0,
                          FOREIGN KEY (proposta_id) REFERENCES orcamentos_propostas(id) ON DELETE CASCADE
                        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4""")
         conn.commit()
@@ -493,6 +495,28 @@ def run_migrations():
             cur.execute("ALTER TABLE ordens_servico ADD COLUMN valor_frete DECIMAL(10,2) NOT NULL DEFAULT 0 AFTER valor_mao_obra")
             conn.commit()
             print("Migração: coluna valor_frete adicionada em ordens_servico")
+
+        # Migração: coluna cliente_trouxe em ordens_servico_pecas
+        cur.execute("""SELECT COUNT(*) FROM information_schema.COLUMNS
+                       WHERE TABLE_SCHEMA = DATABASE()
+                         AND TABLE_NAME = 'ordens_servico_pecas'
+                         AND COLUMN_NAME = 'cliente_trouxe'""")
+        (tem_trouxe_os_peca,) = cur.fetchone()
+        if not tem_trouxe_os_peca:
+            cur.execute("ALTER TABLE ordens_servico_pecas ADD COLUMN cliente_trouxe TINYINT(1) NOT NULL DEFAULT 0")
+            conn.commit()
+            print("Migração: coluna cliente_trouxe adicionada em ordens_servico_pecas")
+
+        # Migração: coluna cliente_trouxe em orcamentos_propostas_pecas
+        cur.execute("""SELECT COUNT(*) FROM information_schema.COLUMNS
+                       WHERE TABLE_SCHEMA = DATABASE()
+                         AND TABLE_NAME = 'orcamentos_propostas_pecas'
+                         AND COLUMN_NAME = 'cliente_trouxe'""")
+        (tem_trouxe_prop_peca,) = cur.fetchone()
+        if not tem_trouxe_prop_peca:
+            cur.execute("ALTER TABLE orcamentos_propostas_pecas ADD COLUMN cliente_trouxe TINYINT(1) NOT NULL DEFAULT 0")
+            conn.commit()
+            print("Migração: coluna cliente_trouxe adicionada em orcamentos_propostas_pecas")
 
         cur.close()
         conn.close()
@@ -1057,11 +1081,12 @@ def criar_os():
                  d.get('data_emissao') or date.today().isoformat(),
                  d.get('valor_mao_obra', 0), d.get('observacoes')), commit=True)
     for p in d.get('pecas', []):
-        query("""INSERT INTO ordens_servico_pecas (ordem_id, codigo, descricao, fornecedor_id, quantidade, valor_custo, lucro_percentual, desconto_percentual, valor_venda_sem_desconto, valor_desconto, valor_venda)
-                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+        query("""INSERT INTO ordens_servico_pecas (ordem_id, codigo, descricao, fornecedor_id, quantidade, valor_custo, lucro_percentual, desconto_percentual, valor_venda_sem_desconto, valor_desconto, valor_venda, cliente_trouxe)
+                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
               (oid, p.get('codigo'), p['descricao'], p.get('fornecedor_id') or None,
                p.get('quantidade', 1),
-               p.get('valor_custo', 0), p.get('lucro_percentual', 0), p.get('desconto_percentual', 0), p.get('valor_venda_sem_desconto', 0), p.get('valor_desconto', 0), p.get('valor_venda', 0)), commit=True)
+               p.get('valor_custo', 0), p.get('lucro_percentual', 0), p.get('desconto_percentual', 0), p.get('valor_venda_sem_desconto', 0), p.get('valor_desconto', 0), p.get('valor_venda', 0),
+               1 if p.get('cliente_trouxe') else 0), commit=True)
     return jsonify({'id': oid, 'numero': numero, 'slug': slug}), 201
 
 @app.route('/api/os/<int:oid>/status', methods=['PUT'])
@@ -1123,12 +1148,13 @@ def criar_proposta():
                    VALUES (%s, %s, %s, %s, %s, %s, %s, 'Pendente')""",
                 (numero, slug, d['cliente_id'], d['veiculo_id'], d.get('valor_mao_obra', 0), d.get('valor_frete', 0), mao_obra_texto), commit=True)
     for p in d.get('pecas', []):
-        query("""INSERT INTO orcamentos_propostas_pecas (proposta_id, descricao, fornecedor_id, quantidade, valor_custo, lucro_percentual, desconto_percentual, valor_venda_sem_desconto, valor_desconto, valor_venda)
-                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+        query("""INSERT INTO orcamentos_propostas_pecas (proposta_id, descricao, fornecedor_id, quantidade, valor_custo, lucro_percentual, desconto_percentual, valor_venda_sem_desconto, valor_desconto, valor_venda, cliente_trouxe)
+                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
               (pid, p['descricao'], p.get('fornecedor_id') or None,
                p.get('quantidade', 1), p.get('valor_custo', 0), p.get('lucro_percentual', 0),
                p.get('desconto_percentual', 0), p.get('valor_venda_sem_desconto', 0),
-               p.get('valor_desconto', 0), p.get('valor_venda', 0)), commit=True)
+               p.get('valor_desconto', 0), p.get('valor_venda', 0),
+               1 if p.get('cliente_trouxe') else 0), commit=True)
     return jsonify({'id': pid, 'numero': numero, 'slug': slug}), 201
 
 @app.route('/api/propostas/<int:pid>', methods=['GET'])
@@ -1149,12 +1175,13 @@ def atualizar_proposta(pid):
           (d['cliente_id'], d['veiculo_id'], d.get('valor_mao_obra', 0), d.get('valor_frete', 0), mao_obra_texto, pid), commit=True)
     query("DELETE FROM orcamentos_propostas_pecas WHERE proposta_id=%s", (pid,), commit=True)
     for p in d.get('pecas', []):
-        query("""INSERT INTO orcamentos_propostas_pecas (proposta_id, descricao, fornecedor_id, quantidade, valor_custo, lucro_percentual, desconto_percentual, valor_venda_sem_desconto, valor_desconto, valor_venda)
-                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+        query("""INSERT INTO orcamentos_propostas_pecas (proposta_id, descricao, fornecedor_id, quantidade, valor_custo, lucro_percentual, desconto_percentual, valor_venda_sem_desconto, valor_desconto, valor_venda, cliente_trouxe)
+                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
               (pid, p['descricao'], p.get('fornecedor_id') or None,
                p.get('quantidade', 1), p.get('valor_custo', 0), p.get('lucro_percentual', 0),
                p.get('desconto_percentual', 0), p.get('valor_venda_sem_desconto', 0),
-               p.get('valor_desconto', 0), p.get('valor_venda', 0)), commit=True)
+               p.get('valor_desconto', 0), p.get('valor_venda', 0),
+               1 if p.get('cliente_trouxe') else 0), commit=True)
     return jsonify({'ok': True})
 
 @app.route('/api/propostas/<int:pid>', methods=['DELETE'])
@@ -1189,12 +1216,13 @@ def aprovar_proposta(pid):
                     (numero, slug, row['cliente_id'], row['veiculo_id'],
                      date.today().isoformat(), valor_mao_obra_os, valor_frete_os), commit=True)
         for p in pecas:
-            query("""INSERT INTO ordens_servico_pecas (ordem_id, descricao, fornecedor_id, quantidade, valor_custo, lucro_percentual, desconto_percentual, valor_venda_sem_desconto, valor_desconto, valor_venda)
-                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+            query("""INSERT INTO ordens_servico_pecas (ordem_id, descricao, fornecedor_id, quantidade, valor_custo, lucro_percentual, desconto_percentual, valor_venda_sem_desconto, valor_desconto, valor_venda, cliente_trouxe)
+                     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
                   (oid, p['descricao'], p.get('fornecedor_id'),
                    p['quantidade'], p['valor_custo'], p['lucro_percentual'],
                    p['desconto_percentual'], p['valor_venda_sem_desconto'],
-                   p['valor_desconto'], p['valor_venda']), commit=True)
+                   p['valor_desconto'], p['valor_venda'],
+                   p.get('cliente_trouxe', 0)), commit=True)
         query("UPDATE orcamentos_propostas SET status='Concluido', os_id=%s WHERE id=%s", (oid, pid), commit=True)
         return jsonify({'ok': True, 'os_id': oid, 'numero': numero, 'status': 'Concluido'})
     else:

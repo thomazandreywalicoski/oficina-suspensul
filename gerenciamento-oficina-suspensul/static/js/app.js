@@ -1634,10 +1634,10 @@
                         <div style="display:grid;grid-template-columns:minmax(180px,2fr) 56px 110px 130px 110px 110px 90px;gap:10px;align-items:center;padding:12px;border-top:1px solid rgba(255,255,255,0.04);">
                             <div style="text-align:center;font-weight:500;color:var(--text-main);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${p.nome}">${p.nome.length > 25 ? p.nome.slice(0, 25) + '...' : p.nome}</div>
                             <div style="text-align:center;font-weight:600;">${p.qtd}</div>
-                            <div style="text-align:center;font-weight:600;">${fmtBRL(p.custo)}</div>
-                            <div style="text-align:center;font-weight:600;">${fmtBRL(p.vendaSemDesconto)}</div>
-                            <div style="text-align:center;font-weight:600;">${fmtBRL(p.valorDesconto)}</div>
-                            <div style="text-align:center;color:#22c55e;font-weight:700;">${fmtBRL(p.venda)}</div>
+                            <div style="text-align:center;font-weight:600;">${p.cliente_trouxe ? 'Cliente trouxe' : fmtBRL(p.custo)}</div>
+                            <div style="text-align:center;font-weight:600;">${p.cliente_trouxe ? '-' : fmtBRL(p.vendaSemDesconto)}</div>
+                            <div style="text-align:center;font-weight:600;">${p.cliente_trouxe ? '-' : fmtBRL(p.valorDesconto)}</div>
+                            <div style="text-align:center;color:#22c55e;font-weight:700;">${p.cliente_trouxe ? 'Sem garantia' : fmtBRL(p.venda)}</div>
                             <div style="display:flex;gap:8px;justify-content:center;">
                                 <button type="button" class="btn-icon" onclick="window.editarPecaOrcamentoProposta(${i})" title="Editar" style="color:#f1c40f;"><i data-lucide="pencil" style="width:16px;height:16px;"></i></button>
                                 <button type="button" class="btn-icon" onclick="window.removerPecaOrcamentoProposta(${i})" title="Remover" style="color:#e74c3c;"><i data-lucide="trash-2" style="width:16px;height:16px;"></i></button>
@@ -1665,8 +1665,12 @@
         document.getElementById('peca-proposta-lucro').value = p.lucro;
         document.getElementById('peca-proposta-desconto').value = p.desconto;
         
-        document.getElementById('peca-proposta-venda-sem-desconto').value = 'R$ ' + p.vendaSemDesconto.toFixed(2).replace('.', ',');
-        document.getElementById('peca-proposta-venda').value = p.venda.toFixed(2);
+        const chk = document.getElementById('peca-proposta-cliente-trouxe');
+        if (chk) chk.checked = !!p.cliente_trouxe;
+        window.toggleClienteTrouxePecaOrcamentoProposta();
+        
+        document.getElementById('peca-proposta-venda-sem-desconto').value = p.cliente_trouxe ? '' : 'R$ ' + p.vendaSemDesconto.toFixed(2).replace('.', ',');
+        document.getElementById('peca-proposta-venda').value = p.cliente_trouxe ? '' : p.venda.toFixed(2);
         
         document.getElementById('peca-proposta-fornecedor-id').value = p.fornecedor_id || '';
         const lbl = document.querySelector('#peca-proposta-fornecedor-btn .peca-fornecedor-label');
@@ -1693,6 +1697,9 @@
         document.getElementById('peca-proposta-venda-sem-desconto').value = '';
         document.getElementById('peca-proposta-venda').value = '';
         document.getElementById('peca-proposta-fornecedor-id').value = '';
+        const chk = document.getElementById('peca-proposta-cliente-trouxe');
+        if (chk) chk.checked = false;
+        window.toggleClienteTrouxePecaOrcamentoProposta();
         const lbl = document.querySelector('#peca-proposta-fornecedor-btn .peca-fornecedor-label');
         if (lbl) { lbl.textContent = 'Selecione...'; lbl.style.color = 'var(--text-muted)'; }
         
@@ -1704,7 +1711,36 @@
         window.openModal('modal-peca-orcamento-proposta');
     };
 
+    window.toggleClienteTrouxePecaOrcamentoProposta = function() {
+        const trouxe = document.getElementById('peca-proposta-cliente-trouxe').checked;
+        const custo = document.getElementById('peca-proposta-custo');
+        const lucro = document.getElementById('peca-proposta-lucro');
+        const desconto = document.getElementById('peca-proposta-desconto');
+
+        if (trouxe) {
+            custo.value = '';
+            lucro.value = '';
+            desconto.value = '';
+            custo.disabled = true;
+            lucro.disabled = true;
+            desconto.disabled = true;
+        } else {
+            custo.disabled = false;
+            lucro.disabled = false;
+            desconto.disabled = false;
+            if (lucro.value === '') lucro.value = '20';
+            if (desconto.value === '') desconto.value = '5';
+        }
+        window.calcularVendaPecaOrcamentoProposta();
+    };
+
     window.calcularVendaPecaOrcamentoProposta = function() {
+        const trouxe = document.getElementById('peca-proposta-cliente-trouxe').checked;
+        if (trouxe) {
+            document.getElementById('peca-proposta-venda-sem-desconto').value = '';
+            document.getElementById('peca-proposta-venda').value = '';
+            return;
+        }
         const custo = parseFloat(document.getElementById('peca-proposta-custo').value) || 0;
         const lucro = parseFloat(document.getElementById('peca-proposta-lucro').value) || 0;
         const desconto = parseFloat(document.getElementById('peca-proposta-desconto').value) || 0;
@@ -1723,6 +1759,12 @@
     };
 
     window.calcularLucroPecaOrcamentoProposta = function() {
+        const trouxe = document.getElementById('peca-proposta-cliente-trouxe').checked;
+        if (trouxe) {
+            document.getElementById('peca-proposta-venda-sem-desconto').value = '';
+            document.getElementById('peca-proposta-venda').value = '';
+            return;
+        }
         const custo = parseFloat(document.getElementById('peca-proposta-custo').value) || 0;
         const vendaFinal = parseFloat(document.getElementById('peca-proposta-venda').value) || 0;
         const desconto = parseFloat(document.getElementById('peca-proposta-desconto').value) || 0;
@@ -1747,25 +1789,28 @@
         const desconto = parseFloat(document.getElementById('peca-proposta-desconto').value) || 0;
         const fornecedorId = document.getElementById('peca-proposta-fornecedor-id').value || null;
         const fornecedorLabel = document.querySelector('#peca-proposta-fornecedor-btn .peca-fornecedor-label')?.textContent || '';
+        const clienteTrouxe = document.getElementById('peca-proposta-cliente-trouxe').checked;
+
         if (!nome) { showToast('Informe o nome da peça/produto', true); return; }
         if (qtd <= 0) { showToast('Informe a quantidade', true); return; }
-        if (custo <= 0) { showToast('Informe o valor de compra', true); return; }
+        if (!clienteTrouxe && custo <= 0) { showToast('Informe o valor de compra', true); return; }
         const lucroFrac = lucro / 100;
         const descontoFrac = desconto / 100;
         let precoSemDesconto = 0, valorDesconto = 0, precoComDesconto = 0;
-        if (descontoFrac < 1) {
+        if (!clienteTrouxe && descontoFrac < 1) {
             precoSemDesconto = custo * (1 + lucroFrac) / (1 - descontoFrac);
             valorDesconto = precoSemDesconto * descontoFrac;
             precoComDesconto = precoSemDesconto - valorDesconto;
         }
         
         const peca = {
-            nome, qtd, custo, lucro, desconto,
+            nome, qtd, custo: clienteTrouxe ? 0 : custo, lucro: clienteTrouxe ? 0 : lucro, desconto: clienteTrouxe ? 0 : desconto,
             vendaSemDesconto: precoSemDesconto,
             valorDesconto,
             venda: precoComDesconto,
             fornecedor_id: fornecedorId,
-            fornecedor_nome: fornecedorLabel === 'Selecione...' ? '' : fornecedorLabel
+            fornecedor_nome: fornecedorLabel === 'Selecione...' ? '' : fornecedorLabel,
+            cliente_trouxe: clienteTrouxe ? 1 : 0
         };
 
         if (state.editandoPecaIdx !== null && state.editandoPecaIdx !== undefined) {
@@ -1967,7 +2012,8 @@
                 valorDesconto: Number(pc.valor_desconto),
                 venda: Number(pc.valor_venda),
                 fornecedor_id: pc.fornecedor_id,
-                fornecedor_nome: ''
+                fornecedor_nome: '',
+                cliente_trouxe: !!pc.cliente_trouxe
             }));
             const titulo = document.getElementById('modal-novo-orcamento-titulo');
             if (titulo) titulo.innerText = 'Editar Orçamento';

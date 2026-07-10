@@ -221,19 +221,27 @@
         <tbody>
             {% set total_pecas = namespace(v=0) %}
             {% for p in pecas %}
-                {% set valor_unidade = (p.valor_venda_sem_desconto|float) if p.valor_venda_sem_desconto is defined and (p.valor_venda_sem_desconto|float) > 0 else ((p.valor_venda|float) + ((p.valor_desconto|float) if p.valor_desconto is defined and p.valor_desconto is not none else 0)) %}
-                {% set desconto_unidade = (p.valor_desconto|float) if p.valor_desconto is defined and p.valor_desconto is not none else (valor_unidade - (p.valor_venda|float)) %}
-                {% set valor_final_unidade = p.valor_venda|float %}
-                {% set sub = (p.valor_venda|float) * (p.quantidade|int) %}
-                {% set total_pecas.v = total_pecas.v + sub %}
+                {% if p.cliente_trouxe %}
                 <tr>
                     <td>{{ (p.descricao[:22] ~ '...') if p.descricao and (p.descricao|length) > 22 else p.descricao }}</td>
                     <td>{{ p.quantidade }}</td>
-                    <td class="right">R$ {{ '%.2f'|format(valor_unidade) | replace('.', ',') }}</td>
-                    <td class="right">R$ {{ '%.2f'|format(desconto_unidade) | replace('.', ',') }}</td>
-                    <td class="right">R$ {{ '%.2f'|format(valor_final_unidade) | replace('.', ',') }}</td>
-                    <td class="right">R$ {{ '%.2f'|format(sub) | replace('.', ',') }}</td>
+                    <td colspan="4" class="right" style="text-align: center; font-style: italic; color: #555; font-weight: 500;">Peça fornecida pelo cliente (sem garantia)</td>
                 </tr>
+                {% else %}
+                    {% set valor_unidade = (p.valor_venda_sem_desconto|float) if p.valor_venda_sem_desconto is defined and (p.valor_venda_sem_desconto|float) > 0 else ((p.valor_venda|float) + ((p.valor_desconto|float) if p.valor_desconto is defined and p.valor_desconto is not none else 0)) %}
+                    {% set desconto_unidade = (p.valor_desconto|float) if p.valor_desconto is defined and p.valor_desconto is not none else (valor_unidade - (p.valor_venda|float)) %}
+                    {% set valor_final_unidade = p.valor_venda|float %}
+                    {% set sub = (p.valor_venda|float) * (p.quantidade|int) %}
+                    {% set total_pecas.v = total_pecas.v + sub %}
+                    <tr>
+                        <td>{{ (p.descricao[:22] ~ '...') if p.descricao and (p.descricao|length) > 22 else p.descricao }}</td>
+                        <td>{{ p.quantidade }}</td>
+                        <td class="right">R$ {{ '%.2f'|format(valor_unidade) | replace('.', ',') }}</td>
+                        <td class="right">R$ {{ '%.2f'|format(desconto_unidade) | replace('.', ',') }}</td>
+                        <td class="right">R$ {{ '%.2f'|format(valor_final_unidade) | replace('.', ',') }}</td>
+                        <td class="right">R$ {{ '%.2f'|format(sub) | replace('.', ',') }}</td>
+                    </tr>
+                {% endif %}
             {% else %}
                 <tr><td colspan="6" style="text-align:center;color:#777">Nenhuma peça registrada.</td></tr>
             {% endfor %}
