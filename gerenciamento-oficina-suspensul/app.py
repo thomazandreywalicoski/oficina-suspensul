@@ -1820,6 +1820,42 @@ def health():
         return jsonify({'status': 'erro', 'erro': str(e), 'tipo': type(e).__name__}), 500
 
 
+@app.route('/admin/migrar')
+@login_required
+def forcar_migracoes():
+    """Força todas as migrações de colunas a rodar novamente, ignorando a flag."""
+    resultados = []
+    alteracoes = [
+        ("ordens_servico_pecas",    "ALTER TABLE ordens_servico_pecas ADD COLUMN cliente_trouxe TINYINT(1) NOT NULL DEFAULT 0"),
+        ("orcamentos_propostas_pecas", "ALTER TABLE orcamentos_propostas_pecas ADD COLUMN cliente_trouxe TINYINT(1) NOT NULL DEFAULT 0"),
+        ("ordens_servico",          "ALTER TABLE ordens_servico ADD COLUMN valor_frete DECIMAL(10,2) NOT NULL DEFAULT 0 AFTER valor_mao_obra"),
+        ("ordens_servico",          "ALTER TABLE ordens_servico ADD COLUMN gastos_variados DECIMAL(10,2) NOT NULL DEFAULT 0"),
+        ("orcamentos_propostas",    "ALTER TABLE orcamentos_propostas ADD COLUMN gastos_variados DECIMAL(10,2) NOT NULL DEFAULT 0"),
+    ]
+    conn = None
+    cur = None
+    try:
+        conn = get_db()
+        cur = conn.cursor()
+        for tabela, sql in alteracoes:
+            try:
+                cur.execute(sql)
+                conn.commit()
+                resultados.append({'tabela': tabela, 'sql': sql, 'resultado': 'OK - coluna adicionada'})
+            except Exception as e:
+                resultados.append({'tabela': tabela, 'sql': sql, 'resultado': f'Ignorado: {e}'})
+    except Exception as e:
+        return jsonify({'erro': str(e), 'resultados': resultados}), 500
+    finally:
+        if cur:
+            try: cur.close()
+            except: pass
+        if conn:
+            try: conn.close()
+            except: pass
+    return jsonify({'ok': True, 'resultados': resultados})
+
+
 @app.context_processor
 def inject_public_base_url():
     return {'PUBLIC_BASE_URL': app.config.get('PUBLIC_BASE_URL', '')}
