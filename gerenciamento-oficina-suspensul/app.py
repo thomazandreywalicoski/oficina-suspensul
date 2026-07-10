@@ -498,37 +498,49 @@ def run_migrations():
             conn.commit()
             print("Migração: coluna valor_frete adicionada em ordens_servico")
 
+        # Migração: coluna gastos_variados em orcamentos_propostas
+        cur.execute("""SELECT COUNT(*) FROM information_schema.COLUMNS
+                       WHERE TABLE_SCHEMA = DATABASE()
+                         AND TABLE_NAME = 'orcamentos_propostas'
+                         AND COLUMN_NAME = 'gastos_variados'""")
+        (tem_gastos_variados_prop,) = cur.fetchone()
+        if not tem_gastos_variados_prop:
+            cur.execute("ALTER TABLE orcamentos_propostas ADD COLUMN gastos_variados DECIMAL(10,2) NOT NULL DEFAULT 0 AFTER valor_frete")
+            conn.commit()
+            print("Migração: coluna gastos_variados adicionada em orcamentos_propostas")
+
+        # Migração: coluna gastos_variados em ordens_servico
+        cur.execute("""SELECT COUNT(*) FROM information_schema.COLUMNS
+                       WHERE TABLE_SCHEMA = DATABASE()
+                         AND TABLE_NAME = 'ordens_servico'
+                         AND COLUMN_NAME = 'gastos_variados'""")
+        (tem_gastos_variados_os,) = cur.fetchone()
+        if not tem_gastos_variados_os:
+            cur.execute("ALTER TABLE ordens_servico ADD COLUMN gastos_variados DECIMAL(10,2) NOT NULL DEFAULT 0 AFTER valor_frete")
+            conn.commit()
+            print("Migração: coluna gastos_variados adicionada em ordens_servico")
+
         # Migração: coluna cliente_trouxe em ordens_servico_pecas
-        try:
+        cur.execute("""SELECT COUNT(*) FROM information_schema.COLUMNS
+                       WHERE TABLE_SCHEMA = DATABASE()
+                         AND TABLE_NAME = 'ordens_servico_pecas'
+                         AND COLUMN_NAME = 'cliente_trouxe'""")
+        (tem_trouxe_os_peca,) = cur.fetchone()
+        if not tem_trouxe_os_peca:
             cur.execute("ALTER TABLE ordens_servico_pecas ADD COLUMN cliente_trouxe TINYINT(1) NOT NULL DEFAULT 0")
             conn.commit()
             print("Migração: coluna cliente_trouxe adicionada em ordens_servico_pecas")
-        except Exception:
-            pass
 
         # Migração: coluna cliente_trouxe em orcamentos_propostas_pecas
-        try:
+        cur.execute("""SELECT COUNT(*) FROM information_schema.COLUMNS
+                       WHERE TABLE_SCHEMA = DATABASE()
+                         AND TABLE_NAME = 'orcamentos_propostas_pecas'
+                         AND COLUMN_NAME = 'cliente_trouxe'""")
+        (tem_trouxe_prop_peca,) = cur.fetchone()
+        if not tem_trouxe_prop_peca:
             cur.execute("ALTER TABLE orcamentos_propostas_pecas ADD COLUMN cliente_trouxe TINYINT(1) NOT NULL DEFAULT 0")
             conn.commit()
             print("Migração: coluna cliente_trouxe adicionada em orcamentos_propostas_pecas")
-        except Exception:
-            pass
-
-        # Migração: coluna gastos_variados em ordens_servico
-        try:
-            cur.execute("ALTER TABLE ordens_servico ADD COLUMN gastos_variados DECIMAL(10,2) NOT NULL DEFAULT 0")
-            conn.commit()
-            print("Migração: coluna gastos_variados adicionada em ordens_servico")
-        except Exception:
-            pass
-
-        # Migração: coluna gastos_variados em orcamentos_propostas
-        try:
-            cur.execute("ALTER TABLE orcamentos_propostas ADD COLUMN gastos_variados DECIMAL(10,2) NOT NULL DEFAULT 0")
-            conn.commit()
-            print("Migração: coluna gastos_variados adicionada em orcamentos_propostas")
-        except Exception:
-            pass
 
         _migrations_done = True
     except Exception as e:
@@ -1096,11 +1108,11 @@ def criar_os():
     last = query("SELECT COALESCE(MAX(numero), 1000) AS m FROM ordens_servico", fetch=True, one=True)
     numero = (last['m'] or 1000) + 1
     slug = gerar_slug(d['veiculo_id'], numero)
-    oid = query("""INSERT INTO ordens_servico (numero, slug, cliente_id, veiculo_id, data_emissao, valor_mao_obra, gastos_variados, status, observacoes)
-                   VALUES (%s, %s, %s, %s, %s, %s, %s, 'Pendente', %s)""",
+    oid = query("""INSERT INTO ordens_servico (numero, slug, cliente_id, veiculo_id, data_emissao, valor_mao_obra, status, observacoes)
+                   VALUES (%s, %s, %s, %s, %s, %s, 'Pendente', %s)""",
                 (numero, slug, d['cliente_id'], d['veiculo_id'],
                  d.get('data_emissao') or date.today().isoformat(),
-                 d.get('valor_mao_obra', 0), d.get('gastos_variados', 0), d.get('observacoes')), commit=True)
+                 d.get('valor_mao_obra', 0), d.get('observacoes')), commit=True)
     for p in d.get('pecas', []):
         query("""INSERT INTO ordens_servico_pecas (ordem_id, codigo, descricao, fornecedor_id, quantidade, valor_custo, lucro_percentual, desconto_percentual, valor_venda_sem_desconto, valor_desconto, valor_venda, cliente_trouxe)
                  VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
@@ -1228,15 +1240,15 @@ def aprovar_proposta(pid):
             return jsonify({'erro': 'Para concluir um orçamento, inclua o valor da mão de obra'}), 400
         valor_mao_obra_os = float(row.get('valor_mao_obra') or 0)
         valor_frete_os = float(row.get('valor_frete') or 0)
+        gastos_variados_os = float(row.get('gastos_variados') or 0)
         pecas = query("SELECT * FROM orcamentos_propostas_pecas WHERE proposta_id = %s", (pid,), fetch=True)
         last = query("SELECT COALESCE(MAX(numero), 1000) AS m FROM ordens_servico", fetch=True, one=True)
         numero = (last['m'] or 1000) + 1
         slug = gerar_slug(row['veiculo_id'], numero)
-        valor_gastos_variados = float(row.get('gastos_variados') or 0)
         oid = query("""INSERT INTO ordens_servico (numero, slug, cliente_id, veiculo_id, data_emissao, valor_mao_obra, valor_frete, gastos_variados, status)
                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 'Pendente')""",
                     (numero, slug, row['cliente_id'], row['veiculo_id'],
-                     date.today().isoformat(), valor_mao_obra_os, valor_frete_os, valor_gastos_variados), commit=True)
+                     date.today().isoformat(), valor_mao_obra_os, valor_frete_os, gastos_variados_os), commit=True)
         for p in pecas:
             query("""INSERT INTO ordens_servico_pecas (ordem_id, descricao, fornecedor_id, quantidade, valor_custo, lucro_percentual, desconto_percentual, valor_venda_sem_desconto, valor_desconto, valor_venda, cliente_trouxe)
                      VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
@@ -1561,8 +1573,7 @@ def relatorio_financeiro():
                    COALESCE(os.valor_mao_obra, 0) AS valor_mao_obra,
                    (COALESCE(SUM(p.valor_venda * p.quantidade), 0) + COALESCE(os.valor_mao_obra, 0)) AS total,
                    (COALESCE(SUM(p.valor_venda * p.quantidade), 0) + COALESCE(os.valor_mao_obra, 0)
-                    - COALESCE(SUM(p.valor_custo * p.quantidade), 0) - COALESCE(os.valor_frete, 0)
-                    - COALESCE(os.gastos_variados, 0)) AS lucro
+                    - COALESCE(SUM(p.valor_custo * p.quantidade), 0) - COALESCE(os.valor_frete, 0) - COALESCE(os.gastos_variados, 0)) AS lucro
             FROM ordens_servico os
             LEFT JOIN veiculos v ON v.id = os.veiculo_id
             LEFT JOIN ordens_servico_pecas p ON p.ordem_id = os.id
@@ -1582,8 +1593,7 @@ def relatorio_financeiro():
                    COALESCE(os.valor_mao_obra, 0) AS valor_mao_obra,
                    (COALESCE(SUM(p.valor_venda * p.quantidade), 0) + COALESCE(os.valor_mao_obra, 0)) AS total,
                    (COALESCE(SUM(p.valor_venda * p.quantidade), 0) + COALESCE(os.valor_mao_obra, 0)
-                    - COALESCE(SUM(p.valor_custo * p.quantidade), 0) - COALESCE(os.valor_frete, 0)
-                    - COALESCE(os.gastos_variados, 0)) AS lucro
+                    - COALESCE(SUM(p.valor_custo * p.quantidade), 0) - COALESCE(os.valor_frete, 0) - COALESCE(os.gastos_variados, 0)) AS lucro
             FROM ordens_servico os
             LEFT JOIN veiculos v ON v.id = os.veiculo_id
             LEFT JOIN ordens_servico_pecas p ON p.ordem_id = os.id
@@ -1818,42 +1828,6 @@ def health():
     except Exception as e:
         traceback.print_exc()
         return jsonify({'status': 'erro', 'erro': str(e), 'tipo': type(e).__name__}), 500
-
-
-@app.route('/api/migrar-colunas')
-@login_required
-def forcar_migracoes():
-    """Força todas as migrações de colunas a rodar novamente, ignorando a flag."""
-    resultados = []
-    alteracoes = [
-        ("ordens_servico_pecas",    "ALTER TABLE ordens_servico_pecas ADD COLUMN cliente_trouxe TINYINT(1) NOT NULL DEFAULT 0"),
-        ("orcamentos_propostas_pecas", "ALTER TABLE orcamentos_propostas_pecas ADD COLUMN cliente_trouxe TINYINT(1) NOT NULL DEFAULT 0"),
-        ("ordens_servico",          "ALTER TABLE ordens_servico ADD COLUMN valor_frete DECIMAL(10,2) NOT NULL DEFAULT 0 AFTER valor_mao_obra"),
-        ("ordens_servico",          "ALTER TABLE ordens_servico ADD COLUMN gastos_variados DECIMAL(10,2) NOT NULL DEFAULT 0"),
-        ("orcamentos_propostas",    "ALTER TABLE orcamentos_propostas ADD COLUMN gastos_variados DECIMAL(10,2) NOT NULL DEFAULT 0"),
-    ]
-    conn = None
-    cur = None
-    try:
-        conn = get_db()
-        cur = conn.cursor()
-        for tabela, sql in alteracoes:
-            try:
-                cur.execute(sql)
-                conn.commit()
-                resultados.append({'tabela': tabela, 'sql': sql, 'resultado': 'OK - coluna adicionada'})
-            except Exception as e:
-                resultados.append({'tabela': tabela, 'sql': sql, 'resultado': f'Ignorado: {e}'})
-    except Exception as e:
-        return jsonify({'erro': str(e), 'resultados': resultados}), 500
-    finally:
-        if cur:
-            try: cur.close()
-            except: pass
-        if conn:
-            try: conn.close()
-            except: pass
-    return jsonify({'ok': True, 'resultados': resultados})
 
 
 @app.context_processor

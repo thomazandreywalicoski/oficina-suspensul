@@ -1662,14 +1662,12 @@
         if (!state.novaOSVeiculo) return showToast('Selecione um veículo', true);
         const m = document.getElementById('modal-nova-os');
         const maoObra = parseFloat(document.getElementById('os-mao-obra')?.value || 0);
-        const gastosVariados = parseFloat(document.getElementById('os-gastos-variados')?.value) || 0;
         const pecas = coletarPecasOS();
         try {
             const r = await api('POST', '/api/os', {
                 cliente_id: state.novaOSCliente.id,
                 veiculo_id: state.novaOSVeiculo.id,
                 valor_mao_obra: maoObra,
-                gastos_variados: gastosVariados,
                 pecas: pecas,
             });
             showToast('Comprovante Nº ' + String(r.numero).padStart(6,'0') + ' criado');
