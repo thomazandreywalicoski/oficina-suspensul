@@ -1662,12 +1662,16 @@
         if (!state.novaOSVeiculo) return showToast('Selecione um veículo', true);
         const m = document.getElementById('modal-nova-os');
         const maoObra = parseFloat(document.getElementById('os-mao-obra')?.value || 0);
+        const frete = parseFloat(document.getElementById('os-frete')?.value || 0);
+        const gastosVariados = parseFloat(document.getElementById('os-gastos-variados')?.value || 0);
         const pecas = coletarPecasOS();
         try {
             const r = await api('POST', '/api/os', {
                 cliente_id: state.novaOSCliente.id,
                 veiculo_id: state.novaOSVeiculo.id,
                 valor_mao_obra: maoObra,
+                valor_frete: frete,
+                gastos_variados: gastosVariados,
                 pecas: pecas,
             });
             showToast('Comprovante Nº ' + String(r.numero).padStart(6,'0') + ' criado');
@@ -1982,6 +1986,7 @@
         if (!state.propostaVeiculo) return showToast('Selecione um veículo', true);
         const maoObra = parseFloat(document.getElementById('orcamento-proposta-mao-obra')?.value || 0);
         const frete = parseFloat(document.getElementById('orcamento-proposta-frete')?.value) || 0;
+        const gastosVariados = parseFloat(document.getElementById('orcamento-proposta-gastos-variados')?.value) || 0;
         const pecas = coletarPecasPropostasParaSalvar();
         const propostaId = document.getElementById('orcamento-proposta-id')?.value;
         try {
@@ -1991,6 +1996,7 @@
                     veiculo_id: state.propostaVeiculo.id,
                     valor_mao_obra: maoObra,
                     valor_frete: frete,
+                    gastos_variados: gastosVariados,
                     pecas,
                 });
                 showToast('Orçamento atualizado');
@@ -2000,6 +2006,7 @@
                     veiculo_id: state.propostaVeiculo.id,
                     valor_mao_obra: maoObra,
                     valor_frete: frete,
+                    gastos_variados: gastosVariados,
                     pecas,
                 });
                 showToast('Orçamento Nº ' + String(r.numero).padStart(6, '0') + ' criado');
@@ -2024,6 +2031,8 @@
         m.querySelectorAll('input[type="text"], input[type="number"]').forEach(i => { i.value = ''; });
         const freteInput = document.getElementById('orcamento-proposta-frete');
         if (freteInput) freteInput.value = '';
+        const gastosInput = document.getElementById('orcamento-proposta-gastos-variados');
+        if (gastosInput) gastosInput.value = '';
         const btnSalvar = document.getElementById('btn-salvar-orcamento-proposta');
         if (btnSalvar) btnSalvar.innerText = 'Criar Orçamento';
         renderPecasOrcamentoPropostaLista();
@@ -2091,6 +2100,8 @@
             if (maoObraInput) maoObraInput.value = p.valor_mao_obra;
             const freteInput = document.getElementById('orcamento-proposta-frete');
             if (freteInput) freteInput.value = p.valor_frete || 0;
+            const gastosVariadosInput = document.getElementById('orcamento-proposta-gastos-variados');
+            if (gastosVariadosInput) gastosVariadosInput.value = p.gastos_variados || 0;
             const btnSalvar = document.getElementById('btn-salvar-orcamento-proposta');
             if (btnSalvar) btnSalvar.innerText = 'Salvar Alterações';
             renderPecasOrcamentoPropostaLista();
