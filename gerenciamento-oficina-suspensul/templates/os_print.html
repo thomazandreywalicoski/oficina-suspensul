@@ -97,51 +97,29 @@
         .print-table th { background: #eee; padding: 8px; font-weight: bold; text-align: left; border: 0; box-shadow: inset -1px 0 0 #ddd, inset 0 -1px 0 #ddd; }
         .print-table td { padding: 8px; border: 0; box-shadow: inset -1px 0 0 #ddd, inset 0 -1px 0 #ddd; }
         .print-table .right { text-align: right; }
-        .print-table-pecas {
-            table-layout: fixed;
-            width: 100%;
-            font-size: 11px;
-        }
         .print-table-pecas th,
         .print-table-pecas td {
             white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
             vertical-align: middle;
-            padding: 5px 4px;
-            line-height: 1.25;
-        }
-        .print-table-pecas thead th {
-            font-size: 9px;
-            font-weight: 700;
-            white-space: nowrap;
-            padding: 6px 4px;
+            padding: 6px 8px;
+            line-height: 1.3;
         }
         .print-table-pecas .col-qtd,
         .print-table-pecas th.col-qtd,
         .print-table-pecas td.col-qtd {
-            width: 28px;
-            min-width: 28px;
-            max-width: 28px;
+            width: 1%;
             text-align: center !important;
-            padding-left: 2px;
-            padding-right: 2px;
         }
         .print-table-pecas .col-desc,
         .print-table-pecas th.col-desc,
         .print-table-pecas td.col-desc {
             text-align: left !important;
-            width: auto;
         }
         .print-table-pecas .col-marca,
         .print-table-pecas th.col-marca,
         .print-table-pecas td.col-marca {
-            width: 44px;
-            min-width: 44px;
-            max-width: 44px;
+            width: 1%;
             text-align: center !important;
-            padding-left: 2px;
-            padding-right: 2px;
         }
         .print-table-pecas .col-valor,
         .print-table-pecas .col-desconto,
@@ -157,18 +135,13 @@
         .print-table-pecas td.col-total {
             width: 1%;
             white-space: nowrap;
-            overflow: visible;
-            text-overflow: clip;
             text-align: right !important;
-            padding-left: 3px;
-            padding-right: 4px;
         }
         .print-table-pecas .col-msg-cliente {
             text-align: center !important;
             font-weight: normal;
             color: #000;
             white-space: nowrap;
-            font-size: 10px;
         }
         .print-table th:last-child, .print-table td:last-child { box-shadow: inset 0 -1px 0 #ddd; }
         .print-table tbody tr:last-child td { box-shadow: inset -1px 0 0 #ddd; }
@@ -281,15 +254,6 @@
 
     <div class="print-secao-title">Produtos / Peças Aplicadas</div>
     <table class="print-table print-table-pecas">
-        <colgroup>
-            <col style="width:28px">
-            <col>
-            <col style="width:44px">
-            <col>
-            <col>
-            <col>
-            <col>
-        </colgroup>
         <thead>
             <tr>
                 <th class="col-qtd">Qtd</th>
