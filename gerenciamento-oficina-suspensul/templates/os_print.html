@@ -98,13 +98,15 @@
         .print-table td { padding: 8px; border: 0; box-shadow: inset -1px 0 0 #ddd, inset 0 -1px 0 #ddd; }
         .print-table .right { text-align: right; }
         .print-table-pecas {
-            table-layout: auto;
+            table-layout: fixed;
             width: 100%;
             font-size: 11px;
         }
         .print-table-pecas th,
         .print-table-pecas td {
             white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
             vertical-align: middle;
             padding: 5px 4px;
             line-height: 1.25;
@@ -118,25 +120,28 @@
         .print-table-pecas .col-qtd,
         .print-table-pecas th.col-qtd,
         .print-table-pecas td.col-qtd {
-            width: 1%;
+            width: 28px;
+            min-width: 28px;
+            max-width: 28px;
             text-align: center !important;
-            padding-left: 6px;
-            padding-right: 6px;
+            padding-left: 2px;
+            padding-right: 2px;
         }
         .print-table-pecas .col-desc,
         .print-table-pecas th.col-desc,
         .print-table-pecas td.col-desc {
             text-align: left !important;
-            width: 100%;
-            white-space: nowrap;
+            width: auto;
         }
         .print-table-pecas .col-marca,
         .print-table-pecas th.col-marca,
         .print-table-pecas td.col-marca {
-            width: 1%;
+            width: 44px;
+            min-width: 44px;
+            max-width: 44px;
             text-align: center !important;
-            padding-left: 4px;
-            padding-right: 4px;
+            padding-left: 2px;
+            padding-right: 2px;
         }
         .print-table-pecas .col-valor,
         .print-table-pecas .col-desconto,
@@ -152,8 +157,10 @@
         .print-table-pecas td.col-total {
             width: 1%;
             white-space: nowrap;
+            overflow: visible;
+            text-overflow: clip;
             text-align: right !important;
-            padding-left: 4px;
+            padding-left: 3px;
             padding-right: 4px;
         }
         .print-table-pecas .col-msg-cliente {
@@ -274,6 +281,15 @@
 
     <div class="print-secao-title">Produtos / Peças Aplicadas</div>
     <table class="print-table print-table-pecas">
+        <colgroup>
+            <col style="width:28px">
+            <col>
+            <col style="width:44px">
+            <col>
+            <col>
+            <col>
+            <col>
+        </colgroup>
         <thead>
             <tr>
                 <th class="col-qtd">Qtd</th>
