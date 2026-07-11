@@ -114,11 +114,13 @@
         .print-table-pecas th.col-desc,
         .print-table-pecas td.col-desc {
             text-align: left !important;
+            max-width: 20ch;
         }
         .print-table-pecas .col-marca,
         .print-table-pecas th.col-marca,
         .print-table-pecas td.col-marca {
             width: 1%;
+            min-width: 56px;
             text-align: center !important;
         }
         .print-table-pecas .col-valor,
@@ -271,7 +273,7 @@
                 {% if p.cliente_trouxe %}
                 <tr>
                     <td class="col-qtd">{{ p.quantidade }}</td>
-                    <td class="col-desc" title="{{ p.descricao }}">{{ p.descricao }}</td>
+                    <td class="col-desc" title="{{ p.descricao }}">{% if p.descricao|length > 20 %}{{ p.descricao[:20] }}...{% else %}{{ p.descricao }}{% endif %}</td>
                     <td class="col-marca">{{ p.marca or '-' }}</td>
                     <td colspan="4" class="col-msg-cliente">Peça fornecida pelo cliente (sem garantia)</td>
                 </tr>
@@ -283,7 +285,7 @@
                     {% set total_pecas.v = total_pecas.v + sub %}
                     <tr>
                         <td class="col-qtd">{{ p.quantidade }}</td>
-                        <td class="col-desc" title="{{ p.descricao }}">{{ p.descricao }}</td>
+                        <td class="col-desc" title="{{ p.descricao }}">{% if p.descricao|length > 20 %}{{ p.descricao[:20] }}...{% else %}{{ p.descricao }}{% endif %}</td>
                         <td class="col-marca">{{ p.marca or '-' }}</td>
                         <td class="col-valor">R$ {{ '%.2f'|format(valor_unidade) | replace('.', ',') }}</td>
                         <td class="col-desconto">R$ {{ '%.2f'|format(desconto_unidade) | replace('.', ',') }}</td>
