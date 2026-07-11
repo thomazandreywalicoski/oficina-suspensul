@@ -132,14 +132,15 @@
         .print-table-pecas td.col-desc {
             text-align: left !important;
             width: auto;
+            max-width: 0;
         }
         .print-table-pecas .col-marca,
         .print-table-pecas th.col-marca,
         .print-table-pecas td.col-marca {
-            width: 48px;
-            min-width: 48px;
-            max-width: 56px;
+            width: 1%;
             text-align: center !important;
+            padding-left: 2px;
+            padding-right: 2px;
         }
         .print-table-pecas .col-valor,
         .print-table-pecas .col-desconto,
@@ -156,8 +157,8 @@
             width: 1%;
             white-space: nowrap;
             text-align: right !important;
-            padding-left: 3px;
-            padding-right: 4px;
+            padding-left: 2px;
+            padding-right: 3px;
         }
         .print-table-pecas .col-msg-cliente {
             text-align: center !important;
@@ -277,15 +278,6 @@
 
     <div class="print-secao-title">Produtos / Peças Orçadas</div>
     <table class="print-table print-table-pecas">
-        <colgroup>
-            <col style="width:30px">
-            <col>
-            <col style="width:50px">
-            <col style="width:62px">
-            <col style="width:68px">
-            <col style="width:72px">
-            <col style="width:62px">
-        </colgroup>
         <thead>
             <tr>
                 <th class="col-qtd">Qtd</th>

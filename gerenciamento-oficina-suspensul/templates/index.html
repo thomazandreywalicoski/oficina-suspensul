@@ -3918,31 +3918,31 @@
         function renderPecasOSLista() {
             const cont = document.getElementById('os-pecas-lista');
             if (!cont) return;
-            const grid = '48px minmax(140px,2fr) 72px 95px 95px 95px 95px 90px';
+            const grid = '36px minmax(0,1fr) 64px max-content max-content max-content max-content 72px';
+            const cellNowrap = 'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
             cont.innerHTML = `
                 <div style="background:var(--bg-input);border-radius:8px;overflow:hidden;min-width:720px;">
                     <div style="display:grid;grid-template-columns:${grid};gap:8px;align-items:center;padding:12px;background:var(--primary);color:#000;font-size:11px;font-weight:700;text-transform:uppercase;border-bottom:1px solid rgba(0,0,0,0.08);text-align:center;">
                         <div>Qtd</div>
-                        <div>Descrição</div>
+                        <div style="text-align:left;">Descrição</div>
                         <div>Marca</div>
-                        <div>Valor (und)</div>
-                        <div>Desconto (und)</div>
-                        <div>Valor final (und)</div>
-                        <div>Total</div>
+                        <div style="text-align:right;">Valor (und)</div>
+                        <div style="text-align:right;">Desconto (und)</div>
+                        <div style="text-align:right;">Valor final (und)</div>
+                        <div style="text-align:right;">Total</div>
                         <div>Ações</div>
                     </div>
                     ${pecasOS.map((p, i) => {
                         const vals = renderPecaOSValores(p);
-                        const desc = p.nome.length > 22 ? p.nome.slice(0, 22) + '...' : p.nome;
                         return `
                         <div style="display:grid;grid-template-columns:${grid};gap:8px;align-items:center;padding:12px;border-top:1px solid rgba(255,255,255,0.04);font-size:13px;">
-                            <div style="text-align:center;color:var(--text-main);font-weight:600;">${p.qtd}</div>
-                            <div style="text-align:center;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500;color:var(--text-main);" title="${p.nome}">${desc}</div>
-                            <div style="text-align:center;color:var(--text-main);font-weight:500;">${vals.marca}</div>
-                            <div style="text-align:center;color:var(--text-main);font-weight:600;">${vals.valor}</div>
-                            <div style="text-align:center;color:var(--text-main);font-weight:600;">${vals.desconto}</div>
-                            <div style="text-align:center;color:#22c55e;font-weight:700;">${vals.final}</div>
-                            <div style="text-align:center;color:var(--text-main);font-weight:700;">${vals.total}</div>
+                            <div style="text-align:center;color:var(--text-main);font-weight:600;${cellNowrap}">${p.qtd}</div>
+                            <div style="text-align:left;min-width:0;font-weight:500;color:var(--text-main);${cellNowrap}" title="${p.nome}">${p.nome}</div>
+                            <div style="text-align:center;color:var(--text-main);font-weight:500;${cellNowrap}">${vals.marca}</div>
+                            <div style="text-align:right;color:var(--text-main);font-weight:600;${cellNowrap}">${vals.valor}</div>
+                            <div style="text-align:right;color:var(--text-main);font-weight:600;${cellNowrap}">${vals.desconto}</div>
+                            <div style="text-align:right;color:#22c55e;font-weight:700;${cellNowrap}">${vals.final}</div>
+                            <div style="text-align:right;color:var(--text-main);font-weight:700;${cellNowrap}">${vals.total}</div>
                             <button type="button" class="btn-icon" onclick="removerPecaOS(${i})" title="Remover" style="color:#e74c3c;justify-self:center;"><i data-lucide="trash-2"></i></button>
                         </div>`;
                     }).join('')}

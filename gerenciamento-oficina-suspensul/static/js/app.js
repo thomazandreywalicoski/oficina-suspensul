@@ -1710,7 +1710,8 @@
 
     window.pecasOrcamentoProposta = [];
 
-    const PECAS_LISTA_GRID = '48px minmax(140px,2fr) 72px 95px 95px 95px 95px 90px';
+    const PECAS_LISTA_GRID = '36px minmax(0,1fr) 64px max-content max-content max-content max-content 72px';
+    const PECAS_LISTA_CELL_NOWRAP = 'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
 
     function renderPecaListaValores(p) {
         if (p.cliente_trouxe) {
@@ -1742,20 +1743,19 @@
             cont.innerHTML = `
                 <div style="background:var(--bg-input);border-radius:8px;min-width:720px;">
                     <div style="display:grid;grid-template-columns:${PECAS_LISTA_GRID};gap:8px;align-items:center;padding:12px;background:var(--primary);color:#000;font-size:11px;font-weight:700;text-transform:uppercase;text-align:center;position:sticky;top:0;z-index:1;border-radius:8px 8px 0 0;">
-                        <div>Qtd</div><div>Descrição</div><div>Marca</div><div>Valor (und)</div><div>Desconto (und)</div><div>Valor final (und)</div><div>Total</div><div>Ações</div>
+                        <div>Qtd</div><div style="text-align:left;">Descrição</div><div>Marca</div><div style="text-align:right;">Valor (und)</div><div style="text-align:right;">Desconto (und)</div><div style="text-align:right;">Valor final (und)</div><div style="text-align:right;">Total</div><div>Ações</div>
                     </div>
                     ${pecas.map((p, i) => {
                         const vals = renderPecaListaValores(p);
-                        const desc = p.nome.length > 22 ? p.nome.slice(0, 22) + '...' : p.nome;
                         return `
                         <div style="display:grid;grid-template-columns:${PECAS_LISTA_GRID};gap:8px;align-items:center;padding:12px;border-top:1px solid rgba(255,255,255,0.04);font-size:13px;">
-                            <div style="text-align:center;font-weight:600;">${p.qtd}</div>
-                            <div style="text-align:center;font-weight:500;color:var(--text-main);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escapeHtml(p.nome)}">${escapeHtml(desc)}</div>
-                            <div style="text-align:center;font-weight:500;">${escapeHtml(vals.marca)}</div>
-                            <div style="text-align:center;font-weight:600;">${vals.valor}</div>
-                            <div style="text-align:center;font-weight:600;">${vals.desconto}</div>
-                            <div style="text-align:center;color:#22c55e;font-weight:700;">${vals.final}</div>
-                            <div style="text-align:center;font-weight:700;">${vals.total}</div>
+                            <div style="text-align:center;font-weight:600;${PECAS_LISTA_CELL_NOWRAP}">${p.qtd}</div>
+                            <div style="text-align:left;font-weight:500;color:var(--text-main);min-width:0;${PECAS_LISTA_CELL_NOWRAP}" title="${escapeHtml(p.nome)}">${escapeHtml(p.nome)}</div>
+                            <div style="text-align:center;font-weight:500;${PECAS_LISTA_CELL_NOWRAP}">${escapeHtml(vals.marca)}</div>
+                            <div style="text-align:right;font-weight:600;${PECAS_LISTA_CELL_NOWRAP}">${vals.valor}</div>
+                            <div style="text-align:right;font-weight:600;${PECAS_LISTA_CELL_NOWRAP}">${vals.desconto}</div>
+                            <div style="text-align:right;color:#22c55e;font-weight:700;${PECAS_LISTA_CELL_NOWRAP}">${vals.final}</div>
+                            <div style="text-align:right;font-weight:700;${PECAS_LISTA_CELL_NOWRAP}">${vals.total}</div>
                             <div style="display:flex;gap:8px;justify-content:center;">
                                 <button type="button" class="btn-icon" onclick="window.editarPecaOrcamentoProposta(${i})" title="Editar" style="color:#f1c40f;"><i data-lucide="pencil" style="width:16px;height:16px;"></i></button>
                                 <button type="button" class="btn-icon" onclick="window.removerPecaOrcamentoProposta(${i})" title="Remover" style="color:#e74c3c;"><i data-lucide="trash-2" style="width:16px;height:16px;"></i></button>
