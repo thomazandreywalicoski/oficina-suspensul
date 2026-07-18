@@ -1,1336 +1,1076 @@
 <!DOCTYPE html>
-<html lang="pt-br" class="scroll-smooth">
+<html lang="pt-BR" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Oficina Suspensul | Especialistas em Suspensão e Freios de Alta Performance</title>
-    <meta name="description" content="Manutenção automotiva de alto padrão em Mafra - SC. Especialistas em suspensão, freios, alinhamento 3D e diagnóstico computadorizado com transparência total.">
+    <title>Oficina Suspensul | A melhor oficina mecânica de Mafra - SC e Rio Negro - PR</title>
+    <meta name="description" content="Oficina Suspensul - A melhor oficina mecânica em Mafra - SC e Rio Negro - PR. Especializada em suspensão, freios, troca de óleo, revisão preventiva e mecânica geral. Peças de qualidade, equipe qualificada e garantia de 90 dias. Faça seu orçamento!">
+    <meta name="keywords" content="oficina mecânica mafra sc, oficina mecânica rio negro pr, suspensão mafra, suspensão rio negro, freios mafra, troca de óleo mafra sc, mecânico mafra sc, suspensul mafra, oficina suspensul, mecânica geral mafra">
+    <meta name="author" content="Oficina Suspensul">
+    <meta name="robots" content="index, follow">
     
-    <!-- Tailwind CSS CDN com Configuração Customizada -->
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://oficinasuspensul.com.br/">
+    <meta property="og:title" content="Oficina Suspensul | A melhor oficina mecânica de Mafra - SC e Rio Negro - PR">
+    <meta property="og:description" content="Oficina Suspensul - A melhor oficina mecânica em Mafra - SC e Rio Negro - PR. Especializada em suspensão, freios, troca de óleo e mecânica geral.">
+    <meta property="og:image" content="https://oficinasuspensul.com.br/logo-oficina-suspensul.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://oficinasuspensul.com.br/">
+    <meta property="twitter:title" content="Oficina Suspensul | A melhor oficina mecânica de Mafra - SC e Rio Negro - PR">
+    <meta property="twitter:description" content="Oficina Suspensul - A melhor oficina mecânica em Mafra - SC e Rio Negro - PR. Especializada em suspensão, freios, troca de óleo e mecânica geral.">
+    <meta property="twitter:image" content="https://oficinasuspensul.com.br/logo-oficina-suspensul.png">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="logo-oficina-suspensul.png">
+
+    <!-- JSON-LD Structured Data for LocalBusiness -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "AutoRepair",
+      "name": "Oficina Suspensul",
+      "image": "https://oficinasuspensul.com.br/logo-oficina-suspensul.png",
+      "@id": "https://oficinasuspensul.com.br/#organization",
+      "url": "https://oficinasuspensul.com.br/",
+      "telephone": "+55-47-99622-6408",
+      "priceRange": "$$",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Mafra",
+        "addressRegion": "SC",
+        "addressCountry": "BR",
+        "streetAddress": "Mafra - SC"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": "-26.2642",
+        "longitude": "-49.8055"
+      },
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday"
+        ],
+        "opens": "08:00",
+        "closes": "18:00"
+      },
+      "areaServed": [
+        {
+          "@type": "AdministrativeArea",
+          "name": "Mafra"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "Rio Negro"
+        }
+      ]
+    }
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: {
-                        brand: {
-                            dark: '#030303',
-                            card: 'rgba(20, 20, 23, 0.7)',
-                            yellow: '#facc15',
-                            yellowHover: '#eab308',
-                            border: 'rgba(255, 255, 255, 0.08)',
-                            gray: '#a1a1aa'
-                        }
-                    },
                     fontFamily: {
                         sans: ['DM Sans', 'sans-serif'],
-                        display: ['Outfit', 'sans-serif']
+                        outfit: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            yellow: '#FFD700',      /* Amarelo Premium */
+                            yellowHover: '#E6C200',
+                            darkBg: '#0D0D0D',       /* Preto profundo */
+                            cardBg: '#161616',       /* Preto intermediário para cards */
+                            border: '#262626',       /* Cinza escuro para bordas */
+                            textMuted: '#A3A3A3'     /* Cinza para textos secundários */
+                        }
                     }
                 }
             }
         }
     </script>
-    
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    
-    <!-- Font Awesome para ícones de redes sociais -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
-    <!-- Google Fonts: Outfit (headings) e DM Sans (body) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Outfit:wght@100..900&display=swap" rel="stylesheet">
-    
-    <link rel="icon" type="image/png" href="logo-oficina-suspensul.png">
-    
     <style>
         body {
-            background-color: #030303;
-            color: #f4f4f5;
-            overflow-x: hidden;
+            background-color: #0D0D0D;
+            color: #FFFFFF;
         }
-
-        /* Estilo para suavizar as bordas do carrossel */
-        .carousel-mask {
-            mask-image: linear-gradient(to right, transparent, white 4%, white 96%, transparent);
-            -webkit-mask-image: linear-gradient(to right, transparent, white 4%, white 96%, transparent);
+        /* Efeito de brilho sutil no fundo */
+        .glow-radial {
+            background: radial-gradient(circle at 50% 50%, rgba(255, 215, 0, 0.08) 0%, rgba(0, 0, 0, 0) 70%);
         }
-        @media (max-width: 640px) {
-            .carousel-mask {
-                mask-image: none;
-                -webkit-mask-image: none;
-            }
-        }
-
-        /* Custom scrollbar para navegadores */
+        /* Custom scrollbar */
         ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+            width: 10px;
         }
         ::-webkit-scrollbar-track {
-            background: #030303;
+            background: #0D0D0D;
         }
         ::-webkit-scrollbar-thumb {
-            background: #27272a;
-            border-radius: 4px;
+            background: #FFD700;
+            border-radius: 5px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #3f3f46;
+            background: #E6C200;
         }
 
-        /* Animação do Marquee infinito */
-        @keyframes marquee {
-            0% { transform: translateX(0%); }
+        /* Animação do Carrossel de Marcas Infinito */
+        @keyframes scrollBrands {
+            0% { transform: translateX(0); }
             100% { transform: translateX(-50%); }
         }
-        .animate-marquee {
-            animation: marquee 25s linear infinite;
+        .animate-infinite-scroll {
+            display: flex;
+            width: max-content;
+            animation: scrollBrands 30s linear infinite;
         }
-        .animate-marquee:hover {
+        .animate-infinite-scroll:hover {
             animation-play-state: paused;
-        }
-
-        /* Hero com Imagem e Degradê */
-        #inicio {
-            background-image: linear-gradient(to bottom, rgba(3, 3, 3, 0.4) 0%, rgba(3, 3, 3, 0.95) 100%), url('img-fundo.png');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-
-        /* Efeito de Borda Conic Gradient para o container do vídeo */
-        .glow-border {
-            position: relative;
-            padding: 2px;
-            background: transparent;
-            border-radius: 1.5rem;
-            overflow: hidden;
-        }
-        .glow-border::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: conic-gradient(
-                transparent, 
-                transparent, 
-                transparent, 
-                #facc15
-            );
-            animation: rotate-border 6s linear infinite;
-        }
-        @keyframes rotate-border {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Filtro escuro para o mapa, voltando ao normal no hover */
-        .dark-map {
-            filter: grayscale(1) invert(0.92) contrast(1.1) brightness(0.95);
-            transition: all 0.5s ease;
-        }
-        .dark-map:hover {
-            filter: none;
         }
     </style>
 </head>
-<body class="font-sans antialiased selection:bg-brand-yellow selection:text-brand-dark">
+<body class="font-sans antialiased overflow-x-hidden selection:bg-brand-yellow selection:text-black">
 
     <!-- Header / Navbar -->
-    <header class="sticky top-0 z-50 bg-brand-dark/80 backdrop-blur-xl border-b border-brand-border py-4 px-4 sm:px-6">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            
-            <!-- Botão Menu Hambúrguer (Mobile) - Alinhado à esquerda -->
-            <div class="flex md:hidden items-center">
-                <button id="btn-hamburger" class="text-white hover:text-brand-yellow focus:outline-none p-2 transition-colors" aria-label="Abrir Menu">
-                    <i data-lucide="menu" class="w-7 h-7"></i>
-                </button>
-            </div>
+    <header class="sticky top-0 z-50 bg-brand-darkBg/90 backdrop-blur-md border-b border-brand-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Logo -->
+            <a href="#" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-lg bg-brand-yellow flex items-center justify-center shadow-[0_0_15px_rgba(255,215,0,0.3)] transition-transform group-hover:scale-105 duration-300">
+                    <i class="fa-solid fa-wrench text-black text-xl"></i>
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-outfit text-xl font-black tracking-wider text-white uppercase group-hover:text-brand-yellow transition-colors">
+                        SUL<span class="text-brand-yellow group-hover:text-white">PENSUL</span>
+                    </span>
+                    <span class="text-[9px] font-bold uppercase tracking-[0.25em] text-brand-textMuted -mt-1">Oficina Mecânica</span>
+                </div>
+            </a>
 
-            <!-- Logo - Esquerda no desktop, Centro no mobile -->
-            <div class="flex items-center gap-3 absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0">
-                <a href="#inicio" class="flex items-center">
-                    <img src="logo-oficina-suspensul.png" alt="Oficina Suspensul" class="h-10 sm:h-12 w-auto object-contain">
-                </a>
-            </div>
-            
-            <!-- Menu Desktop -->
-            <nav class="hidden md:flex gap-8 font-display text-sm font-medium uppercase tracking-wider text-zinc-300">
-                <a href="#inicio" class="hover:text-brand-yellow transition-colors duration-200">Início</a>
-                <a href="#sobre" class="hover:text-brand-yellow transition-colors duration-200">A Empresa</a>
-                <a href="#servicos" class="hover:text-brand-yellow transition-colors duration-200">Serviços</a>
-                <a href="#diferenciais" class="hover:text-brand-yellow transition-colors duration-200">Diferenciais</a>
-                <a href="#depoimentos" class="hover:text-brand-yellow transition-colors duration-200">Avaliações</a>
-                <a href="#contato" class="hover:text-brand-yellow transition-colors duration-200">Contato</a>
+            <!-- Desktop Menu -->
+            <nav class="hidden md:flex items-center gap-8">
+                <a href="#inicio" class="text-sm font-medium hover:text-brand-yellow transition-colors">Início</a>
+                <a href="#marcas" class="text-sm font-medium hover:text-brand-yellow transition-colors">Marcas</a>
+                <a href="#servicos" class="text-sm font-medium hover:text-brand-yellow transition-colors">Serviços</a>
+                <a href="#estrutura" class="text-sm font-medium hover:text-brand-yellow transition-colors">Nossa Estrutura</a>
+                <a href="#avaliacoes" class="text-sm font-medium hover:text-brand-yellow transition-colors">Avaliações</a>
             </nav>
-            
-            <!-- CTA WhatsApp Navbar -->
-            <div class="flex items-center gap-4">
-                <a href="https://wa.me/5547996226408" target="_blank" class="bg-brand-yellow hover:bg-brand-yellowHover text-brand-dark px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl font-display font-extrabold text-xs uppercase tracking-wider transition-all duration-300 hover:scale-[1.02] shadow-md shadow-brand-yellow/10 flex items-center gap-2">
-                    <i class="fa-brands fa-whatsapp text-sm sm:text-base"></i>
-                    <span class="hidden sm:inline">Falar com Técnico</span>
-                    <span class="inline sm:hidden">WhatsApp</span>
+
+            <!-- CTA Button -->
+            <div class="hidden sm:flex items-center gap-4">
+                <a href="https://wa.me/5547996226408?text=Olá!%20Gostaria%20de%20agendar%20um%20diagnóstico%20na%20Oficina%20Suspensul!" 
+                   target="_blank"
+                   rel="noopener noreferrer" 
+                   class="inline-flex items-center gap-2 bg-brand-yellow hover:bg-brand-yellowHover text-black font-outfit font-bold px-5 py-2.5 rounded-lg transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 shadow-[0_4px_20px_rgba(255,215,0,0.2)] hover:shadow-[0_4px_25px_rgba(255,215,0,0.35)]">
+                    <i class="fa-brands fa-whatsapp text-lg"></i>
+                    <span>Fale Conosco</span>
                 </a>
             </div>
+
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg text-white hover:text-brand-yellow focus:outline-none" aria-label="Menu principal">
+                <i class="fa-solid fa-bars text-2xl" id="menu-icon"></i>
+            </button>
         </div>
 
-        <!-- Menu Lateral (Drawer) Mobile -->
-        <div id="mobile-drawer" class="fixed inset-y-0 left-0 z-50 w-72 bg-brand-dark/95 border-r border-brand-border backdrop-blur-2xl transform -translate-x-full transition-transform duration-300 ease-in-out md:hidden flex flex-col justify-between p-6">
-            <div>
-                <div class="flex justify-between items-center mb-8 border-b border-brand-border pb-6">
-                    <img src="logo-oficina-suspensul.png" alt="Oficina Suspensul" class="h-10 w-auto object-contain">
-                    <button id="btn-close-drawer" class="text-zinc-400 hover:text-white p-2" aria-label="Fechar Menu">
-                        <i data-lucide="x" class="w-6 h-6"></i>
-                    </button>
-                </div>
-                <div class="flex flex-col gap-5 font-display text-base font-bold uppercase tracking-wider text-zinc-300">
-                    <a href="#inicio" class="hover:text-brand-yellow py-2 flex items-center gap-3 transition-colors" onclick="closeDrawer()">
-                        <i data-lucide="home" class="w-5 h-5 text-brand-yellow"></i> Início
-                    </a>
-                    <a href="#sobre" class="hover:text-brand-yellow py-2 flex items-center gap-3 transition-colors" onclick="closeDrawer()">
-                        <i data-lucide="info" class="w-5 h-5 text-brand-yellow"></i> A Empresa
-                    </a>
-                    <a href="#servicos" class="hover:text-brand-yellow py-2 flex items-center gap-3 transition-colors" onclick="closeDrawer()">
-                        <i data-lucide="wrench" class="w-5 h-5 text-brand-yellow"></i> Serviços
-                    </a>
-                    <a href="#diferenciais" class="hover:text-brand-yellow py-2 flex items-center gap-3 transition-colors" onclick="closeDrawer()">
-                        <i data-lucide="award" class="w-5 h-5 text-brand-yellow"></i> Diferenciais
-                    </a>
-                    <a href="#depoimentos" class="hover:text-brand-yellow py-2 flex items-center gap-3 transition-colors" onclick="closeDrawer()">
-                        <i data-lucide="message-square" class="w-5 h-5 text-brand-yellow"></i> Avaliações
-                    </a>
-                    <a href="#contato" class="hover:text-brand-yellow py-2 flex items-center gap-3 transition-colors" onclick="closeDrawer()">
-                        <i data-lucide="map-pin" class="w-5 h-5 text-brand-yellow"></i> Contato
-                    </a>
-                </div>
-            </div>
-            <div class="flex flex-col gap-4 border-t border-brand-border pt-6">
-                <a href="https://wa.me/5547996226408" target="_blank" class="bg-brand-yellow hover:bg-brand-yellowHover text-brand-dark w-full py-3.5 rounded-xl font-display font-black text-center uppercase tracking-wider flex items-center justify-center gap-2 transition-transform duration-200 active:scale-95 shadow-lg">
-                    <i class="fa-brands fa-whatsapp text-lg"></i> Agendar via WhatsApp
+        <!-- Mobile Drawer (dropdown) -->
+        <div id="mobile-menu" class="hidden md:hidden bg-brand-darkBg/95 border-b border-brand-border px-4 pt-2 pb-6 space-y-3 transition-all duration-300">
+            <a href="#inicio" class="block py-2 px-3 rounded-lg hover:bg-brand-cardBg hover:text-brand-yellow transition-all">Início</a>
+            <a href="#marcas" class="block py-2 px-3 rounded-lg hover:bg-brand-cardBg hover:text-brand-yellow transition-all">Marcas</a>
+            <a href="#servicos" class="block py-2 px-3 rounded-lg hover:bg-brand-cardBg hover:text-brand-yellow transition-all">Serviços</a>
+            <a href="#estrutura" class="block py-2 px-3 rounded-lg hover:bg-brand-cardBg hover:text-brand-yellow transition-all">Nossa Estrutura</a>
+            <a href="#avaliacoes" class="block py-2 px-3 rounded-lg hover:bg-brand-cardBg hover:text-brand-yellow transition-all">Avaliações</a>
+            <div class="pt-4 border-t border-brand-border">
+                <a href="https://wa.me/5547996226408?text=Olá!%20Gostaria%20de%20agendar%20um%20diagnóstico%20na%20Oficina%20Suspensul!" 
+                   target="_blank"
+                   rel="noopener noreferrer" 
+                   class="flex items-center justify-center gap-2 w-full bg-brand-yellow hover:bg-brand-yellowHover text-black font-outfit font-bold py-3 rounded-lg transition-all shadow-[0_4px_15px_rgba(255,215,0,0.15)]">
+                    <i class="fa-brands fa-whatsapp text-lg"></i>
+                    <span>Fale no WhatsApp</span>
                 </a>
             </div>
         </div>
-        <!-- Overlay de fundo para o menu lateral -->
-        <div id="drawer-overlay" class="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm hidden md:hidden"></div>
     </header>
 
     <!-- Hero Section -->
-    <section id="inicio" class="min-h-[92vh] flex items-center justify-center px-4 sm:px-6 py-12 relative overflow-hidden">
-        <!-- Detalhes de iluminação de fundo (glow effects) -->
-        <div class="absolute top-1/4 left-1/4 w-[300px] h-[300px] bg-brand-yellow/5 rounded-full blur-[120px] pointer-events-none"></div>
-        <div class="absolute bottom-1/3 right-1/4 w-[400px] h-[400px] bg-brand-yellow/5 rounded-full blur-[150px] pointer-events-none"></div>
-
-        <div class="max-w-7xl w-full mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
-            
-            <!-- Conteúdo Textual (Esquerda) -->
-            <div class="lg:col-span-6 flex flex-col justify-center text-center lg:text-left">
-                <div class="inline-flex items-center gap-2 self-center lg:self-start px-3.5 py-1.5 rounded-full text-xs font-semibold bg-brand-yellow/10 text-brand-yellow border border-brand-yellow/20 mb-6 uppercase tracking-widest font-display">
-                    <i data-lucide="award" class="w-3.5 h-3.5"></i> Referência em Suspensões Especiais
-                </div>
-                <h1 class="text-3xl sm:text-5xl md:text-6xl font-black uppercase text-white leading-none tracking-tight font-display">
-                    O Cuidado que seu <br>
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-yellow via-amber-400 to-yellow-500">veículo merece.</span>
-                </h1>
-                <p class="mt-6 text-sm sm:text-lg text-zinc-300 max-w-xl mx-auto lg:mx-0 leading-relaxed font-sans">
-                    Especialistas em amortecedores, freios de alta performance, diagnóstico computadorizado e manutenção de alto padrão. Traga seu carro para quem entende de verdade.
-                </p>
-                
-                <!-- Avaliação rápida -->
-                <div class="mt-6 flex items-center justify-center lg:justify-start gap-2 text-xs text-zinc-400 font-display">
-                    <div class="flex text-brand-yellow">
-                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                        <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                    </div>
-                    <span>5.0 de 5 estrelas no Google (250+ revisões)</span>
-                </div>
-                
-                <!-- Botões de Ação -->
-                <div class="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                    <a href="https://wa.me/5547996226408" target="_blank" class="px-8 py-4 bg-brand-yellow hover:bg-brand-yellowHover text-brand-dark font-display font-extrabold rounded-xl transition-all duration-300 hover:scale-[1.02] shadow-lg shadow-brand-yellow/10 flex items-center justify-center gap-2 group text-sm sm:text-base uppercase tracking-wider">
-                        <i class="fa-brands fa-whatsapp text-xl"></i>
-                        <span>Solicitar Orçamento</span>
-                        <i data-lucide="arrow-right" class="w-4 h-4 transition-transform group-hover:translate-x-1"></i>
-                    </a>
-                    <a href="#servicos" class="px-8 py-4 bg-white/5 hover:bg-white/10 text-white hover:text-brand-yellow font-display font-bold rounded-xl border border-brand-border hover:border-brand-yellow/30 transition-all duration-300 flex items-center justify-center gap-2 text-sm sm:text-base uppercase tracking-wider">
-                        <span>Nossos Serviços</span>
-                    </a>
-                </div>
-            </div>
-            
-            <!-- Carrossel de Serviços (Direita - metade para a direita) -->
-            <div class="lg:col-span-6 w-full relative overflow-hidden py-4 select-none">
-                <div class="mb-4 flex justify-between items-center px-2">
-                    <h2 class="text-lg font-display uppercase tracking-widest text-zinc-400 font-bold flex items-center gap-2">
-                        <span class="w-2 h-2 rounded-full bg-brand-yellow animate-ping"></span> Nossas Especialidades
-                    </h2>
-                    
-                    <!-- Controls -->
-                    <div class="flex gap-2">
-                        <button id="carousel-prev" class="w-9 h-9 rounded-full bg-zinc-900 border border-brand-border hover:bg-brand-yellow hover:text-brand-dark transition-all flex items-center justify-center text-white" aria-label="Anterior">
-                            <i data-lucide="chevron-left" class="w-4 h-4"></i>
-                        </button>
-                        <button id="carousel-next" class="w-9 h-9 rounded-full bg-zinc-900 border border-brand-border hover:bg-brand-yellow hover:text-brand-dark transition-all flex items-center justify-center text-white" aria-label="Próximo">
-                            <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="carousel-container relative w-full overflow-hidden carousel-mask">
-                    <!-- Cards Wrapper -->
-                    <div id="hero-carousel-track" class="flex gap-5 transition-transform duration-500 ease-out cursor-grab active:cursor-grabbing">
-                        
-                        <!-- Card 1: Suspensão e Amortecedores -->
-                        <div class="carousel-card flex-shrink-0 w-[88vw] sm:w-[310px] md:w-[340px] bg-brand-card backdrop-blur-md border border-brand-border hover:border-brand-yellow/40 rounded-2xl p-6 sm:p-8 flex flex-col justify-between transition-all duration-300 group hover:shadow-2xl hover:shadow-brand-yellow/5">
-                            <div>
-                                <div class="flex justify-between items-start mb-6">
-                                    <div class="w-12 h-12 rounded-xl bg-brand-yellow/10 border border-brand-yellow/20 flex items-center justify-center text-brand-yellow group-hover:bg-brand-yellow group-hover:text-brand-dark transition-all duration-300">
-                                        <i data-lucide="activity" class="w-6 h-6"></i>
-                                    </div>
-                                    <span class="text-xs font-mono text-zinc-500 font-bold uppercase">01 / Suspensão</span>
-                                </div>
-                                <h3 class="text-xl font-display font-bold text-white mb-3 group-hover:text-brand-yellow transition-colors uppercase tracking-wider">Suspensão & Direção</h3>
-                                <p class="text-sm text-zinc-400 leading-relaxed mb-6">Substituição e reparo de amortecedores, molas, buchas de PU, bandejas e braços oscilantes com aperto técnico.</p>
-                                <ul class="space-y-2 mb-6">
-                                    <li class="flex items-center gap-2 text-xs text-zinc-300">
-                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-yellow"></i>
-                                        <span>Amortecedores originais e esportivos</span>
-                                    </li>
-                                    <li class="flex items-center gap-2 text-xs text-zinc-300">
-                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-yellow"></i>
-                                        <span>Buchas de poliuretano e borracha OEM</span>
-                                    </li>
-                                </ul>
-                            </div>
-                            <a href="https://wa.me/5547996226408?text=Olá! Gostaria de um orçamento para Revisão de Suspensão e Amortecedores." target="_blank" class="w-full py-3 bg-white/5 group-hover:bg-brand-yellow text-white group-hover:text-brand-dark text-center font-display font-bold text-xs rounded-xl border border-brand-border group-hover:border-transparent transition-all duration-300 flex items-center justify-center gap-2 uppercase tracking-widest">
-                                <span>Pedir Orçamento</span>
-                                <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                            </a>
-                        </div>
-
-                        <!-- Card 2: Freios Especiais -->
-                        <div class="carousel-card flex-shrink-0 w-[88vw] sm:w-[310px] md:w-[340px] bg-brand-card backdrop-blur-md border border-brand-border hover:border-brand-yellow/40 rounded-2xl p-6 sm:p-8 flex flex-col justify-between transition-all duration-300 group hover:shadow-2xl hover:shadow-brand-yellow/5">
-                            <div>
-                                <div class="flex justify-between items-start mb-6">
-                                    <div class="w-12 h-12 rounded-xl bg-brand-yellow/10 border border-brand-yellow/20 flex items-center justify-center text-brand-yellow group-hover:bg-brand-yellow group-hover:text-brand-dark transition-all duration-300">
-                                        <i data-lucide="disc" class="w-6 h-6"></i>
-                                    </div>
-                                    <span class="text-xs font-mono text-zinc-500 font-bold uppercase">02 / Freios</span>
-                                </div>
-                                <h3 class="text-xl font-display font-bold text-white mb-3 group-hover:text-brand-yellow transition-colors uppercase tracking-wider">Sistema de Freios</h3>
-                                <p class="text-sm text-zinc-400 leading-relaxed mb-6">Substituição profissional de pastilhas de cerâmica, discos frisados e fluídos. Sangria eletrônica sob pressão.</p>
-                                <ul class="space-y-2 mb-6">
-                                    <li class="flex items-center gap-2 text-xs text-zinc-300">
-                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-yellow"></i>
-                                        <span>Pastilhas de cerâmica (sem pó nas rodas)</span>
-                                    </li>
-                                    <li class="flex items-center gap-2 text-xs text-zinc-300">
-                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-yellow"></i>
-                                        <span>Fluidos premium DOT 4 / DOT 5.1</span>
-                                    </li>
-                                </ul>
-                            </div>
-                            <a href="https://wa.me/5547996226408?text=Olá! Gostaria de um orçamento para Revisão e Troca de Freios." target="_blank" class="w-full py-3 bg-white/5 group-hover:bg-brand-yellow text-white group-hover:text-brand-dark text-center font-display font-bold text-xs rounded-xl border border-brand-border group-hover:border-transparent transition-all duration-300 flex items-center justify-center gap-2 uppercase tracking-widest">
-                                <span>Pedir Orçamento</span>
-                                <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                            </a>
-                        </div>
-
-                        <!-- Card 3: Revisão Geral -->
-                        <div class="carousel-card flex-shrink-0 w-[88vw] sm:w-[310px] md:w-[340px] bg-brand-card backdrop-blur-md border border-brand-border hover:border-brand-yellow/40 rounded-2xl p-6 sm:p-8 flex flex-col justify-between transition-all duration-300 group hover:shadow-2xl hover:shadow-brand-yellow/5">
-                            <div>
-                                <div class="flex justify-between items-start mb-6">
-                                    <div class="w-12 h-12 rounded-xl bg-brand-yellow/10 border border-brand-yellow/20 flex items-center justify-center text-brand-yellow group-hover:bg-brand-yellow group-hover:text-brand-dark transition-all duration-300">
-                                        <i data-lucide="shield-check" class="w-6 h-6"></i>
-                                    </div>
-                                    <span class="text-xs font-mono text-zinc-500 font-bold uppercase">03 / Revisão</span>
-                                </div>
-                                <h3 class="text-xl font-display font-bold text-white mb-3 group-hover:text-brand-yellow transition-colors uppercase tracking-wider">Revisão Preventiva</h3>
-                                <p class="text-sm text-zinc-400 leading-relaxed mb-6">Check-up detalhado de mais de 50 itens de segurança e injeção com laudo técnico completo enviado pelo celular.</p>
-                                <ul class="space-y-2 mb-6">
-                                    <li class="flex items-center gap-2 text-xs text-zinc-300">
-                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-yellow"></i>
-                                        <span>Scanner de injeção e erros eletrônicos</span>
-                                    </li>
-                                    <li class="flex items-center gap-2 text-xs text-zinc-300">
-                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-yellow"></i>
-                                        <span>Evita falhas graves na estrada</span>
-                                    </li>
-                                </ul>
-                            </div>
-                            <a href="https://wa.me/5547996226408?text=Olá! Gostaria de um orçamento para Revisão Preventiva Completa." target="_blank" class="w-full py-3 bg-white/5 group-hover:bg-brand-yellow text-white group-hover:text-brand-dark text-center font-display font-bold text-xs rounded-xl border border-brand-border group-hover:border-transparent transition-all duration-300 flex items-center justify-center gap-2 uppercase tracking-widest">
-                                <span>Pedir Orçamento</span>
-                                <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                            </a>
-                        </div>
-
-                        <!-- Card 4: Alinhamento 3D -->
-                        <div class="carousel-card flex-shrink-0 w-[88vw] sm:w-[310px] md:w-[340px] bg-brand-card backdrop-blur-md border border-brand-border hover:border-brand-yellow/40 rounded-2xl p-6 sm:p-8 flex flex-col justify-between transition-all duration-300 group hover:shadow-2xl hover:shadow-brand-yellow/5">
-                            <div>
-                                <div class="flex justify-between items-start mb-6">
-                                    <div class="w-12 h-12 rounded-xl bg-brand-yellow/10 border border-brand-yellow/20 flex items-center justify-center text-brand-yellow group-hover:bg-brand-yellow group-hover:text-brand-dark transition-all duration-300">
-                                        <i data-lucide="gauge" class="w-6 h-6"></i>
-                                    </div>
-                                    <span class="text-xs font-mono text-zinc-500 font-bold uppercase">04 / Alinhamento</span>
-                                </div>
-                                <h3 class="text-xl font-display font-bold text-white mb-3 group-hover:text-brand-yellow transition-colors uppercase tracking-wider">Geometria & Alinhamento</h3>
-                                <p class="text-sm text-zinc-400 leading-relaxed mb-6">Alinhamento computadorizado 3D de alta definição, balanceamento preciso e correção de cambagem e convergência.</p>
-                                <ul class="space-y-2 mb-6">
-                                    <li class="flex items-center gap-2 text-xs text-zinc-300">
-                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-yellow"></i>
-                                        <span>Desgaste uniforme dos pneus</span>
-                                    </li>
-                                    <li class="flex items-center gap-2 text-xs text-zinc-300">
-                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-yellow"></i>
-                                        <span>Precisão de sensores a laser 3D</span>
-                                    </li>
-                                </ul>
-                            </div>
-                            <a href="https://wa.me/5547996226408?text=Olá! Gostaria de um orçamento para Alinhamento 3D e Balanceamento." target="_blank" class="w-full py-3 bg-white/5 group-hover:bg-brand-yellow text-white group-hover:text-brand-dark text-center font-display font-bold text-xs rounded-xl border border-brand-border group-hover:border-transparent transition-all duration-300 flex items-center justify-center gap-2 uppercase tracking-widest">
-                                <span>Pedir Orçamento</span>
-                                <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                            </a>
-                        </div>
-
-                        <!-- Card 5: Troca de Óleo -->
-                        <div class="carousel-card flex-shrink-0 w-[88vw] sm:w-[310px] md:w-[340px] bg-brand-card backdrop-blur-md border border-brand-border hover:border-brand-yellow/40 rounded-2xl p-6 sm:p-8 flex flex-col justify-between transition-all duration-300 group hover:shadow-2xl hover:shadow-brand-yellow/5">
-                            <div>
-                                <div class="flex justify-between items-start mb-6">
-                                    <div class="w-12 h-12 rounded-xl bg-brand-yellow/10 border border-brand-yellow/20 flex items-center justify-center text-brand-yellow group-hover:bg-brand-yellow group-hover:text-brand-dark transition-all duration-300">
-                                        <i data-lucide="droplet" class="w-6 h-6"></i>
-                                    </div>
-                                    <span class="text-xs font-mono text-zinc-500 font-bold uppercase">05 / Lubrificação</span>
-                                </div>
-                                <h3 class="text-xl font-display font-bold text-white mb-3 group-hover:text-brand-yellow transition-colors uppercase tracking-wider">Óleo & Filtros</h3>
-                                <p class="text-sm text-zinc-400 leading-relaxed mb-6">Troca rápida de óleo do motor e filtros (óleo, ar, combustível e cabine) utilizando lubrificantes 100% sintéticos homologados.</p>
-                                <ul class="space-y-2 mb-6">
-                                    <li class="flex items-center gap-2 text-xs text-zinc-300">
-                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-yellow"></i>
-                                        <span>Marcas líderes (Motul, Castrol, Mobil)</span>
-                                    </li>
-                                    <li class="flex items-center gap-2 text-xs text-zinc-300">
-                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-yellow"></i>
-                                        <span>Garantia de proteção do motor</span>
-                                    </li>
-                                </ul>
-                            </div>
-                            <a href="https://wa.me/5547996226408?text=Olá! Gostaria de um orçamento para Troca de Óleo e Filtros." target="_blank" class="w-full py-3 bg-white/5 group-hover:bg-brand-yellow text-white group-hover:text-brand-dark text-center font-display font-bold text-xs rounded-xl border border-brand-border group-hover:border-transparent transition-all duration-300 flex items-center justify-center gap-2 uppercase tracking-widest">
-                                <span>Pedir Orçamento</span>
-                                <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                            </a>
-                        </div>
-
-                        <!-- Card 6: Escapamentos & Difusores -->
-                        <div class="carousel-card flex-shrink-0 w-[88vw] sm:w-[310px] md:w-[340px] bg-brand-card backdrop-blur-md border border-brand-border hover:border-brand-yellow/40 rounded-2xl p-6 sm:p-8 flex flex-col justify-between transition-all duration-300 group hover:shadow-2xl hover:shadow-brand-yellow/5">
-                            <div>
-                                <div class="flex justify-between items-start mb-6">
-                                    <div class="w-12 h-12 rounded-xl bg-brand-yellow/10 border border-brand-yellow/20 flex items-center justify-center text-brand-yellow group-hover:bg-brand-yellow group-hover:text-brand-dark transition-all duration-300">
-                                        <i data-lucide="wind" class="w-6 h-6"></i>
-                                    </div>
-                                    <span class="text-xs font-mono text-zinc-500 font-bold uppercase">06 / Performance</span>
-                                </div>
-                                <h3 class="text-xl font-display font-bold text-white mb-3 group-hover:text-brand-yellow transition-colors uppercase tracking-wider">Escapamentos & Difusores</h3>
-                                <p class="text-sm text-zinc-400 leading-relaxed mb-6">Manutenção, substituição e personalização completa do sistema de exaustão e instalação de difusores esportivos com controle remoto.</p>
-                                <ul class="space-y-2 mb-6">
-                                    <li class="flex items-center gap-2 text-xs text-zinc-300">
-                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-yellow"></i>
-                                        <span>Instalação de difusores eletrônicos</span>
-                                    </li>
-                                    <li class="flex items-center gap-2 text-xs text-zinc-300">
-                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-yellow"></i>
-                                        <span>Soldas de precisão em aço carbono e inox</span>
-                                    </li>
-                                </ul>
-                            </div>
-                            <a href="https://wa.me/5547996226408?text=Olá! Gostaria de saber mais sobre Escapamentos e Difusores." target="_blank" class="w-full py-3 bg-white/5 group-hover:bg-brand-yellow text-white group-hover:text-brand-dark text-center font-display font-bold text-xs rounded-xl border border-brand-border group-hover:border-transparent transition-all duration-300 flex items-center justify-center gap-2 uppercase tracking-widest">
-                                <span>Pedir Orçamento</span>
-                                <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                            </a>
-                        </div>
-
-                        <!-- Card 7: Climatização e Radiador -->
-                        <div class="carousel-card flex-shrink-0 w-[88vw] sm:w-[310px] md:w-[340px] bg-brand-card backdrop-blur-md border border-brand-border hover:border-brand-yellow/40 rounded-2xl p-6 sm:p-8 flex flex-col justify-between transition-all duration-300 group hover:shadow-2xl hover:shadow-brand-yellow/5">
-                            <div>
-                                <div class="flex justify-between items-start mb-6">
-                                    <div class="w-12 h-12 rounded-xl bg-brand-yellow/10 border border-brand-yellow/20 flex items-center justify-center text-brand-yellow group-hover:bg-brand-yellow group-hover:text-brand-dark transition-all duration-300">
-                                        <i data-lucide="snowflake" class="w-6 h-6"></i>
-                                    </div>
-                                    <span class="text-xs font-mono text-zinc-500 font-bold uppercase">07 / Conforto</span>
-                                </div>
-                                <h3 class="text-xl font-display font-bold text-white mb-3 group-hover:text-brand-yellow transition-colors uppercase tracking-wider">Ar & Arrefecimento</h3>
-                                <p class="text-sm text-zinc-400 leading-relaxed mb-6">Higienização com ozônio do ar condicionado e recarga de gás. Limpeza química de radiador e substituição de aditivos orgânicos.</p>
-                                <ul class="space-y-2 mb-6">
-                                    <li class="flex items-center gap-2 text-xs text-zinc-300">
-                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-yellow"></i>
-                                        <span>Limpeza completa do sistema de arrefecimento</span>
-                                    </li>
-                                    <li class="flex items-center gap-2 text-xs text-zinc-300">
-                                        <i data-lucide="check" class="w-3.5 h-3.5 text-brand-yellow"></i>
-                                        <span>Higienização bactericida de cabine</span>
-                                    </li>
-                                </ul>
-                            </div>
-                            <a href="https://wa.me/5547996226408?text=Olá! Gostaria de um orçamento para Ar Condicionado ou Radiador." target="_blank" class="w-full py-3 bg-white/5 group-hover:bg-brand-yellow text-white group-hover:text-brand-dark text-center font-display font-bold text-xs rounded-xl border border-brand-border group-hover:border-transparent transition-all duration-300 flex items-center justify-center gap-2 uppercase tracking-widest">
-                                <span>Pedir Orçamento</span>
-                                <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                            </a>
-                        </div>
-
-                    </div>
-                </div>
-
-                <!-- Carousel Dots / Progress -->
-                <div class="mt-4 flex items-center justify-center gap-2" id="carousel-dots">
-                    <!-- Inserido dinamicamente via JS -->
-                </div>
-            </div>
+    <section id="inicio" class="relative min-h-[calc(100vh-5rem)] flex items-center justify-center overflow-hidden py-16 sm:py-24">
+        <!-- Background Overlay / Image -->
+        <div class="absolute inset-0 z-0">
+            <img src="fundo.png" 
+                 alt="Oficina Mecânica Profissional" 
+                 class="w-full h-full object-cover opacity-20 filter brightness-50" />
+            <div class="absolute inset-0 bg-gradient-to-t from-brand-darkBg via-brand-darkBg/90 to-brand-darkBg/40"></div>
+            <div class="absolute inset-0 glow-radial"></div>
         </div>
-    </section>
 
-    <!-- Brand Marquee (Marcas Atendidas) -->
-    <section class="py-4 bg-brand-yellow border-y border-brand-yellow/30 overflow-hidden relative z-20">
-        <div class="flex whitespace-nowrap">
-            <div class="flex gap-16 text-brand-dark font-display font-extrabold uppercase text-sm tracking-[0.2em] select-none animate-marquee">
-                <span>Volkswagen</span><span>•</span><span>Chevrolet</span><span>•</span><span>Fiat</span><span>•</span><span>Toyota</span><span>•</span><span>Hyundai</span><span>•</span><span>Honda</span><span>•</span><span>Ford</span><span>•</span><span>Renault</span><span>•</span><span>Jeep</span><span>•</span><span>Nissan</span><span>•</span><span>Peugeot</span><span>•</span><span>Citroën</span>
-                <!-- Repetidos para efeito infinito -->
-                <span>Volkswagen</span><span>•</span><span>Chevrolet</span><span>•</span><span>Fiat</span><span>•</span><span>Toyota</span><span>•</span><span>Hyundai</span><span>•</span><span>Honda</span><span>•</span><span>Ford</span><span>•</span><span>Renault</span><span>•</span><span>Jeep</span><span>•</span><span>Nissan</span><span>•</span><span>Peugeot</span><span>•</span><span>Citroën</span>
+        <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <!-- Badge Google / Mafra -->
+            <div class="inline-flex items-center gap-2 bg-brand-cardBg border border-brand-border px-4 py-1.5 rounded-full mb-8 animate-fade-in">
+                <span class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
+                <span class="text-xs font-semibold tracking-wider uppercase text-brand-textMuted">Disponível agora em Mafra - SC</span>
             </div>
-        </div>
-    </section>
 
-    <!-- Estatísticas Rápidas -->
-    <section class="py-16 bg-brand-dark/95 border-b border-brand-border">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 lg:gap-8">
-                
-                <div class="bg-zinc-900/30 border border-brand-border/60 hover:border-brand-yellow/20 rounded-2xl p-6 text-center transition-all duration-300 hover:-translate-y-1">
-                    <span class="block text-3xl sm:text-5xl font-black text-brand-yellow font-display mb-2">+15.000</span>
-                    <span class="text-xs sm:text-sm font-semibold text-zinc-400 uppercase tracking-widest font-display">Carros Atendidos</span>
-                </div>
-
-                <div class="bg-zinc-900/30 border border-brand-border/60 hover:border-brand-yellow/20 rounded-2xl p-6 text-center transition-all duration-300 hover:-translate-y-1">
-                    <span class="block text-3xl sm:text-5xl font-black text-brand-yellow font-display mb-2">10+ Anos</span>
-                    <span class="text-xs sm:text-sm font-semibold text-zinc-400 uppercase tracking-widest font-display">de Experiência</span>
-                </div>
-
-                <div class="bg-zinc-900/30 border border-brand-border/60 hover:border-brand-yellow/20 rounded-2xl p-6 text-center transition-all duration-300 hover:-translate-y-1">
-                    <span class="block text-3xl sm:text-5xl font-black text-brand-yellow font-display mb-2">100%</span>
-                    <span class="text-xs sm:text-sm font-semibold text-zinc-400 uppercase tracking-widest font-display">Peças Garantidas</span>
-                </div>
-
-                <div class="bg-zinc-900/30 border border-brand-border/60 hover:border-brand-yellow/20 rounded-2xl p-6 text-center transition-all duration-300 hover:-translate-y-1">
-                    <span class="block text-3xl sm:text-5xl font-black text-brand-yellow font-display mb-2">Nota 5.0</span>
-                    <span class="text-xs sm:text-sm font-semibold text-zinc-400 uppercase tracking-widest font-display">No Google Maps</span>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <!-- A Empresa (Sobre Nós) -->
-    <section id="sobre" class="py-20 sm:py-24 bg-brand-dark px-4 sm:px-6 relative overflow-hidden">
-        <!-- Glow suave de fundo -->
-        <div class="absolute right-0 top-1/4 w-[350px] h-[350px] bg-brand-yellow/5 rounded-full blur-[100px] pointer-events-none"></div>
-        
-        <div class="max-w-7xl mx-auto relative z-10">
-            <div class="flex flex-col lg:flex-row gap-12 lg:gap-16 items-center">
-                
-                <!-- Texto explicativo (Esquerda no desktop) -->
-                <div class="w-full lg:w-1/2 flex flex-col justify-center text-center lg:text-left">
-                    <span class="inline-flex items-center gap-2 self-center lg:self-start px-3 py-1 rounded-full text-xs font-semibold bg-brand-yellow/10 text-brand-yellow border border-brand-yellow/20 mb-6 uppercase tracking-wider font-display">
-                        Quem Somos
-                    </span>
-                    <h2 class="text-3xl sm:text-4xl font-black text-white uppercase font-display leading-tight">
-                        Compromisso com a sua <br>
-                        <span class="text-brand-yellow">segurança e conforto</span>
-                    </h2>
-                    <p class="mt-6 text-sm sm:text-base text-zinc-300 leading-relaxed">
-                        A Oficina Suspensul é especialista in diagnósticos de alta precisão e serviços voltados para a dinâmica veicular. Trabalhamos exclusivamente com marcas consagradas no mercado mundial, combinando equipamentos de última geração a um rigoroso protocolo de qualidade.
-                    </p>
-                    <p class="mt-4 text-sm sm:text-base text-zinc-400 leading-relaxed">
-                        Nossa equipe passa por treinamentos recorrentes para atender desde carros populares a veículos importados de alto desempenho com o mesmo grau de capricho e atenção técnica.
-                    </p>
-
-                    <!-- Lista de Benefícios Rápidos -->
-                    <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4 text-left max-w-lg mx-auto lg:mx-0">
-                        <div class="flex items-start gap-3">
-                            <div class="w-5 h-5 rounded-md bg-brand-yellow/10 flex items-center justify-center mt-1 text-brand-yellow">
-                                <i data-lucide="check" class="w-3.5 h-3.5"></i>
-                            </div>
-                            <div>
-                                <h4 class="text-sm font-bold text-white font-display uppercase tracking-wider">Atendimento Agendado</h4>
-                                <p class="text-xs text-zinc-400">Sem filas, seu carro entra e sai no prazo.</p>
-                            </div>
-                        </div>
-
-                        <div class="flex items-start gap-3">
-                            <div class="w-5 h-5 rounded-md bg-brand-yellow/10 flex items-center justify-center mt-1 text-brand-yellow">
-                                <i data-lucide="check" class="w-3.5 h-3.5"></i>
-                            </div>
-                            <div>
-                                <h4 class="text-sm font-bold text-white font-display uppercase tracking-wider">Laudo por WhatsApp</h4>
-                                <p class="text-xs text-zinc-400">Fotos e vídeos detalhados da sua revisão.</p>
-                            </div>
-                        </div>
-
-                        <div class="flex items-start gap-3">
-                            <div class="w-5 h-5 rounded-md bg-brand-yellow/10 flex items-center justify-center mt-1 text-brand-yellow">
-                                <i data-lucide="check" class="w-3.5 h-3.5"></i>
-                            </div>
-                            <div>
-                                <h4 class="text-sm font-bold text-white font-display uppercase tracking-wider">Preço Justo</h4>
-                                <p class="text-xs text-zinc-400">Valores descriminados, sem surpresas no final.</p>
-                            </div>
-                        </div>
-
-                        <div class="flex items-start gap-3">
-                            <div class="w-5 h-5 rounded-md bg-brand-yellow/10 flex items-center justify-center mt-1 text-brand-yellow">
-                                <i data-lucide="check" class="w-3.5 h-3.5"></i>
-                            </div>
-                            <div>
-                                <h4 class="text-sm font-bold text-white font-display uppercase tracking-wider">Garantia Formal</h4>
-                                <p class="text-xs text-zinc-400">Segurança de peças homologadas.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-10 self-center lg:self-start">
-                        <a href="https://wa.me/5547996226408" target="_blank" class="inline-flex items-center gap-2.5 bg-brand-yellow hover:bg-brand-yellowHover text-brand-dark px-7 py-3.5 rounded-xl font-display font-extrabold text-sm uppercase tracking-wider transition-all duration-300 hover:scale-[1.02] shadow-md shadow-brand-yellow/10">
-                            <i class="fa-brands fa-whatsapp text-lg"></i> Agendar Diagnóstico
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Vídeo de demonstração (Direita no desktop) -->
-                <div class="w-full lg:w-1/2 flex items-center justify-center">
-                    <div class="glow-border w-full max-w-lg shadow-2xl shadow-brand-yellow/5">
-                        <div class="bg-brand-dark rounded-[1.4rem] overflow-hidden p-1 relative z-10">
-                            <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-zinc-950 border border-brand-border">
-                                <iframe class="absolute inset-0 w-full h-full" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="Vídeo Institucional Suspensul" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <!-- Nossos Serviços (Grade Estática de Detalhes Adicionais) -->
-    <section id="servicos" class="py-20 sm:py-24 bg-brand-dark/95 border-y border-brand-border px-4 sm:px-6 relative">
-        <div class="absolute left-0 bottom-1/4 w-[300px] h-[300px] bg-brand-yellow/5 rounded-full blur-[120px] pointer-events-none"></div>
-
-        <div class="max-w-7xl mx-auto relative z-10">
-            <div class="text-center max-w-3xl mx-auto mb-16">
-                <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-brand-yellow/10 text-brand-yellow border border-brand-yellow/20 mb-4 uppercase tracking-wider font-display">
-                    Nossas Atividades
+            <!-- Title -->
+            <h1 class="font-outfit text-4xl sm:text-6xl md:text-7xl font-black tracking-tight leading-none mb-6">
+                A MELHOR OFICINA MECÂNICA<br class="hidden md:block" />
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-yellow to-white">
+                    DE MAFRA - SC
                 </span>
-                <h2 class="text-3xl sm:text-4xl font-black text-white uppercase font-display">
-                    Equipamentos modernos, <br>
-                    <span class="text-brand-yellow">serviço impecável.</span>
-                </h2>
-                <p class="mt-4 text-sm sm:text-base text-zinc-400 leading-relaxed font-sans">
-                    Nossos boxes de serviços são equipados para resolver com agilidade qualquer tipo de diagnóstico no chassi, exaustão e mecânica preventiva de seu veículo.
-                </p>
-            </div>
+            </h1>
 
-            <!-- Grid de Serviços -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Subtitle -->
+            <p class="max-w-2xl mx-auto text-base sm:text-xl text-brand-textMuted font-normal leading-relaxed mb-10">
+                Segurança, precisão e respeito pelo seu bolso. Cuidamos do seu veículo com equipamentos modernos de diagnóstico e equipe especializada.
+            </p>
+
+            <!-- Hero Action Buttons -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="https://wa.me/5547996226408?text=Olá!%20Gostaria%20de%20solicitar%20um%20orçamento%20geral%20para%20meu%20veículo%20na%20Oficina%20Suspensul!" 
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-brand-yellow hover:bg-brand-yellowHover text-black font-outfit font-extrabold px-8 py-4 rounded-xl text-lg transition-all duration-300 transform hover:-translate-y-1 shadow-[0_10px_30px_rgba(255,215,0,0.2)] hover:shadow-[0_12px_40px_rgba(255,215,0,0.4)]">
+                    <i class="fa-brands fa-whatsapp text-xl"></i>
+                    <span>Solicitar Orçamento</span>
+                </a>
                 
-                <div class="bg-zinc-900/40 border border-brand-border hover:border-brand-yellow/30 rounded-2xl p-6 sm:p-8 transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between group">
-                    <div>
-                        <div class="w-10 h-10 rounded-lg bg-zinc-800 flex items-center justify-center text-brand-yellow mb-5 border border-brand-border">
-                            <i data-lucide="shield" class="w-5 h-5"></i>
-                        </div>
-                        <h3 class="text-lg sm:text-xl font-display font-bold text-white mb-2 uppercase tracking-wide">Prevenção Inteligente</h3>
-                        <p class="text-xs sm:text-sm text-zinc-400 leading-relaxed mb-4">Evite surpresas indesejáveis em viagens com diagnósticos por scanner que detectam avarias elétricas e mecânicas antes que causem a parada total do veículo.</p>
-                    </div>
-                    <span class="text-xs text-brand-yellow font-display font-bold uppercase tracking-wider mt-4 flex items-center gap-1">
-                        Saber mais <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
-                    </span>
-                </div>
-
-                <div class="bg-zinc-900/40 border border-brand-border hover:border-brand-yellow/30 rounded-2xl p-6 sm:p-8 transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between group">
-                    <div>
-                        <div class="w-10 h-10 rounded-lg bg-zinc-800 flex items-center justify-center text-brand-yellow mb-5 border border-brand-border">
-                            <i data-lucide="navigation" class="w-5 h-5"></i>
-                        </div>
-                        <h3 class="text-lg sm:text-xl font-display font-bold text-white mb-2 uppercase tracking-wide">Estabilidade Máxima</h3>
-                        <p class="text-xs sm:text-sm text-zinc-400 leading-relaxed mb-4">Garantimos a direção centrada e o desgaste regular dos pneus através de equipamentos de Geometria 3D de altíssima fidelidade e calibração computadorizada.</p>
-                    </div>
-                    <span class="text-xs text-brand-yellow font-display font-bold uppercase tracking-wider mt-4 flex items-center gap-1">
-                        Saber mais <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
-                    </span>
-                </div>
-
-                <div class="bg-zinc-900/40 border border-brand-border hover:border-brand-yellow/30 rounded-2xl p-6 sm:p-8 transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between group">
-                    <div>
-                        <div class="w-10 h-10 rounded-lg bg-zinc-800 flex items-center justify-center text-brand-yellow mb-5 border border-brand-border">
-                            <i data-lucide="target" class="w-5 h-5"></i>
-                        </div>
-                        <h3 class="text-lg sm:text-xl font-display font-bold text-white mb-2 uppercase tracking-wide">Frenagem Sob Controle</h3>
-                        <p class="text-xs sm:text-sm text-zinc-400 leading-relaxed mb-4">Revisamos pastilhas, pinças, cilindros mestres e fazemos a troca assistida de fluidos de freio para uma resposta imediata do pedal sob condições severas de uso.</p>
-                    </div>
-                    <span class="text-xs text-brand-yellow font-display font-bold uppercase tracking-wider mt-4 flex items-center gap-1">
-                        Saber mais <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
-                    </span>
-                </div>
-
-                <div class="bg-zinc-900/40 border border-brand-border hover:border-brand-yellow/30 rounded-2xl p-6 sm:p-8 transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between group">
-                    <div>
-                        <div class="w-10 h-10 rounded-lg bg-zinc-800 flex items-center justify-center text-brand-yellow mb-5 border border-brand-border">
-                            <i data-lucide="flame" class="w-5 h-5"></i>
-                        </div>
-                        <h3 class="text-lg sm:text-xl font-display font-bold text-white mb-2 uppercase tracking-wide">Arrefecimento e Motor</h3>
-                        <p class="text-xs sm:text-sm text-zinc-400 leading-relaxed mb-4">Realizamos a limpeza preventiva com aditivos adequados ao manual do proprietário, mantendo o radiador limpo e evitando superaquecimentos de junta de cabeçote.</p>
-                    </div>
-                    <span class="text-xs text-brand-yellow font-display font-bold uppercase tracking-wider mt-4 flex items-center gap-1">
-                        Saber mais <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
-                    </span>
-                </div>
-
-                <div class="bg-zinc-900/40 border border-brand-border hover:border-brand-yellow/30 rounded-2xl p-6 sm:p-8 transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between group">
-                    <div>
-                        <div class="w-10 h-10 rounded-lg bg-zinc-800 flex items-center justify-center text-brand-yellow mb-5 border border-brand-border">
-                            <i data-lucide="wind" class="w-5 h-5"></i>
-                        </div>
-                        <h3 class="text-lg sm:text-xl font-display font-bold text-white mb-2 uppercase tracking-wide">Exaustão Customizada</h3>
-                        <p class="text-xs sm:text-sm text-zinc-400 leading-relaxed mb-4">Trabalhamos com escapamentos originais silenciosos ou sistemas personalizados com difusores eletrônicos para controle do ronco esportivo em inox.</p>
-                    </div>
-                    <span class="text-xs text-brand-yellow font-display font-bold uppercase tracking-wider mt-4 flex items-center gap-1">
-                        Saber mais <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
-                    </span>
-                </div>
-
-                <div class="bg-zinc-900/40 border border-brand-border hover:border-brand-yellow/30 rounded-2xl p-6 sm:p-8 transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between group">
-                    <div>
-                        <div class="w-10 h-10 rounded-lg bg-zinc-800 flex items-center justify-center text-brand-yellow mb-5 border border-brand-border">
-                            <i data-lucide="snowflake" class="w-5 h-5"></i>
-                        </div>
-                        <h3 class="text-lg sm:text-xl font-display font-bold text-white mb-2 uppercase tracking-wide">Ar Puro na Cabine</h3>
-                        <p class="text-xs sm:text-sm text-zinc-400 leading-relaxed mb-4">Efetuamos a recarga do gás R134a, higienização com geradores de ozônio bactericida e a substituição do filtro de cabine contra ácaros e pólen.</p>
-                    </div>
-                    <span class="text-xs text-brand-yellow font-display font-bold uppercase tracking-wider mt-4 flex items-center gap-1">
-                        Saber mais <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
-                    </span>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <!-- Nossos Diferenciais -->
-    <section id="diferenciais" class="py-20 sm:py-24 bg-brand-dark px-4 sm:px-6 relative overflow-hidden">
-        <div class="absolute right-0 bottom-1/4 w-[300px] h-[300px] bg-brand-yellow/5 rounded-full blur-[120px] pointer-events-none"></div>
-
-        <div class="max-w-7xl mx-auto relative z-10">
-            <div class="text-center max-w-3xl mx-auto mb-16">
-                <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-brand-yellow/10 text-brand-yellow border border-brand-yellow/20 mb-4 uppercase tracking-wider font-display">
-                    Por que nos escolher?
-                </span>
-                <h2 class="text-3xl sm:text-4xl font-black text-white uppercase font-display">
-                    Diferenciais que geram <br>
-                    <span class="text-brand-yellow">confiança absoluta.</span>
-                </h2>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                
-                <!-- Diferencial 1 -->
-                <div class="bg-zinc-900/40 border border-brand-border hover:border-brand-yellow/20 rounded-2xl p-6 transition-all duration-300">
-                    <div class="w-12 h-12 rounded-xl bg-brand-yellow/10 flex items-center justify-center text-brand-yellow mb-6">
-                        <i data-lucide="cpu" class="w-6 h-6"></i>
-                    </div>
-                    <h3 class="text-lg font-display font-bold text-white mb-2 uppercase tracking-wide">Tecnologia 3D</h3>
-                    <p class="text-xs sm:text-sm text-zinc-400 leading-relaxed">Sensores e câmeras de alta precisão garantem que as rodas do seu carro estejam perfeitamente alinhadas.</p>
-                </div>
-
-                <!-- Diferencial 2 -->
-                <div class="bg-zinc-900/40 border border-brand-border hover:border-brand-yellow/20 rounded-2xl p-6 transition-all duration-300">
-                    <div class="w-12 h-12 rounded-xl bg-brand-yellow/10 flex items-center justify-center text-brand-yellow mb-6">
-                        <i data-lucide="video" class="w-6 h-6"></i>
-                    </div>
-                    <h3 class="text-lg font-display font-bold text-white mb-2 uppercase tracking-wide">Orçamento Transparente</h3>
-                    <p class="text-xs sm:text-sm text-zinc-400 leading-relaxed">Você recebe fotos e vídeos curtos no celular mostrando os problemas identificados no carro.</p>
-                </div>
-
-                <!-- Diferencial 3 -->
-                <div class="bg-zinc-900/40 border border-brand-border hover:border-brand-yellow/20 rounded-2xl p-6 transition-all duration-300">
-                    <div class="w-12 h-12 rounded-xl bg-brand-yellow/10 flex items-center justify-center text-brand-yellow mb-6">
-                        <i data-lucide="clock" class="w-6 h-6"></i>
-                    </div>
-                    <h3 class="text-lg font-display font-bold text-white mb-2 uppercase tracking-wide">Agilidade e Pontualidade</h3>
-                    <p class="text-xs sm:text-sm text-zinc-400 leading-relaxed">Planejamento focado no cumprimento exato de horários. Deixe e retire o carro sem atrasos.</p>
-                </div>
-
-                <!-- Diferencial 4 -->
-                <div class="bg-zinc-900/40 border border-brand-border hover:border-brand-yellow/20 rounded-2xl p-6 transition-all duration-300">
-                    <div class="w-12 h-12 rounded-xl bg-brand-yellow/10 flex items-center justify-center text-brand-yellow mb-6">
-                        <i data-lucide="coffee" class="w-6 h-6"></i>
-                    </div>
-                    <h3 class="text-lg font-display font-bold text-white mb-2 uppercase tracking-wide">Espaço Confortável</h3>
-                    <p class="text-xs sm:text-sm text-zinc-400 leading-relaxed">Sala de espera confortável com climatização, wi-fi liberado e café quente para o seu conforto.</p>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <!-- Depoimentos (Google Reviews) -->
-    <section id="depoimentos" class="py-20 sm:py-24 bg-brand-dark/95 border-t border-brand-border px-4 sm:px-6 relative overflow-hidden">
-        <div class="absolute left-1/3 top-1/4 w-[300px] h-[300px] bg-brand-yellow/5 rounded-full blur-[120px] pointer-events-none"></div>
-
-        <div class="max-w-7xl mx-auto relative z-10">
-            <div class="text-center max-w-3xl mx-auto mb-16">
-                <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-brand-yellow/10 text-brand-yellow border border-brand-yellow/20 mb-4 uppercase tracking-wider font-display">
-                    Depoimentos
-                </span>
-                <h2 class="text-3xl sm:text-4xl font-black text-white uppercase font-display">
-                    O que dizem os <br>
-                    <span class="text-brand-yellow">nossos clientes?</span>
-                </h2>
-            </div>
-
-            <!-- Grade de depoimentos -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                
-                <!-- Depoimento 1 -->
-                <div class="bg-zinc-900/30 border border-brand-border rounded-2xl p-6 sm:p-8 flex flex-col justify-between hover:border-brand-border transition-all">
-                    <div>
-                        <div class="flex items-center justify-between mb-6">
-                            <div class="flex text-brand-yellow">
-                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                            </div>
-                            <i class="fa-brands fa-google text-zinc-600 text-lg"></i>
-                        </div>
-                        <p class="text-xs sm:text-sm text-zinc-300 leading-relaxed italic mb-6">
-                            "Excelente atendimento! Levei meu carro para revisar o barulho na dianteira e resolveram com rapidez. O mecânico me mostrou a peça desgastada e explicou tudo antes de trocar. Super transparentes com o orçamento!"
-                        </p>
-                    </div>
-                    <div class="flex items-center gap-3 border-t border-brand-border pt-4">
-                        <div class="w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center font-display font-bold text-xs text-brand-yellow border border-brand-border">
-                            CM
-                        </div>
-                        <div>
-                            <span class="block text-xs font-bold text-white uppercase tracking-wider">Carlos Eduardo M.</span>
-                            <span class="block text-[10px] text-zinc-500 font-mono">Avaliação no Google</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Depoimento 2 -->
-                <div class="bg-zinc-900/30 border border-brand-border rounded-2xl p-6 sm:p-8 flex flex-col justify-between hover:border-brand-border transition-all">
-                    <div>
-                        <div class="flex items-center justify-between mb-6">
-                            <div class="flex text-brand-yellow">
-                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                            </div>
-                            <i class="fa-brands fa-google text-zinc-600 text-lg"></i>
-                        </div>
-                        <p class="text-xs sm:text-sm text-zinc-300 leading-relaxed italic mb-6">
-                            "Melhor alinhamento 3D de Mafra. Meu carro puxava para a direita e nenhuma oficina conseguia alinhar direito. O pessoal da Suspensul resolveu de primeira. Sala de espera excelente com café de qualidade."
-                        </p>
-                    </div>
-                    <div class="flex items-center gap-3 border-t border-brand-border pt-4">
-                        <div class="w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center font-display font-bold text-xs text-brand-yellow border border-brand-border">
-                            JF
-                        </div>
-                        <div>
-                            <span class="block text-xs font-bold text-white uppercase tracking-wider">Juliano Ferreira</span>
-                            <span class="block text-[10px] text-zinc-500 font-mono">Avaliação no Google</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Depoimento 3 -->
-                <div class="bg-zinc-900/30 border border-brand-border rounded-2xl p-6 sm:p-8 flex flex-col justify-between hover:border-brand-border transition-all">
-                    <div>
-                        <div class="flex items-center justify-between mb-6">
-                            <div class="flex text-brand-yellow">
-                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                                <i data-lucide="star" class="w-4 h-4 fill-current"></i>
-                            </div>
-                            <i class="fa-brands fa-google text-zinc-600 text-lg"></i>
-                        </div>
-                        <p class="text-xs sm:text-sm text-zinc-300 leading-relaxed italic mb-6">
-                            "Oficina extremamente organizada e limpa, passa muita confiança. Mandaram vídeos curtos no WhatsApp demonstrando a folga nos pivôs e trocaram tudo dentro do horário combinado. Recomendo de olhos fechados!"
-                        </p>
-                    </div>
-                    <div class="flex items-center gap-3 border-t border-brand-border pt-4">
-                        <div class="w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center font-display font-bold text-xs text-brand-yellow border border-brand-border">
-                            MS
-                        </div>
-                        <div>
-                            <span class="block text-xs font-bold text-white uppercase tracking-wider">Mariana Silveira</span>
-                            <span class="block text-[10px] text-zinc-500 font-mono">Avaliação no Google</span>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-            
-            <div class="text-center mt-12">
-                <a href="https://maps.app.goo.gl/MTgi23MjYU1KbRwE9" target="_blank" class="inline-flex items-center gap-2 text-xs sm:text-sm font-display font-bold uppercase tracking-wider text-brand-yellow hover:text-white transition-colors duration-200">
-                    Ver todas as avaliações no Google <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+                <a href="#servicos" 
+                   class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-brand-cardBg hover:bg-neutral-900 text-white font-outfit font-semibold px-8 py-4 rounded-xl text-lg border border-brand-border hover:border-brand-yellow transition-all duration-300">
+                    <span>Nossos Serviços</span>
+                    <i class="fa-solid fa-arrow-right text-sm text-brand-yellow"></i>
                 </a>
             </div>
+
+            <!-- Stats & Cards Row (Alinhamentos Completamente Centralizados) -->
+            <div class="flex flex-wrap items-center justify-center gap-6 sm:gap-10 max-w-5xl mx-auto mt-16 pt-12 border-t border-brand-border">
+                
+                <!-- Stat 1: Clientes Satisfeitos (Animado e Centralizado) -->
+                <div class="text-center min-w-[140px]">
+                    <span class="block font-outfit text-3xl sm:text-4xl font-black text-white" id="count-clientes">0</span>
+                    <span class="text-xs sm:text-sm text-brand-textMuted font-medium block mt-1 tracking-wide">clientes satisfeitos</span>
+                </div>
+                
+                <!-- Stat 2: +10 anos de experiência (Animado e Centralizado) -->
+                <div class="text-center min-w-[140px]">
+                    <span class="block font-outfit text-3xl sm:text-4xl font-black text-white" id="count-experiencia">0</span>
+                    <span class="text-xs sm:text-sm text-brand-textMuted font-medium block mt-1 tracking-wide">anos de experiência</span>
+                </div>
+
+                <!-- Card 3: 5 Estrelas Avaliações Usuários -->
+                <div class="bg-[#121212] border border-brand-border rounded-xl p-3.5 sm:p-4 flex items-center gap-4 text-left min-w-[220px]">
+                    <!-- Medalha Verde com Sombra Neon Sutil -->
+                    <div class="w-12 h-12 rounded-xl bg-[#22C55E] flex items-center justify-center text-white shrink-0 shadow-[0_0_15px_rgba(34,197,94,0.3)]">
+                        <i class="fa-solid fa-medal text-xl"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-1.5">
+                            <span class="font-outfit text-lg sm:text-xl font-extrabold text-white leading-none">4,9</span>
+                            <div class="flex text-brand-yellow text-xs">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                            </div>
+                        </div>
+                        <span class="text-xs text-brand-textMuted font-medium block mt-1 tracking-wide">avaliações usuários</span>
+                    </div>
+                </div>
+
+                <!-- Card 4: 90 Dias de Garantia -->
+                <div class="bg-[#121212] border border-brand-border rounded-xl p-3.5 sm:p-4 flex items-center gap-4 text-left min-w-[190px]">
+                    <!-- Check Circle Verde com Sombra Neon Sutil -->
+                    <div class="w-12 h-12 rounded-xl bg-[#22C55E] flex items-center justify-center text-white shrink-0 shadow-[0_0_15px_rgba(34,197,94,0.3)]">
+                        <i class="fa-solid fa-circle-check text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="font-outfit text-lg sm:text-xl font-extrabold text-white block leading-none">90 dias</span>
+                        <span class="text-xs text-brand-textMuted font-medium block mt-1.5 tracking-wide">de garantia</span>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </section>
 
-    <!-- Contato & Localização -->
-    <section id="contato" class="py-20 sm:py-24 bg-brand-dark px-4 sm:px-6 relative overflow-hidden">
-        <div class="absolute right-0 top-1/3 w-[300px] h-[300px] bg-brand-yellow/5 rounded-full blur-[120px] pointer-events-none"></div>
+    <!-- Marcas Section (Carrossel Infinito com Desfoque Lateral) -->
+    <section id="marcas" class="py-16 bg-brand-cardBg/30 border-y border-brand-border relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
+            <p class="text-center text-xs font-bold uppercase tracking-[0.25em] text-brand-textMuted">
+                TRABALHAMOS COM AS MELHORES PEÇAS E MARCAS DO MERCADO
+            </p>
+        </div>
+        
+        <!-- Container do Carrossel com Efeito de Opacidade/Desfoque nas Bordas -->
+        <div class="relative w-full overflow-hidden 
+                    before:absolute before:left-0 before:top-0 before:z-10 before:h-full before:w-16 sm:before:w-32 before:bg-gradient-to-r before:from-brand-darkBg before:to-transparent
+                    after:absolute after:right-0 after:top-0 after:z-10 after:h-full after:w-16 sm:after:w-32 after:bg-gradient-to-l after:from-brand-darkBg after:to-transparent">
+            
+            <div class="animate-infinite-scroll gap-6 items-center py-2">
+                <!-- Conjunto de Marcas (Original) -->
+                <div class="flex items-center gap-6 shrink-0">
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-6 rounded-xl w-48 text-center">
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide">BOSCH</span>
+                        <span class="text-[9px] font-bold text-brand-yellow uppercase tracking-widest mt-1 block">Injeção &amp; Filtros</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-6 rounded-xl w-48 text-center">
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide">AXIOS</span>
+                        <span class="text-[9px] font-bold text-brand-yellow uppercase tracking-widest mt-1 block">Suspensão</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-6 rounded-xl w-48 text-center">
+                        <span class="font-outfit font-black text-lg text-neutral-400 tracking-tight">DRIVEWAY</span>
+                        <span class="text-[9px] font-bold text-brand-yellow uppercase tracking-widest mt-1 block">Articulações</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-6 rounded-xl w-48 text-center">
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide">BAP</span>
+                        <span class="text-[9px] font-bold text-brand-yellow uppercase tracking-widest mt-1 block">Componentes</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-6 rounded-xl w-48 text-center">
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide">NAKATA</span>
+                        <span class="text-[9px] font-bold text-brand-yellow uppercase tracking-widest mt-1 block">Tudo Azul</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-6 rounded-xl w-48 text-center">
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide">COFAP</span>
+                        <span class="text-[9px] font-bold text-brand-yellow uppercase tracking-widest mt-1 block">Amortecedores</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-6 rounded-xl w-48 text-center">
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide">TRW</span>
+                        <span class="text-[9px] font-bold text-brand-yellow uppercase tracking-widest mt-1 block">Freios &amp; Direção</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-6 rounded-xl w-48 text-center">
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide">MONROE</span>
+                        <span class="text-[9px] font-bold text-brand-yellow uppercase tracking-widest mt-1 block">Amortecedores</span>
+                    </div>
+                </div>
+                <!-- Conjunto Duplicado para Rolagem Contínua Sem Cortes -->
+                <div class="flex items-center gap-6 shrink-0">
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-6 rounded-xl w-48 text-center">
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide">BOSCH</span>
+                        <span class="text-[9px] font-bold text-brand-yellow uppercase tracking-widest mt-1 block">Injeção &amp; Filtros</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-6 rounded-xl w-48 text-center">
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide">AXIOS</span>
+                        <span class="text-[9px] font-bold text-brand-yellow uppercase tracking-widest mt-1 block">Suspensão</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-6 rounded-xl w-48 text-center">
+                        <span class="font-outfit font-black text-lg text-neutral-400 tracking-tight">DRIVEWAY</span>
+                        <span class="text-[9px] font-bold text-brand-yellow uppercase tracking-widest mt-1 block">Articulações</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-6 rounded-xl w-48 text-center">
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide">BAP</span>
+                        <span class="text-[9px] font-bold text-brand-yellow uppercase tracking-widest mt-1 block">Componentes</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-6 rounded-xl w-48 text-center">
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide">NAKATA</span>
+                        <span class="text-[9px] font-bold text-brand-yellow uppercase tracking-widest mt-1 block">Tudo Azul</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-6 rounded-xl w-48 text-center">
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide">COFAP</span>
+                        <span class="text-[9px] font-bold text-brand-yellow uppercase tracking-widest mt-1 block">Amortecedores</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-6 rounded-xl w-48 text-center">
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide">TRW</span>
+                        <span class="text-[9px] font-bold text-brand-yellow uppercase tracking-widest mt-1 block">Freios &amp; Direção</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-6 rounded-xl w-48 text-center">
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide">MONROE</span>
+                        <span class="text-[9px] font-bold text-brand-yellow uppercase tracking-widest mt-1 block">Amortecedores</span>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </section>
 
-        <div class="max-w-7xl mx-auto relative z-10">
-            <div class="flex flex-col lg:flex-row gap-12 items-stretch">
+    <!-- Serviços Section -->
+    <section id="servicos" class="py-24 sm:py-32 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- Section Header -->
+            <div class="text-center max-w-3xl mx-auto mb-20">
+                <span class="text-xs font-bold uppercase tracking-[0.25em] text-brand-yellow">CONHEÇA NOSSA OFICINA</span>
+                <h2 class="font-outfit text-3xl sm:text-5xl font-black mt-3 mb-6">SERVIÇOS DE ALTÍSSIMA PRECISÃO</h2>
+                <div class="w-16 h-1 bg-brand-yellow mx-auto rounded-full"></div>
+                <p class="text-brand-textMuted mt-6 text-sm sm:text-base">
+                    Nossa equipe é especializada nas marcas nacionais e importadas mais populares. Garantimos rapidez no diagnóstico e transparência total no orçamento.
+                </p>
+            </div>
+
+            <!-- Services Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 
-                <!-- Informações e Canais de Contato -->
-                <div class="w-full lg:w-5/12 flex flex-col justify-between">
+                <!-- Serviço 1: Suspensão -->
+                <div class="group bg-brand-cardBg border border-brand-border hover:border-brand-yellow/40 p-8 rounded-2xl transition-all duration-300 hover:-translate-y-2 flex flex-col justify-between">
                     <div>
-                        <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-brand-yellow/10 text-brand-yellow border border-brand-yellow/20 mb-6 uppercase tracking-wider font-display">
-                            Fale Conosco
-                        </span>
-                        <h2 class="text-3xl sm:text-4xl font-black text-white uppercase font-display leading-tight mb-6">
-                            Venha tomar um café e <br>
-                            <span class="text-brand-yellow">revisar seu veículo.</span>
-                        </h2>
-                        
-                        <!-- Lista de Contatos -->
-                        <div class="space-y-6 mt-8">
-                            
-                            <!-- WhatsApp -->
-                            <a href="https://wa.me/5547996226408" target="_blank" class="flex items-start gap-4 p-4 rounded-xl border border-brand-border bg-zinc-900/30 hover:border-brand-yellow/30 transition-all group">
-                                <div class="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center text-green-500 group-hover:scale-110 transition-transform">
-                                    <i class="fa-brands fa-whatsapp text-xl"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-xs font-bold text-zinc-500 uppercase tracking-wider font-mono">WhatsApp e Telefone</h4>
-                                    <p class="text-sm font-bold text-white mt-1 group-hover:text-brand-yellow transition-colors font-display">(47) 99622-6408</p>
-                                </div>
-                            </a>
+                        <!-- Icone Animado com Scale & Rotation on Group Hover -->
+                        <div class="w-14 h-14 bg-brand-yellow/10 rounded-xl flex items-center justify-center text-brand-yellow mb-6 group-hover:bg-brand-yellow group-hover:text-black group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
+                            <i class="fa-solid fa-car-tunnel text-2xl"></i>
+                        </div>
+                        <h3 class="font-outfit text-xl font-bold mb-3">Suspensão Geral</h3>
+                        <p class="text-brand-textMuted text-sm leading-relaxed mb-6">
+                            Diagnóstico computadorizado e substituição de amortecedores, buchas, pivôs, e coxins com peças certificadas. Estabilidade garantida.
+                        </p>
+                    </div>
+                    <a href="https://wa.me/5547996226408?text=Olá!%20Gostaria%20de%20solicitar%20um%20orçamento%20para%20o%20serviço%20de%20Suspensão%20na%20Oficina%20Suspensul."
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="text-xs font-bold text-brand-yellow flex items-center gap-2 group-hover:gap-3 transition-all hover:underline">
+                        <span>SOLICITAR ORÇAMENTO</span> <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
 
-                            <!-- Instagram -->
-                            <a href="https://www.instagram.com/oficina_suspensul" target="_blank" class="flex items-start gap-4 p-4 rounded-xl border border-brand-border bg-zinc-900/30 hover:border-brand-yellow/30 transition-all group">
-                                <div class="w-10 h-10 rounded-lg bg-pink-500/10 flex items-center justify-center text-pink-500 group-hover:scale-110 transition-transform">
-                                    <i class="fa-brands fa-instagram text-xl"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-xs font-bold text-zinc-500 uppercase tracking-wider font-mono">Instagram</h4>
-                                    <p class="text-sm font-bold text-white mt-1 group-hover:text-brand-yellow transition-colors font-display">@oficina_suspensul</p>
-                                </div>
-                            </a>
+                <!-- Serviço 2: Freios -->
+                <div class="group bg-brand-cardBg border border-brand-border hover:border-brand-yellow/40 p-8 rounded-2xl transition-all duration-300 hover:-translate-y-2 flex flex-col justify-between">
+                    <div>
+                        <!-- Icone Animado -->
+                        <div class="w-14 h-14 bg-brand-yellow/10 rounded-xl flex items-center justify-center text-brand-yellow mb-6 group-hover:bg-brand-yellow group-hover:text-black group-hover:scale-110 group-hover:rotate-[360deg] transition-all duration-500">
+                            <i class="fa-solid fa-compact-disc text-2xl"></i>
+                        </div>
+                        <h3 class="font-outfit text-xl font-bold mb-3">Sistemas de Freios</h3>
+                        <p class="text-brand-textMuted text-sm leading-relaxed mb-6">
+                            Pastilhas, discos, lonas, cilindros de roda e sangria de fluido de freio. Atendimento cuidadoso para a maior segurança da sua família.
+                        </p>
+                    </div>
+                    <a href="https://wa.me/5547996226408?text=Olá!%20Gostaria%20de%20solicitar%20um%20orçamento%20para%20o%20sistema%20de%20Freios%20na%20Oficina%20Suspensul."
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="text-xs font-bold text-brand-yellow flex items-center gap-2 group-hover:gap-3 transition-all hover:underline">
+                        <span>SOLICITAR ORÇAMENTO</span> <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
 
-                            <!-- Localização Física -->
-                            <a href="https://maps.app.goo.gl/MTgi23MjYU1KbRwE9" target="_blank" class="flex items-start gap-4 p-4 rounded-xl border border-brand-border bg-zinc-900/30 hover:border-brand-yellow/30 transition-all group">
-                                <div class="w-10 h-10 rounded-lg bg-brand-yellow/10 flex items-center justify-center text-brand-yellow group-hover:scale-110 transition-transform">
-                                    <i data-lucide="map-pin" class="w-5 h-5"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-xs font-bold text-zinc-500 uppercase tracking-wider font-mono">Endereço</h4>
-                                    <p class="text-sm font-bold text-white mt-1 group-hover:text-brand-yellow transition-colors leading-relaxed font-display">
-                                        BR-280, Km 167 - Campo da Lança<br>
-                                        Mafra - SC, 89300-000<br>
-                                        <span class="text-[10px] text-zinc-400 font-normal normal-case font-sans">(Próximo ao Posto Nove)</span>
-                                    </p>
-                                </div>
-                            </a>
+                <!-- Serviço 3: Troca de óleo e filtros -->
+                <div class="group bg-brand-cardBg border border-brand-border hover:border-brand-yellow/40 p-8 rounded-2xl transition-all duration-300 hover:-translate-y-2 flex flex-col justify-between">
+                    <div>
+                        <!-- Icone Animado -->
+                        <div class="w-14 h-14 bg-brand-yellow/10 rounded-xl flex items-center justify-center text-brand-yellow mb-6 group-hover:bg-brand-yellow group-hover:text-black group-hover:scale-110 group-hover:-translate-y-1 transition-all duration-300">
+                            <i class="fa-solid fa-oil-can text-2xl"></i>
+                        </div>
+                        <h3 class="font-outfit text-xl font-bold mb-3">Troca de Óleo e Filtros</h3>
+                        <p class="text-brand-textMuted text-sm leading-relaxed mb-6">
+                            Lubrificantes recomendados pelo fabricante para o motor e transmissão. Troca de filtros de ar, óleo, combustível e cabine.
+                        </p>
+                    </div>
+                    <a href="https://wa.me/5547996226408?text=Olá!%20Gostaria%20de%20solicitar%20um%20orçamento%20para%20Troca%20de%20Óleo%20e%20Filtros%20na%20Oficina%20Suspensul."
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="text-xs font-bold text-brand-yellow flex items-center gap-2 group-hover:gap-3 transition-all hover:underline">
+                        <span>SOLICITAR ORÇAMENTO</span> <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
 
-                            <!-- Horários de Funcionamento -->
-                            <div class="flex items-start gap-4 p-4 rounded-xl border border-brand-border bg-zinc-900/30">
-                                <div class="w-10 h-10 rounded-lg bg-zinc-800 flex items-center justify-center text-zinc-400">
-                                    <i data-lucide="clock" class="w-5 h-5"></i>
-                                </div>
-                                <div>
-                                    <h4 class="text-xs font-bold text-zinc-500 uppercase tracking-wider font-mono">Horário de Funcionamento</h4>
-                                    <p class="text-xs text-zinc-300 mt-1 font-sans leading-relaxed">
-                                        Segunda a Sexta: <span class="text-white font-semibold">08:00h às 18:00h</span><br>
-                                        Sábado: <span class="text-white font-semibold">08:00h às 12:00h</span>
-                                    </p>
-                                </div>
+                <!-- Serviço 4: Revisão preventiva -->
+                <div class="group bg-brand-cardBg border border-brand-border hover:border-brand-yellow/40 p-8 rounded-2xl transition-all duration-300 hover:-translate-y-2 flex flex-col justify-between">
+                    <div>
+                        <!-- Icone Animado -->
+                        <div class="w-14 h-14 bg-brand-yellow/10 rounded-xl flex items-center justify-center text-brand-yellow mb-6 group-hover:bg-brand-yellow group-hover:text-black group-hover:scale-110 group-hover:bounce transition-all duration-300">
+                            <i class="fa-solid fa-clipboard-check text-2xl"></i>
+                        </div>
+                        <h3 class="font-outfit text-xl font-bold mb-3">Revisão Preventiva</h3>
+                        <p class="text-brand-textMuted text-sm leading-relaxed mb-6">
+                            Evite prejuízos maiores. Checamos até 40 itens cruciais antes de você viajar ou no dia a dia urbano do seu veículo.
+                        </p>
+                    </div>
+                    <a href="https://wa.me/5547996226408?text=Olá!%20Gostaria%20de%20solicitar%20um%20orçamento%20para%20uma%20Revisão%20Preventiva%20na%20Oficina%20Suspensul."
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="text-xs font-bold text-brand-yellow flex items-center gap-2 group-hover:gap-3 transition-all hover:underline">
+                        <span>SOLICITAR ORÇAMENTO</span> <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <!-- Serviço 5: Escapamentos -->
+                <div class="group bg-brand-cardBg border border-brand-border hover:border-brand-yellow/40 p-8 rounded-2xl transition-all duration-300 hover:-translate-y-2 flex flex-col justify-between">
+                    <div>
+                        <!-- Icone Animado -->
+                        <div class="w-14 h-14 bg-brand-yellow/10 rounded-xl flex items-center justify-center text-brand-yellow mb-6 group-hover:bg-brand-yellow group-hover:text-black group-hover:scale-110 group-hover:skew-x-6 transition-all duration-300">
+                            <i class="fa-solid fa-wind text-2xl"></i>
+                        </div>
+                        <h3 class="font-outfit text-xl font-bold mb-3">Escapamentos</h3>
+                        <p class="text-brand-textMuted text-sm leading-relaxed mb-6">
+                            Substituição de silenciadores, catalisadores e coxins. Melhora na eficiência e eliminação de ruídos desagradáveis do seu carro.
+                        </p>
+                    </div>
+                    <a href="https://wa.me/5547996226408?text=Olá!%20Gostaria%20de%20solicitar%20um%20orçamento%20para%20o%20reparo%20de%20Escapamentos%20na%20Oficina%20Suspensul."
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="text-xs font-bold text-brand-yellow flex items-center gap-2 group-hover:gap-3 transition-all hover:underline">
+                        <span>SOLICITAR ORÇAMENTO</span> <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <!-- Serviço 6: Arrefecimento -->
+                <div class="group bg-brand-cardBg border border-brand-border hover:border-brand-yellow/40 p-8 rounded-2xl transition-all duration-300 hover:-translate-y-2 flex flex-col justify-between">
+                    <div>
+                        <!-- Icone Animado -->
+                        <div class="w-14 h-14 bg-brand-yellow/10 rounded-xl flex items-center justify-center text-brand-yellow mb-6 group-hover:bg-brand-yellow group-hover:text-black group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+                            <i class="fa-solid fa-temperature-half text-2xl"></i>
+                        </div>
+                        <h3 class="font-outfit text-xl font-bold mb-3">Arrefecimento do Motor</h3>
+                        <p class="text-brand-textMuted text-sm leading-relaxed mb-6">
+                            Manutenção preventiva no radiador, mangueiras, válvula termostática e aplicação de aditivo correto para proteger o motor.
+                        </p>
+                    </div>
+                    <a href="https://wa.me/5547996226408?text=Olá!%20Gostaria%20de%20solicitar%20um%20orçamento%20para%20Arrefecimento%20na%20Oficina%20Suspensul."
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="text-xs font-bold text-brand-yellow flex items-center gap-2 group-hover:gap-3 transition-all hover:underline">
+                        <span>SOLICITAR ORÇAMENTO</span> <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <!-- Serviço 7: Mecânica Geral (Em destaque abaixo) -->
+                <div class="group bg-brand-cardBg border border-brand-yellow/20 hover:border-brand-yellow/50 p-8 rounded-2xl transition-all duration-300 hover:-translate-y-2 flex flex-col justify-between col-span-1 md:col-span-2 lg:col-span-3">
+                    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                        <div class="flex-1">
+                            <div class="w-14 h-14 bg-brand-yellow/20 rounded-xl flex items-center justify-center text-brand-yellow mb-6">
+                                <i class="fa-solid fa-gears text-2xl animate-spin" style="animation-duration: 10s;"></i>
                             </div>
-
+                            <h3 class="font-outfit text-2xl font-bold mb-3">Mecânica Geral Profissional</h3>
+                            <p class="text-brand-textMuted text-sm sm:text-base leading-relaxed max-w-3xl">
+                                Diagnóstico de motores, troca de correia dentada, embreagem, cabeçote, sistemas elétricos integrados e injeção eletrônica de alto padrão técnico. Se o seu carro tem um mistério, nós descobrimos e resolvemos.
+                            </p>
+                        </div>
+                        <div>
+                            <a href="https://wa.me/5547996226408?text=Olá!%20Gostaria%20de%20um%20orçamento%20ou%20diagnóstico%20de%20Mecânica%20Geral%20na%20Oficina%20Suspensul!" 
+                               target="_blank"
+                               rel="noopener noreferrer"
+                               class="inline-flex items-center gap-2 bg-brand-yellow hover:bg-brand-yellowHover text-black font-outfit font-bold px-6 py-3 rounded-xl transition-all shadow-[0_4px_15px_rgba(255,215,0,0.15)]">
+                                <span>Solicitar Orçamento Geral</span>
+                                <i class="fa-brands fa-whatsapp text-lg"></i>
+                            </a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Iframe do Mapa Interativo (Direita) -->
-                <div class="w-full lg:w-7/12 rounded-3xl overflow-hidden border border-brand-border min-h-[350px] lg:min-h-[450px] relative shadow-2xl">
-                    <iframe 
-                        class="absolute inset-0 w-full h-full dark-map" 
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3578.136894371408!2d-49.83226762391039!3d-26.257218666352924!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94e39757657b2827%3A0xc33a1e2fbc446ca8!2sOficina%20Mec%C3%A2nica%20Suspensul!5e0!3m2!1spt-BR!2sbr!4v1710000000000!5m2!1spt-BR!2sbr" 
-                        style="border:0;" 
-                        allowfullscreen="" 
-                        loading="lazy" 
-                        referrerpolicy="no-referrer-when-downgrade"
-                        title="Localização Oficina Suspensul no Mapa">
-                    </iframe>
-                    <!-- Botão Flutuante Rota Maps -->
-                    <div class="absolute bottom-4 right-4 z-10">
-                        <a href="https://maps.app.goo.gl/MTgi23MjYU1KbRwE9" target="_blank" class="bg-brand-yellow hover:bg-brand-yellowHover text-brand-dark px-4 py-2.5 rounded-xl font-display font-black text-xs uppercase tracking-wider flex items-center gap-2 shadow-2xl transition-all hover:scale-[1.02]">
-                            <i data-lucide="navigation" class="w-4 h-4 fill-current"></i> Como Chegar
-                        </a>
-                    </div>
-                </div>
-
             </div>
         </div>
     </section>
 
-    <!-- Rodapé (Footer) -->
-    <footer class="bg-brand-dark border-t border-brand-border py-12 sm:py-16 px-4 sm:px-6">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+    <!-- Estrutura Completa da Oficina (Substituindo Dicas Técnicas por Estrutura Completa/Institucional) -->
+    <section id="estrutura" class="py-20 bg-brand-cardBg/40 border-y border-brand-border relative">
+        <div class="absolute inset-0 glow-radial opacity-60"></div>
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
             
-            <!-- Logo e Descrição -->
-            <div class="md:col-span-5 flex flex-col items-center md:items-start text-center md:text-left">
-                <img src="logo-oficina-suspensul.png" alt="Oficina Suspensul" class="h-10 sm:h-12 w-auto object-contain mb-4">
-                <p class="text-xs sm:text-sm text-zinc-400 max-w-sm leading-relaxed">
-                    Mais de uma década cuidando com precisão técnica e total honestidade da segurança de motoristas e suas famílias.
-                </p>
+            <span class="text-xs font-bold uppercase tracking-[0.25em] text-brand-yellow">NOSSA OFICINA</span>
+            <h2 class="font-outfit text-3xl sm:text-4xl font-black mt-3 mb-6">ESTRUTURA COMPLETA E EQUIPAMENTOS MODERNOS</h2>
+            <p class="text-brand-textMuted mb-12 max-w-2xl mx-auto text-sm sm:text-base">
+                Assista ao nosso vídeo e faça um tour virtual pela nossa estrutura. Conheça nossos elevadores hidráulicos de alta segurança, scanners de diagnóstico avançado e ferramentas especializadas prontas para dar o tratamento que seu carro merece.
+            </p>
+
+            <!-- Video Frame Wrapper (Institucional / Estrutural) -->
+            <div id="video-container" class="relative aspect-video rounded-2xl overflow-hidden border border-brand-border bg-black shadow-2xl group cursor-pointer">
+                <!-- Capa do Vídeo (capa.png) -->
+                <div id="video-cover" class="absolute inset-0 z-10 flex items-center justify-center transition-all duration-300">
+                    <img src="capa.png" 
+                         alt="Capa do Vídeo Institucional Oficina Suspensul" 
+                         class="w-full h-full object-cover opacity-70 group-hover:scale-105 transition-transform duration-500" />
+                    <!-- Play Button Overlay -->
+                    <div class="absolute w-20 h-20 rounded-full bg-brand-yellow/90 flex items-center justify-center text-black text-2xl shadow-[0_0_30px_rgba(255,215,0,0.5)] group-hover:scale-110 group-hover:bg-brand-yellow transition-all duration-300">
+                        <i class="fa-solid fa-play ml-1 text-3xl"></i>
+                    </div>
+                </div>
+                <!-- YouTube Iframe (inserido dinamicamente via JS ao clicar) -->
+                <div id="video-player" class="hidden w-full h-full"></div>
             </div>
 
-            <!-- Links Rápidos -->
-            <div class="md:col-span-4 text-center md:text-left flex flex-col items-center md:items-start">
-                <h4 class="font-display font-extrabold text-sm uppercase text-brand-yellow tracking-wider mb-4">Navegação</h4>
-                <div class="grid grid-cols-2 gap-x-8 gap-y-2 text-xs text-zinc-400 font-display font-semibold uppercase">
-                    <a href="#inicio" class="hover:text-white transition-colors">Início</a>
-                    <a href="#sobre" class="hover:text-white transition-colors">A Empresa</a>
-                    <a href="#servicos" class="hover:text-white transition-colors">Serviços</a>
-                    <a href="#diferenciais" class="hover:text-white transition-colors">Diferenciais</a>
-                    <a href="#depoimentos" class="hover:text-white transition-colors">Depoimentos</a>
-                    <a href="#contato" class="hover:text-white transition-colors">Contato</a>
-                </div>
-            </div>
-
-            <!-- Redes Sociais e Contatos -->
-            <div class="md:col-span-3 flex flex-col items-center md:items-end text-center md:text-right">
-                <h4 class="font-display font-extrabold text-sm uppercase text-brand-yellow tracking-wider mb-4">Siga & Avalie</h4>
-                <div class="flex gap-4 items-center">
-                    <a href="https://wa.me/5547996226408" target="_blank" class="w-10 h-10 rounded-xl bg-zinc-900 border border-brand-border text-zinc-400 hover:text-green-500 hover:border-green-500/20 transition-all flex items-center justify-center" title="Conversar no WhatsApp">
-                        <i class="fa-brands fa-whatsapp text-lg"></i>
-                    </a>
-                    <a href="https://www.instagram.com/oficina_suspensul" target="_blank" class="w-10 h-10 rounded-xl bg-zinc-900 border border-brand-border text-zinc-400 hover:text-pink-500 hover:border-pink-500/20 transition-all flex items-center justify-center" title="Siga no Instagram">
-                        <i class="fa-brands fa-instagram text-lg"></i>
-                    </a>
-                    <a href="https://maps.app.goo.gl/MTgi23MjYU1KbRwE9" target="_blank" class="w-10 h-10 rounded-xl bg-zinc-900 border border-brand-border text-zinc-400 hover:text-brand-yellow hover:border-brand-yellow/20 transition-all flex items-center justify-center" title="Avalie no Google Maps">
-                        <i class="fa-brands fa-google text-lg"></i>
-                    </a>
-                </div>
-                <div class="text-[10px] text-zinc-500 font-mono mt-4 uppercase">
-                    CNPJ: 00.000.000/0001-00
-                </div>
+            <div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+                <span class="text-xs text-brand-textMuted">Vídeo institucional • Oficina Suspensul</span>
+                <span class="hidden sm:inline text-brand-border">|</span>
+                <a href="https://maps.app.goo.gl/MTgi23MjYU1KbRwE9o" 
+                   target="_blank"
+                   rel="noopener noreferrer" 
+                   class="text-xs font-bold text-brand-yellow hover:underline flex items-center gap-1.5">
+                    Venha nos visitar pessoalmente • Ver Rotas no Maps <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                </a>
             </div>
 
         </div>
-        <div class="text-center mt-12 pt-8 border-t border-brand-border text-[10px] text-zinc-500 font-mono uppercase tracking-[0.2em]">
-            &copy; 2026 Oficina Suspensul. Todos os direitos reservados.
+    </section>
+
+    <!-- Google Reviews Section (Com Carrossel Automático de 5 Avaliações) -->
+    <section id="avaliacoes" class="py-24 sm:py-32 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- Header -->
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-xs font-bold uppercase tracking-[0.25em] text-brand-yellow">AVALIAÇÃO DO GOOGLE</span>
+                <h2 class="font-outfit text-3xl sm:text-5xl font-black mt-3 mb-6">O QUE NOSSOS CLIENTES DIZEM</h2>
+                <div class="w-16 h-1 bg-brand-yellow mx-auto rounded-full"></div>
+                <div class="flex items-center justify-center gap-1 mt-6 text-brand-yellow text-xl">
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <span class="text-white font-bold ml-3 text-lg">4.9 / 5.0</span>
+                </div>
+            </div>
+
+            <!-- Carrossel Wrapper -->
+            <div class="relative w-full overflow-hidden">
+                <!-- Slider Track -->
+                <div id="reviews-carousel-track" class="flex transition-transform duration-500 ease-in-out">
+                    
+                    <!-- Avaliação 1 -->
+                    <div class="w-full md:w-1/2 lg:w-1/3 shrink-0 px-4">
+                        <div class="bg-brand-cardBg border border-brand-border p-8 rounded-2xl h-full flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between mb-6">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-full bg-neutral-700 flex items-center justify-center font-bold text-white text-sm">
+                                            RM
+                                        </div>
+                                        <div>
+                                            <h4 class="font-outfit font-bold text-sm">Roberto Mendes</h4>
+                                            <span class="text-[10px] text-brand-textMuted">Local Guide • Mafra</span>
+                                        </div>
+                                    </div>
+                                    <div class="text-[#4285F4] text-xl">
+                                        <i class="fa-brands fa-google"></i>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-1 text-brand-yellow mb-4 text-sm">
+                                    <i class="fa-solid fa-star"></i> <i class="fa-solid fa-star"></i> <i class="fa-solid fa-star"></i> <i class="fa-solid fa-star"></i> <i class="fa-solid fa-star"></i>
+                                </div>
+                                <p class="text-brand-textMuted text-sm leading-relaxed">
+                                    "Melhor atendimento de Mafra! Levei meu carro para resolver um barulho na suspensão que nenhuma outra mecânica descobria. O pessoal da Suspensul resolveu rápido, com honestidade e preço justo."
+                                </p>
+                            </div>
+                            <span class="block text-[10px] text-brand-textMuted mt-6">Avaliado há 2 semanas</span>
+                        </div>
+                    </div>
+
+                    <!-- Avaliação 2 -->
+                    <div class="w-full md:w-1/2 lg:w-1/3 shrink-0 px-4">
+                        <div class="bg-brand-cardBg border border-brand-border p-8 rounded-2xl h-full flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between mb-6">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-full bg-neutral-700 flex items-center justify-center font-bold text-white text-sm">
+                                            AL
+                                        </div>
+                                        <div>
+                                            <h4 class="font-outfit font-bold text-sm">Ana Lucia</h4>
+                                            <span class="text-[10px] text-brand-textMuted">Proprietária • Renault Clio</span>
+                                        </div>
+                                    </div>
+                                    <div class="text-[#4285F4] text-xl">
+                                        <i class="fa-brands fa-google"></i>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-1 text-brand-yellow mb-4 text-sm">
+                                    <i class="fa-solid fa-star"></i> <i class="fa-solid fa-star"></i> <i class="fa-solid fa-star"></i> <i class="fa-solid fa-star"></i> <i class="fa-solid fa-star"></i>
+                                </div>
+                                <p class="text-brand-textMuted text-sm leading-relaxed">
+                                    "Trabalho impecável e muito profissional. Fiz a troca de óleo, filtros e revisão dos freios. O mecânico me explicou tudo em detalhes e me mostrou as peças velhas trocadas. Transparência sem igual."
+                                </p>
+                            </div>
+                            <span class="block text-[10px] text-brand-textMuted mt-6">Avaliado há 1 mês</span>
+                        </div>
+                    </div>
+
+                    <!-- Avaliação 3 -->
+                    <div class="w-full md:w-1/2 lg:w-1/3 shrink-0 px-4">
+                        <div class="bg-brand-cardBg border border-brand-border p-8 rounded-2xl h-full flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between mb-6">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-full bg-neutral-700 flex items-center justify-center font-bold text-white text-sm">
+                                            JS
+                                        </div>
+                                        <div>
+                                            <h4 class="font-outfit font-bold text-sm">Julio Silveira</h4>
+                                            <span class="text-[10px] text-brand-textMuted">Motorista de Aplicativo</span>
+                                        </div>
+                                    </div>
+                                    <div class="text-[#4285F4] text-xl">
+                                        <i class="fa-brands fa-google"></i>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-1 text-brand-yellow mb-4 text-sm">
+                                    <i class="fa-solid fa-star"></i> <i class="fa-solid fa-star"></i> <i class="fa-solid fa-star"></i> <i class="fa-solid fa-star"></i> <i class="fa-solid fa-star"></i>
+                                </div>
+                                <p class="text-brand-textMuted text-sm leading-relaxed">
+                                    "Como motorista de aplicativo preciso do carro pronto o quanto antes. O pessoal agendou meu horário, cumpriu o prazo perfeitamente e fez um serviço excelente de suspensão completa. Nota 10!"
+                                </p>
+                            </div>
+                            <span class="block text-[10px] text-brand-textMuted mt-6">Avaliado há 3 meses</span>
+                        </div>
+                    </div>
+
+                    <!-- Avaliação 4 -->
+                    <div class="w-full md:w-1/2 lg:w-1/3 shrink-0 px-4">
+                        <div class="bg-brand-cardBg border border-brand-border p-8 rounded-2xl h-full flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between mb-6">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-full bg-neutral-700 flex items-center justify-center font-bold text-white text-sm">
+                                            RS
+                                        </div>
+                                        <div>
+                                            <h4 class="font-outfit font-bold text-sm">Ricardo Souza</h4>
+                                            <span class="text-[10px] text-brand-textMuted">Proprietária • Corolla</span>
+                                        </div>
+                                    </div>
+                                    <div class="text-[#4285F4] text-xl">
+                                        <i class="fa-brands fa-google"></i>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-1 text-brand-yellow mb-4 text-sm">
+                                    <i class="fa-solid fa-star"></i> <i class="fa-solid fa-star"></i> <i class="fa-solid fa-star"></i> <i class="fa-solid fa-star"></i> <i class="fa-solid fa-star"></i>
+                                </div>
+                                <p class="text-brand-textMuted text-sm leading-relaxed">
+                                    "Excelente estrutura técnica. Fiz alinhamento, balanceamento e a troca dos amortecedores traseiros. Preço super honesto e entrega no mesmo dia. Com certeza serei cliente fixo."
+                                </p>
+                            </div>
+                            <span class="block text-[10px] text-brand-textMuted mt-6">Avaliado há 1 semana</span>
+                        </div>
+                    </div>
+
+                    <!-- Avaliação 5 -->
+                    <div class="w-full md:w-1/2 lg:w-1/3 shrink-0 px-4">
+                        <div class="bg-brand-cardBg border border-brand-border p-8 rounded-2xl h-full flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between mb-6">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-full bg-neutral-700 flex items-center justify-center font-bold text-white text-sm">
+                                            AP
+                                        </div>
+                                        <div>
+                                            <h4 class="font-outfit font-bold text-sm">Amanda Pereira</h4>
+                                            <span class="text-[10px] text-brand-textMuted">Proprietária • Honda Civic</span>
+                                        </div>
+                                    </div>
+                                    <div class="text-[#4285F4] text-xl">
+                                        <i class="fa-brands fa-google"></i>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-1 text-brand-yellow mb-4 text-sm">
+                                    <i class="fa-solid fa-star"></i> <i class="fa-solid fa-star"></i> <i class="fa-solid fa-star"></i> <i class="fa-solid fa-star"></i> <i class="fa-solid fa-star"></i>
+                                </div>
+                                <p class="text-brand-textMuted text-sm leading-relaxed">
+                                    "A Suspensul superou minhas expectativas. Resolvido o sistema de arrefecimento e radiador que causava superaquecimento. Mecânicos extremamente educados e preço justo."
+                                </p>
+                            </div>
+                            <span class="block text-[10px] text-brand-textMuted mt-6">Avaliado há 1 mês</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Dots Indicadores -->
+                <div class="flex justify-center gap-2 mt-8" id="carousel-dots">
+                    <!-- Gerados via JavaScript -->
+                </div>
+            </div>
+
+            <!-- CTA Maps -->
+            <div class="text-center mt-12">
+                <a href="https://maps.app.goo.gl/MTgi23MjYU1KbRwE9o" 
+                   target="_blank"
+                   rel="noopener noreferrer" 
+                   class="inline-flex items-center gap-2 text-brand-yellow hover:text-white font-bold transition-colors">
+                    <span>Ver mais avaliações reais no Google Maps</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Footer (Totalmente Otimizado e Centralizado para Mobile) -->
+    <footer class="bg-black border-t border-brand-border pt-16 pb-8 text-brand-textMuted">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+                
+                <!-- Coluna 1: Logo & Slogan -->
+                <div class="space-y-6 text-center md:text-left flex flex-col items-center md:items-start">
+                    <a href="#" class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-brand-yellow flex items-center justify-center">
+                            <i class="fa-solid fa-wrench text-black text-xl"></i>
+                        </div>
+                        <span class="font-outfit text-xl font-black tracking-wider text-white uppercase">
+                            SUL<span class="text-brand-yellow">PENSUL</span>
+                        </span>
+                    </a>
+                    <p class="text-xs sm:text-sm leading-relaxed max-w-sm">
+                        A melhor oficina mecânica de Mafra - SC. Alta precisão e responsabilidade no reparo do seu veículo.
+                    </p>
+                    <div class="flex items-center gap-4">
+                        <a href="https://www.instagram.com/oficina_suspensul" 
+                           target="_blank"
+                           rel="noopener noreferrer" 
+                           class="w-10 h-10 rounded-lg bg-brand-cardBg border border-brand-border flex items-center justify-center text-white hover:text-brand-yellow hover:border-brand-yellow transition-all duration-300"
+                           aria-label="Instagram Oficina Suspensul">
+                            <i class="fa-brands fa-instagram text-lg"></i>
+                        </a>
+                        <a href="https://wa.me/5547996226408" 
+                           target="_blank"
+                           rel="noopener noreferrer" 
+                           class="w-10 h-10 rounded-lg bg-brand-cardBg border border-brand-border flex items-center justify-center text-white hover:text-brand-yellow hover:border-brand-yellow transition-all duration-300"
+                           aria-label="WhatsApp Oficina Suspensul">
+                            <i class="fa-brands fa-whatsapp text-lg"></i>
+                        </a>
+                        <a href="https://maps.app.goo.gl/MTgi23MjYU1KbRwE9o" 
+                           target="_blank"
+                           rel="noopener noreferrer" 
+                           class="w-10 h-10 rounded-lg bg-brand-cardBg border border-brand-border flex items-center justify-center text-white hover:text-brand-yellow hover:border-brand-yellow transition-all duration-300"
+                           aria-label="Google Maps Oficina Suspensul">
+                            <i class="fa-solid fa-location-dot text-lg"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Coluna 2: Serviços -->
+                <div class="text-center md:text-left">
+                    <h3 class="font-outfit text-white font-bold text-sm tracking-widest uppercase mb-6">Serviços executados</h3>
+                    <ul class="space-y-3 text-xs sm:text-sm">
+                        <li><a href="#servicos" class="hover:text-brand-yellow transition-colors">Revisão preventiva</a></li>
+                        <li><a href="#servicos" class="hover:text-brand-yellow transition-colors">Suspensão automotiva</a></li>
+                        <li><a href="#servicos" class="hover:text-brand-yellow transition-colors">Sistemas de Freios</a></li>
+                        <li><a href="#servicos" class="hover:text-brand-yellow transition-colors">Troca de óleo e filtros</a></li>
+                        <li><a href="#servicos" class="hover:text-brand-yellow transition-colors">Escapamentos e Radiadores</a></li>
+                        <li><a href="#servicos" class="hover:text-brand-yellow transition-colors">Arrefecimento e Mecânica geral</a></li>
+                    </ul>
+                </div>
+
+                <!-- Coluna 3: Funcionamento -->
+                <div class="text-center md:text-left">
+                    <h3 class="font-outfit text-white font-bold text-sm tracking-widest uppercase mb-6">Funcionamento</h3>
+                    <ul class="space-y-3 text-xs sm:text-sm max-w-[280px] mx-auto md:mx-0">
+                        <li class="flex justify-between border-b border-brand-border/40 pb-2">
+                            <span>Segunda a Sexta:</span>
+                            <span class="text-white font-medium">08h às 18h</span>
+                        </li>
+                        <li class="flex justify-between border-b border-brand-border/40 pb-2">
+                            <span>Sábado:</span>
+                            <span class="text-brand-yellow font-medium">08h às 12h</span>
+                        </li>
+                        <li class="flex justify-between pb-2">
+                            <span>Domingo:</span>
+                            <span class="text-red-500 font-medium">Fechado</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Coluna 4: Contato & Local -->
+                <div class="text-center md:text-left flex flex-col items-center md:items-start">
+                    <h3 class="font-outfit text-white font-bold text-sm tracking-widest uppercase mb-6">Como nos encontrar</h3>
+                    <ul class="space-y-4 text-xs sm:text-sm">
+                        <li class="flex flex-col items-center md:flex-row md:items-start gap-2 md:gap-3">
+                            <i class="fa-solid fa-location-dot text-brand-yellow mt-1"></i>
+                            <span class="text-center md:text-left">Mafra - Santa Catarina<br/><a href="https://maps.app.goo.gl/MTgi23MjYU1KbRwE9o" target="_blank" rel="noopener noreferrer" class="text-brand-yellow hover:underline">Ver rota no mapa</a></span>
+                        </li>
+                        <li class="flex flex-col items-center md:flex-row gap-2 md:gap-3">
+                            <i class="fa-solid fa-phone text-brand-yellow"></i>
+                            <span>47 99622-6408</span>
+                        </li>
+                        <li class="flex flex-col items-center md:flex-row gap-2 md:gap-3">
+                            <i class="fa-brands fa-whatsapp text-brand-yellow"></i>
+                            <a href="https://wa.me/5547996226408" target="_blank" rel="noopener noreferrer" class="hover:text-white hover:underline">Chamar no WhatsApp</a>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <!-- Direitos autorais -->
+            <div class="border-t border-brand-border pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-center sm:text-left">
+                <span>&copy; 2026 Oficina Suspensul. Todos os direitos reservados.</span>
+                <span class="flex items-center justify-center gap-1 text-brand-textMuted">
+                    Desenvolvido com <i class="fa-solid fa-heart text-red-500"></i> para motoristas exigentes.
+                </span>
+            </div>
         </div>
     </footer>
 
-    <!-- Carousel & Drawer Logic Scripts -->
+    <!-- Botão de WhatsApp Flutuante -->
+    <a href="https://wa.me/5547996226408?text=Olá!%20Gostaria%20de%20agendar%20um%20diagnóstico%20na%20Oficina%20Suspensul!" 
+       target="_blank"
+       rel="noopener noreferrer" 
+       class="fixed bottom-6 right-6 z-50 w-14 h-14 bg-green-500 hover:bg-green-600 text-white rounded-full flex items-center justify-center shadow-[0_8px_30px_rgba(34,197,94,0.4)] transition-all duration-300 transform hover:scale-110 active:scale-95"
+       aria-label="Falar conosco no Whatsapp">
+        <i class="fa-brands fa-whatsapp text-3xl"></i>
+    </a>
+
+    <!-- Menu Toggle & Carrossel Auto Script -->
     <script>
-        // Inicializar os ícones Lucide
-        lucide.createIcons();
+        // Menu de Celular
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuIcon = document.getElementById('menu-icon');
 
-        // Lógica do Drawer (Menu Hambúrguer) Mobile
-        const drawer = document.getElementById('mobile-drawer');
-        const overlay = document.getElementById('drawer-overlay');
-        const btnHamburger = document.getElementById('btn-hamburger');
-        const btnCloseDrawer = document.getElementById('btn-close-drawer');
-
-        function openDrawer() {
-            drawer.classList.remove('-translate-x-full');
-            overlay.classList.remove('hidden');
-            document.body.style.overflow = 'hidden'; // Impede o scroll de fundo
-        }
-
-        function closeDrawer() {
-            drawer.classList.add('-translate-x-full');
-            overlay.classList.add('hidden');
-            document.body.style.overflow = ''; // Reativa o scroll
-        }
-
-        if (btnHamburger) btnHamburger.addEventListener('click', openDrawer);
-        if (btnCloseDrawer) btnCloseDrawer.addEventListener('click', closeDrawer);
-        if (overlay) overlay.addEventListener('click', closeDrawer);
-
-
-        // Lógica Avançada do Carrossel de Serviços no Hero
-        const track = document.getElementById('hero-carousel-track');
-        const cards = document.querySelectorAll('.carousel-card');
-        const btnPrev = document.getElementById('carousel-prev');
-        const btnNext = document.getElementById('carousel-next');
-        const dotsContainer = document.getElementById('carousel-dots');
-
-        let currentIndex = 0;
-        let startX = 0;
-        let currentX = 0;
-        let isDragging = false;
-        let startTranslate = 0;
-        let autoPlayTimer = null;
-
-        // Calcula a largura de translação somando a largura do card + o espaçamento (gap)
-        function getSlideWidth() {
-            if (cards.length === 0) return 0;
-            const cardWidth = cards[0].offsetWidth;
-            const style = window.getComputedStyle(track);
-            const gap = parseFloat(style.gap) || 0;
-            return cardWidth + gap;
-        }
-
-        // Atualiza a posição visual do trilho do carrossel
-        function updateCarousel(transition = true) {
-            const slideWidth = getSlideWidth();
-            let targetX = -currentIndex * slideWidth;
-            
-            // Impede a translação excessiva que deixaria espaço em branco na direita (desktop)
-            const trackWidth = track.scrollWidth;
-            const containerWidth = track.parentElement.offsetWidth;
-            const maxTranslate = trackWidth - containerWidth;
-            
-            if (maxTranslate > 0 && -targetX > maxTranslate) {
-                targetX = -maxTranslate;
-            }
-            
-            if (transition) {
-                track.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            if(mobileMenu.classList.contains('hidden')) {
+                menuIcon.className = 'fa-solid fa-bars text-2xl';
             } else {
-                track.style.transition = 'none';
+                menuIcon.className = 'fa-solid fa-xmark text-2xl';
             }
-            track.style.transform = `translateX(${targetX}px)`;
-            
-            updateDots();
+        });
+
+        const navLinks = mobileMenu.querySelectorAll('a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                menuIcon.className = 'fa-solid fa-bars text-2xl';
+            });
+        });
+
+        // Função Genérica para Animação de Contagem (Count-up)
+        function animateValue(obj, start, end, duration, formatFn) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const currentVal = Math.floor(progress * (end - start) + start);
+                obj.innerHTML = formatFn ? formatFn(currentVal) : currentVal;
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                } else {
+                    obj.innerHTML = formatFn ? formatFn(end) : end;
+                }
+            };
+            window.requestAnimationFrame(step);
         }
 
-        // Inicializa e desenha os indicadores em círculo (dots)
-        function initDots() {
+        // Executar Contagem Progressiva ao carregar
+        window.addEventListener('DOMContentLoaded', () => {
+            const clientObj = document.getElementById("count-clientes");
+            const expObj = document.getElementById("count-experiencia");
+
+            if (clientObj) {
+                animateValue(clientObj, 0, 1000, 1500, (val) => `+${val.toLocaleString('pt-BR')}`);
+            }
+            if (expObj) {
+                animateValue(expObj, 0, 10, 1500, (val) => `+${val}`);
+            }
+        });
+
+        // Controle Carrossel Automático de Depoimentos
+        const track = document.getElementById('reviews-carousel-track');
+        const slides = Array.from(track.children);
+        const totalSlides = slides.length;
+        const dotsContainer = document.getElementById('carousel-dots');
+        
+        let currentIndex = 0;
+        let slideInterval;
+
+        // Determina quantos slides estão visíveis baseados na largura da viewport
+        function getVisibleSlidesCount() {
+            if (window.innerWidth >= 1024) return 3; // Desktop
+            if (window.innerWidth >= 768) return 2;  // Tablet
+            return 1;                                // Mobile
+        }
+
+        // Gera os dots baseados nas etapas reais de transição do carrossel
+        function buildDots() {
             dotsContainer.innerHTML = '';
-            
-            const slideWidth = getSlideWidth();
-            const trackWidth = track.scrollWidth;
-            const containerWidth = track.parentElement.offsetWidth;
-            const maxTranslate = trackWidth - containerWidth;
-            const maxIndex = maxTranslate > 0 ? Math.ceil(maxTranslate / slideWidth) : cards.length - 1;
-            
-            const dotsCount = Math.min(cards.length, maxIndex + 1);
-            
-            for (let i = 0; i < dotsCount; i++) {
+            const visibleCount = getVisibleSlidesCount();
+            const totalSteps = Math.max(1, totalSlides - visibleCount + 1);
+
+            for (let i = 0; i < totalSteps; i++) {
                 const dot = document.createElement('button');
-                // Indicador principal tem largura estendida
-                dot.className = `w-2 h-2 rounded-full transition-all duration-300 ${i === currentIndex ? 'bg-brand-yellow w-5' : 'bg-zinc-700 hover:bg-zinc-500'}`;
-                dot.setAttribute('aria-label', `Ir para slide ${i + 1}`);
+                dot.className = `w-3 h-3 rounded-full transition-all duration-300 ${i === currentIndex ? 'bg-brand-yellow w-6' : 'bg-neutral-700 hover:bg-neutral-500'}`;
+                dot.ariaLabel = `Ver slide ${i + 1}`;
                 dot.addEventListener('click', () => {
                     goToSlide(i);
-                    stopAutoPlay();
-                    startAutoPlay();
+                    resetInterval();
                 });
                 dotsContainer.appendChild(dot);
             }
         }
 
-        // Atualiza o estado visual do indicador ativo
-        function updateDots() {
-            const dots = dotsContainer.children;
-            for (let i = 0; i < dots.length; i++) {
-                if (i === currentIndex) {
-                    dots[i].className = 'w-2 h-2 rounded-full transition-all duration-300 bg-brand-yellow w-5';
-                } else {
-                    dots[i].className = 'w-2 h-2 rounded-full transition-all duration-300 bg-zinc-700';
-                }
-            }
-        }
-
         function goToSlide(index) {
-            const slideWidth = getSlideWidth();
-            const trackWidth = track.scrollWidth;
-            const containerWidth = track.parentElement.offsetWidth;
-            const maxTranslate = trackWidth - containerWidth;
-            const maxIndex = maxTranslate > 0 ? Math.ceil(maxTranslate / slideWidth) : cards.length - 1;
+            const visibleCount = getVisibleSlidesCount();
+            const maxIndex = Math.max(0, totalSlides - visibleCount);
             
-            currentIndex = Math.max(0, Math.min(index, maxIndex));
-            updateCarousel();
-        }
-
-        function nextSlide() {
-            const slideWidth = getSlideWidth();
-            const trackWidth = track.scrollWidth;
-            const containerWidth = track.parentElement.offsetWidth;
-            const maxTranslate = trackWidth - containerWidth;
-            const maxIndex = maxTranslate > 0 ? Math.ceil(maxTranslate / slideWidth) : cards.length - 1;
-            
-            if (currentIndex >= maxIndex) {
-                currentIndex = 0; // Volta para o início se estourar
+            // Corrige se o index ultrapassar o limite aceitável
+            if (index > maxIndex) {
+                currentIndex = 0;
+            } else if (index < 0) {
+                currentIndex = maxIndex;
             } else {
-                currentIndex++;
+                currentIndex = index;
             }
-            updateCarousel();
-        }
 
-        function prevSlide() {
-            const slideWidth = getSlideWidth();
-            const trackWidth = track.scrollWidth;
-            const containerWidth = track.parentElement.offsetWidth;
-            const maxTranslate = trackWidth - containerWidth;
-            const maxIndex = maxTranslate > 0 ? Math.ceil(maxTranslate / slideWidth) : cards.length - 1;
+            const slideWidthPercent = 100 / visibleCount;
+            track.style.transform = `translateX(-${currentIndex * slideWidthPercent}%)`;
             
-            if (currentIndex <= 0) {
-                currentIndex = maxIndex; // Vai para o fim se for antes do início
-            } else {
-                currentIndex--;
-            }
-            updateCarousel();
-        }
-
-        // Eventos de toque (Swipe) e clique e arraste (Mouse Drag)
-        track.addEventListener('mousedown', dragStart);
-        track.addEventListener('touchstart', dragStart, { passive: true });
-
-        window.addEventListener('mousemove', dragMove);
-        window.addEventListener('touchmove', dragMove, { passive: true });
-
-        window.addEventListener('mouseup', dragEnd);
-        window.addEventListener('touchend', dragEnd);
-
-        function dragStart(e) {
-            isDragging = true;
-            startX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-            
-            const style = window.getComputedStyle(track);
-            const matrix = new DOMMatrix(style.transform);
-            startTranslate = matrix.m41;
-            
-            track.style.transition = 'none';
-            stopAutoPlay();
-        }
-
-        function dragMove(e) {
-            if (!isDragging) return;
-            currentX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-            const deltaX = currentX - startX;
-            
-            let newTranslate = startTranslate + deltaX;
-            
-            // Resistência elástica nas bordas do carrossel
-            const trackWidth = track.scrollWidth;
-            const containerWidth = track.parentElement.offsetWidth;
-            const maxTranslate = -(trackWidth - containerWidth);
-            
-            if (newTranslate > 0) {
-                newTranslate = newTranslate * 0.35; // Resistência na margem esquerda
-            } else if (newTranslate < maxTranslate) {
-                newTranslate = maxTranslate + (newTranslate - maxTranslate) * 0.35; // Resistência na margem direita
-            }
-            
-            track.style.transform = `translateX(${newTranslate}px)`;
-        }
-
-        function dragEnd(e) {
-            if (!isDragging) return;
-            isDragging = false;
-            
-            const deltaX = currentX - startX;
-            track.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
-            
-            // Sensibilidade do deslize de 50px
-            if (Math.abs(deltaX) > 50) {
-                if (deltaX < 0) {
-                    nextSlide();
+            // Atualiza o estado visual dos dots
+            const dots = Array.from(dotsContainer.children);
+            dots.forEach((dot, i) => {
+                if (i === currentIndex) {
+                    dot.className = 'w-3 h-3 rounded-full bg-brand-yellow w-6 transition-all duration-300';
                 } else {
-                    prevSlide();
+                    dot.className = 'w-3 h-3 rounded-full bg-neutral-700 hover:bg-neutral-500 transition-all duration-300';
                 }
-            } else {
-                updateCarousel(); // Restaura posição se o deslize for muito curto
-            }
-            
-            startAutoPlay();
+            });
         }
 
-        // Autoplay
-        function startAutoPlay() {
-            autoPlayTimer = setInterval(nextSlide, 4500);
+        // Carrossel de avaliações automático
+        function startAutoSlide() {
+            slideInterval = setInterval(() => {
+                const visibleCount = getVisibleSlidesCount();
+                const maxIndex = Math.max(0, totalSlides - visibleCount);
+                if (currentIndex >= maxIndex) {
+                    goToSlide(0);
+                } else {
+                    goToSlide(currentIndex + 1);
+                }
+            }, 5000); // Roda a cada 5 segundos
         }
 
-        function stopAutoPlay() {
-            clearInterval(autoPlayTimer);
+        function resetInterval() {
+            clearInterval(slideInterval);
+            startAutoSlide();
         }
 
-        btnPrev.addEventListener('click', () => {
-            prevSlide();
-            stopAutoPlay();
-            startAutoPlay();
-        });
-
-        btnNext.addEventListener('click', () => {
-            nextSlide();
-            stopAutoPlay();
-            startAutoPlay();
-        });
-
-        // Pause autoplay on mouse enter, resume on mouse leave
-        track.addEventListener('mouseenter', stopAutoPlay);
-        track.addEventListener('mouseleave', startAutoPlay);
-
-        // Recalcula dimensões em caso de rotação de tela ou redimensionamento de janela
+        // Redimensionamento Inteligente
         window.addEventListener('resize', () => {
-            initDots();
-            updateCarousel(false);
+            buildDots();
+            goToSlide(currentIndex);
         });
 
-        // Inicialização com pequeno delay para garantir renderização das larguras CSS
-        window.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                initDots();
-                updateCarousel(false);
-                startAutoPlay();
-            }, 100);
-        });
+        // Inicialização do Carrossel
+        buildDots();
+        goToSlide(0);
+        startAutoSlide();
 
-        // Lógica de fallback para imagem gerada por IA se houver chave configurada
-        const apiKey = ""; 
-        const prompt = "fotografia profissional de um carro sedan moderno em um elevador hidráulico dentro de uma oficina mecânica limpa e tecnológica, iluminação cinematográfica, tons escuros e detalhes em metal, alta resolução";
-        
-        async function updateHeroBackground() {
-            if (!apiKey) return;
-            try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${apiKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        instances: { prompt: prompt },
-                        parameters: { sampleCount: 1 }
-                    })
-                });
-                
-                const result = await response.json();
-                if (result.predictions && result.predictions[0].bytesBase64Encoded) {
-                    const imageUrl = `data:image/png;base64,${result.predictions[0].bytesBase64Encoded}`;
-                    const hero = document.getElementById('inicio');
-                    if (hero) {
-                        hero.style.backgroundImage = `linear-gradient(to bottom, rgba(3, 3, 3, 0.4) 0%, rgba(3, 3, 3, 0.95) 100%), url(${imageUrl})`;
-                    }
-                }
-            } catch (error) {
-                console.error("Erro ao carregar imagem gerada:", error);
-            }
-        }
-        
-        if (apiKey) {
-            window.addEventListener('load', updateHeroBackground);
+        // Carregar e rodar vídeo ao clicar na capa
+        const videoContainer = document.getElementById('video-container');
+        const videoCover = document.getElementById('video-cover');
+        const videoPlayer = document.getElementById('video-player');
+
+        if (videoContainer && videoCover && videoPlayer) {
+            videoContainer.addEventListener('click', () => {
+                videoCover.classList.add('hidden');
+                videoPlayer.classList.remove('hidden');
+                videoPlayer.innerHTML = `
+                    <iframe class="w-full h-full object-cover" 
+                            src="https://www.youtube.com/embed/n_m-GqG-Y4A?autoplay=1" 
+                            title="Estrutura e Equipamentos de Oficina Mecânica" 
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen>
+                    </iframe>
+                `;
+            });
         }
     </script>
 </body>

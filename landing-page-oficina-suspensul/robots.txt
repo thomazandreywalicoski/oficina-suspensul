@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://oficinasuspensul.com.br/sitemap.xml
