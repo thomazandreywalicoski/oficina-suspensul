@@ -208,8 +208,8 @@
         <div class="absolute inset-0 z-0">
             <img src="fundo.png" 
                  alt="Oficina Mecânica Profissional" 
-                 class="w-full h-full object-cover opacity-70" />
-            <div class="absolute inset-0 bg-brand-darkBg/65"></div>
+                 class="w-full h-full object-cover opacity-35" />
+            <div class="absolute inset-0 bg-brand-darkBg/90"></div>
         </div>
 
         <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -249,8 +249,8 @@
                 </a>
             </div>
 
-            <!-- Stats & Cards Row (Alinhamentos Completamente Centralizados) -->
-            <div class="flex flex-wrap items-center justify-center gap-6 sm:gap-10 max-w-5xl mx-auto mt-16 pt-12 border-t border-brand-border">
+            <!-- Stats & Cards Row (Alinhamentos Completamente Centralizados - Oculto em telas pequenas) -->
+            <div class="hidden sm:flex flex-wrap items-center justify-center gap-6 sm:gap-10 max-w-5xl mx-auto mt-16 pt-12 border-t border-brand-border">
                 
                 <!-- Stat 1: Clientes Satisfeitos (Animado e Centralizado) -->
                 <div class="text-center min-w-[140px]">
@@ -317,136 +317,176 @@
             <div class="animate-infinite-scroll gap-6 items-center py-2">
                 <!-- Conjunto de Marcas (Original) -->
                 <div class="flex items-center gap-6 shrink-0">
-                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-28 group/brand">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Bosch-Logo.svg/320px-Bosch-Logo.svg.png" 
-                             alt="BOSCH Logo" 
-                             class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" 
-                             onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Bosch-Logo.svg/320px-Bosch-Logo.svg.png" alt="BOSCH Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
                         <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">BOSCH</span>
-                        <span class="text-[9px] font-bold text-brand-yellow uppercase tracking-widest mt-1 block">Injeção &amp; Filtros</span>
                     </div>
-                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-28 group/brand">
-                        <img src="https://logo.clearbit.com/tenneco.com" 
-                             alt="AXIOS Logo" 
-                             class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" 
-                             onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
-                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">AXIOS</span>
-                        <span class="text-[9px] font-bold text-brand-yellow uppercase tracking-widest mt-1 block">Suspensão</span>
-                    </div>
-                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-28 group/brand">
-                        <img src="https://logo.clearbit.com/driveway.com.br" 
-                             alt="DRIVEWAY Logo" 
-                             class="h-7 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" 
-                             onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
-                        <span class="font-outfit font-black text-lg text-neutral-400 tracking-tight hidden">DRIVEWAY</span>
-                        <span class="text-[9px] font-bold text-brand-yellow uppercase tracking-widest mt-1 block">Articulações</span>
-                    </div>
-                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-28 group/brand">
-                        <img src="https://logo.clearbit.com/bap.ind.br" 
-                             alt="BAP Logo" 
-                             class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" 
-                             onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
-                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">BAP</span>
-                        <span class="text-[9px] font-bold text-brand-yellow uppercase tracking-widest mt-1 block">Componentes</span>
-                    </div>
-                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-28 group/brand">
-                        <img src="https://logo.clearbit.com/nakata.com.br" 
-                             alt="NAKATA Logo" 
-                             class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" 
-                             onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://logo.clearbit.com/nakata.com.br" alt="NAKATA Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
                         <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">NAKATA</span>
-                        <span class="text-[9px] font-bold text-brand-yellow uppercase tracking-widest mt-1 block">Tudo Azul</span>
                     </div>
-                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-28 group/brand">
-                        <img src="https://logo.clearbit.com/cofap.com.br" 
-                             alt="COFAP Logo" 
-                             class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" 
-                             onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://logo.clearbit.com/cofap.com.br" alt="COFAP Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
                         <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">COFAP</span>
-                        <span class="text-[9px] font-bold text-brand-yellow uppercase tracking-widest mt-1 block">Amortecedores</span>
                     </div>
-                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-28 group/brand">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/TRW_logo.svg/320px-TRW_logo.svg.png" 
-                             alt="TRW Logo" 
-                             class="h-6 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" 
-                             onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
-                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">TRW</span>
-                        <span class="text-[9px] font-bold text-brand-yellow uppercase tracking-widest mt-1 block">Freios &amp; Direção</span>
-                    </div>
-                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-28 group/brand">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Monroe_Shocks_and_Struts_logo.svg/320px-Monroe_Shocks_and_Struts_logo.svg.png" 
-                             alt="MONROE Logo" 
-                             class="h-7 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" 
-                             onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Monroe_Shocks_and_Struts_logo.svg/320px-Monroe_Shocks_and_Struts_logo.svg.png" alt="MONROE Logo" class="h-7 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
                         <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">MONROE</span>
-                        <span class="text-[9px] font-bold text-brand-yellow uppercase tracking-widest mt-1 block">Amortecedores</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/TRW_logo.svg/320px-TRW_logo.svg.png" alt="TRW Logo" class="h-6 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">TRW</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://logo.clearbit.com/moura.com.br" alt="MOURA Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">MOURA</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://logo.clearbit.com/heliar.com.br" alt="HELIAR Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">HELIAR</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://logo.clearbit.com/mobil.com" alt="MOBIL Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">MOBIL</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://logo.clearbit.com/motul.com" alt="MOTUL Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">MOTUL</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://logo.clearbit.com/castrol.com" alt="CASTROL Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">CASTROL</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Shell_logo.svg/320px-Shell_logo.svg.png" alt="SHELL Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">SHELL</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://logo.clearbit.com/magnetimarelli.com" alt="MAGNETI MARELLI Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">MARELLI</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://logo.clearbit.com/ngkntk.com.br" alt="NGK Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">NGK</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://logo.clearbit.com/vw.com.br" alt="VOLKSWAGEN Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">VOLKSWAGEN</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://logo.clearbit.com/fiat.com.br" alt="FIAT Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">FIAT</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://logo.clearbit.com/chevrolet.com.br" alt="CHEVROLET Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">CHEVROLET</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://logo.clearbit.com/ford.com.br" alt="FORD Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">FORD</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://logo.clearbit.com/toyota.com.br" alt="TOYOTA Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">TOYOTA</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://logo.clearbit.com/honda.com.br" alt="HONDA Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">HONDA</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://logo.clearbit.com/hyundai.com.br" alt="HYUNDAI Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">HYUNDAI</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://logo.clearbit.com/renault.com.br" alt="RENAULT Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">RENAULT</span>
                     </div>
                 </div>
                 <!-- Conjunto Duplicado para Rolagem Contínua Sem Cortes -->
                 <div class="flex items-center gap-6 shrink-0">
-                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-28 group/brand">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Bosch-Logo.svg/320px-Bosch-Logo.svg.png" 
-                             alt="BOSCH Logo" 
-                             class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" 
-                             onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Bosch-Logo.svg/320px-Bosch-Logo.svg.png" alt="BOSCH Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
                         <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">BOSCH</span>
-                        <span class="text-[9px] font-bold text-brand-yellow uppercase tracking-widest mt-1 block">Injeção &amp; Filtros</span>
                     </div>
-                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-28 group/brand">
-                        <img src="https://logo.clearbit.com/tenneco.com" 
-                             alt="AXIOS Logo" 
-                             class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" 
-                             onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
-                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">AXIOS</span>
-                        <span class="text-[9px] font-bold text-brand-yellow uppercase tracking-widest mt-1 block">Suspensão</span>
-                    </div>
-                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-28 group/brand">
-                        <img src="https://logo.clearbit.com/driveway.com.br" 
-                             alt="DRIVEWAY Logo" 
-                             class="h-7 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" 
-                             onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
-                        <span class="font-outfit font-black text-lg text-neutral-400 tracking-tight hidden">DRIVEWAY</span>
-                        <span class="text-[9px] font-bold text-brand-yellow uppercase tracking-widest mt-1 block">Articulações</span>
-                    </div>
-                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-28 group/brand">
-                        <img src="https://logo.clearbit.com/bap.ind.br" 
-                             alt="BAP Logo" 
-                             class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" 
-                             onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
-                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">BAP</span>
-                        <span class="text-[9px] font-bold text-brand-yellow uppercase tracking-widest mt-1 block">Componentes</span>
-                    </div>
-                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-28 group/brand">
-                        <img src="https://logo.clearbit.com/nakata.com.br" 
-                             alt="NAKATA Logo" 
-                             class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" 
-                             onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://logo.clearbit.com/nakata.com.br" alt="NAKATA Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
                         <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">NAKATA</span>
-                        <span class="text-[9px] font-bold text-brand-yellow uppercase tracking-widest mt-1 block">Tudo Azul</span>
                     </div>
-                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-28 group/brand">
-                        <img src="https://logo.clearbit.com/cofap.com.br" 
-                             alt="COFAP Logo" 
-                             class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" 
-                             onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://logo.clearbit.com/cofap.com.br" alt="COFAP Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
                         <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">COFAP</span>
-                        <span class="text-[9px] font-bold text-brand-yellow uppercase tracking-widest mt-1 block">Amortecedores</span>
                     </div>
-                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-28 group/brand">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/TRW_logo.svg/320px-TRW_logo.svg.png" 
-                             alt="TRW Logo" 
-                             class="h-6 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" 
-                             onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
-                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">TRW</span>
-                        <span class="text-[9px] font-bold text-brand-yellow uppercase tracking-widest mt-1 block">Freios &amp; Direção</span>
-                    </div>
-                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-28 group/brand">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Monroe_Shocks_and_Struts_logo.svg/320px-Monroe_Shocks_and_Struts_logo.svg.png" 
-                             alt="MONROE Logo" 
-                             class="h-7 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" 
-                             onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Monroe_Shocks_and_Struts_logo.svg/320px-Monroe_Shocks_and_Struts_logo.svg.png" alt="MONROE Logo" class="h-7 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
                         <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">MONROE</span>
-                        <span class="text-[9px] font-bold text-brand-yellow uppercase tracking-widest mt-1 block">Amortecedores</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/TRW_logo.svg/320px-TRW_logo.svg.png" alt="TRW Logo" class="h-6 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">TRW</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://logo.clearbit.com/moura.com.br" alt="MOURA Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">MOURA</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://logo.clearbit.com/heliar.com.br" alt="HELIAR Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">HELIAR</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://logo.clearbit.com/mobil.com" alt="MOBIL Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">MOBIL</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://logo.clearbit.com/motul.com" alt="MOTUL Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">MOTUL</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://logo.clearbit.com/castrol.com" alt="CASTROL Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">CASTROL</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Shell_logo.svg/320px-Shell_logo.svg.png" alt="SHELL Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">SHELL</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://logo.clearbit.com/magnetimarelli.com" alt="MAGNETI MARELLI Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">MARELLI</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://logo.clearbit.com/ngkntk.com.br" alt="NGK Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">NGK</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://logo.clearbit.com/vw.com.br" alt="VOLKSWAGEN Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">VOLKSWAGEN</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://logo.clearbit.com/fiat.com.br" alt="FIAT Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">FIAT</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://logo.clearbit.com/chevrolet.com.br" alt="CHEVROLET Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">CHEVROLET</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://logo.clearbit.com/ford.com.br" alt="FORD Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">FORD</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://logo.clearbit.com/toyota.com.br" alt="TOYOTA Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">TOYOTA</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://logo.clearbit.com/honda.com.br" alt="HONDA Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">HONDA</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://logo.clearbit.com/hyundai.com.br" alt="HYUNDAI Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">HYUNDAI</span>
+                    </div>
+                    <div class="bg-brand-cardBg/60 border border-brand-border p-5 rounded-xl w-48 text-center flex flex-col items-center justify-center h-20 group/brand">
+                        <img src="https://logo.clearbit.com/renault.com.br" alt="RENAULT Logo" class="h-8 max-w-[140px] object-contain transition-all duration-300 filter grayscale brightness-200 group-hover/brand:grayscale-0 group-hover/brand:brightness-100" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" />
+                        <span class="font-outfit font-black text-xl text-neutral-400 tracking-wide hidden">RENAULT</span>
                     </div>
                 </div>
             </div>
