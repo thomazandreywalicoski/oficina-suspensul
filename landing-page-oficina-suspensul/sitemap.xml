@@ -1,9 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+  <!--  ═══ Página Principal (Landing Page) ═══  -->
   <url>
     <loc>https://oficinasuspensul.com.br/</loc>
     <lastmod>2026-07-18</lastmod>
-    <changefreq>monthly</changefreq>
+    <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+
+    <!--  Logo da Oficina  -->
+    <image:image>
+      <image:loc>https://oficinasuspensul.com.br/logo-oficina-suspensul.png</image:loc>
+      <image:title>Oficina Suspensul – Oficina mecânica em Mafra - SC</image:title>
+      <image:caption>Logotipo oficial da Oficina Suspensul, a melhor oficina mecânica de Mafra - SC e Rio Negro - PR.</image:caption>
+    </image:image>
+
+    <!--  Favicon  -->
+    <image:image>
+      <image:loc>https://oficinasuspensul.com.br/faveicon.png</image:loc>
+      <image:title>Favicon Oficina Suspensul</image:title>
+      <image:caption>Favicon oficial da Oficina Suspensul em Mafra - SC.</image:caption>
+    </image:image>
+
+    <!--  Imagem de fundo (Oficina)  -->
+    <image:image>
+      <image:loc>https://oficinasuspensul.com.br/fundo.png</image:loc>
+      <image:title>Oficina mecânica em Mafra - SC – Estrutura Oficina Suspensul</image:title>
+      <image:caption>Imagem de fundo mostrando a estrutura interna e elevadores da Oficina Suspensul em Mafra - SC.</image:caption>
+    </image:image>
+
+    <!--  Capa do vídeo  -->
+    <image:image>
+      <image:loc>https://oficinasuspensul.com.br/capa.png</image:loc>
+      <image:title>Capa do Vídeo Institucional da Oficina Suspensul</image:title>
+      <image:caption>Capa da apresentação em vídeo da Oficina Suspensul – Oficina mecânica em Mafra - SC.</image:caption>
+    </image:image>
+
+    <!--  Vídeo de apresentação do YouTube  -->
+    <video:video>
+      <video:thumbnail_loc>https://oficinasuspensul.com.br/capa.png</video:thumbnail_loc>
+      <video:title>Oficina Suspensul – Estrutura de Oficina Mecânica em Mafra - SC</video:title>
+      <video:description>Vídeo institucional mostrando a estrutura completa de atendimento, elevadores hidráulicos e scanners de diagnóstico avançado da Oficina Suspensul em Mafra - SC e Rio Negro - PR.</video:description>
+      <video:content_loc>https://www.youtube.com/watch?v=n_m-GqG-Y4A</video:content_loc>
+      <video:player_loc>https://www.youtube.com/embed/n_m-GqG-Y4A</video:player_loc>
+      <video:family_friendly>yes</video:family_friendly>
+      <video:live>no</video:live>
+    </video:video>
   </url>
 </urlset>
