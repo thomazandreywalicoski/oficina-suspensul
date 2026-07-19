@@ -986,7 +986,7 @@
                 <td>${fmtDataBR(o.data_emissao)}</td>
                 <td style="color: #e74c3c; font-weight: 500;">${fmtBRL(o.gastos_pecas || 0)}</td>
                 <td style="color: #3498db; font-weight: 500;">${fmtBRL((Number(o.cobrado_pecas) || 0) + (Number(o.valor_mao_obra) || 0))}</td>
-                <td style="color: #2ecc71; font-weight: 500;">${fmtBRL(((Number(o.cobrado_pecas) || 0) + (Number(o.valor_mao_obra) || 0)) - (Number(o.gastos_pecas) || 0))}</td>
+                <td style="color: #2ecc71; font-weight: 500;">${fmtBRL(((Number(o.cobrado_pecas) || 0) + (Number(o.valor_mao_obra) || 0)) - (Number(o.gastos_pecas) || 0) - (Number(o.valor_frete) || 0) - (Number(o.gastos_variados) || 0))}</td>
                 <td><span class="badge ${o.status === 'Paga' ? 'badge-paga' : 'badge-pendente'}">${o.status}</span></td>
                 <td class="actions-cell">
                     <button class="btn-icon btn-action-blue" title="Visualizar" onclick="window.visualizarOS('${o.slug || o.id}')"><i data-lucide="eye"></i></button>
@@ -1710,25 +1710,21 @@
 
     window.pecasOrcamentoProposta = [];
 
-    const PECAS_LISTA_GRID = '36px minmax(0,1fr) 64px max-content max-content max-content max-content 72px';
+    const PECAS_LISTA_GRID = '48px minmax(0,1fr) 140px 140px 120px 72px';
     const PECAS_LISTA_CELL_NOWRAP = 'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
 
     function renderPecaListaValores(p) {
         if (p.cliente_trouxe) {
             return {
-                marca: '-',
-                valor: '-',
-                desconto: '-',
-                final: 'Sem garantia',
+                custo: '-',
+                venda: 'Cliente trouxe',
                 total: '-',
             };
         }
         const total = (p.venda || 0) * (p.qtd || 0);
         return {
-            marca: p.marca || '-',
-            valor: fmtBRL(p.vendaSemDesconto),
-            desconto: fmtBRL(p.valorDesconto),
-            final: fmtBRL(p.venda),
+            custo: fmtBRL(p.custo),
+            venda: fmtBRL(p.venda),
             total: fmtBRL(total),
         };
     }
@@ -1743,18 +1739,17 @@
             cont.innerHTML = `
                 <div style="background:var(--bg-input);border-radius:8px;min-width:720px;">
                     <div style="display:grid;grid-template-columns:${PECAS_LISTA_GRID};gap:8px;align-items:center;padding:12px;background:var(--primary);color:#000;font-size:11px;font-weight:700;text-transform:uppercase;text-align:center;position:sticky;top:0;z-index:1;border-radius:8px 8px 0 0;">
-                        <div>Qtd</div><div style="text-align:left;">Descrição</div><div>Marca</div><div style="text-align:right;">Valor (und)</div><div style="text-align:right;">Desconto (und)</div><div style="text-align:right;">Valor final (und)</div><div style="text-align:right;">Total</div><div>Ações</div>
+                        <div>Qtd</div><div style="text-align:left;">Descrição</div><div style="text-align:right;">Valor de compra (und)</div><div style="text-align:right;">Valor de venda (und)</div><div style="text-align:right;">Total</div><div>Ações</div>
                     </div>
                     ${pecas.map((p, i) => {
                         const vals = renderPecaListaValores(p);
+                        const truncatedNome = p.nome.length > 20 ? p.nome.slice(0, 20) + '...' : p.nome;
                         return `
                         <div style="display:grid;grid-template-columns:${PECAS_LISTA_GRID};gap:8px;align-items:center;padding:12px;border-top:1px solid rgba(255,255,255,0.04);font-size:13px;">
                             <div style="text-align:center;font-weight:600;${PECAS_LISTA_CELL_NOWRAP}">${p.qtd}</div>
-                            <div style="text-align:left;font-weight:500;color:var(--text-main);min-width:0;${PECAS_LISTA_CELL_NOWRAP}" title="${escapeHtml(p.nome)}">${escapeHtml(p.nome)}</div>
-                            <div style="text-align:center;font-weight:500;${PECAS_LISTA_CELL_NOWRAP}">${escapeHtml(vals.marca)}</div>
-                            <div style="text-align:right;font-weight:600;${PECAS_LISTA_CELL_NOWRAP}">${vals.valor}</div>
-                            <div style="text-align:right;font-weight:600;${PECAS_LISTA_CELL_NOWRAP}">${vals.desconto}</div>
-                            <div style="text-align:right;color:#22c55e;font-weight:700;${PECAS_LISTA_CELL_NOWRAP}">${vals.final}</div>
+                            <div style="text-align:left;font-weight:500;color:var(--text-main);min-width:0;${PECAS_LISTA_CELL_NOWRAP}" title="${escapeHtml(p.nome)}">${escapeHtml(truncatedNome)}</div>
+                            <div style="text-align:right;font-weight:600;${PECAS_LISTA_CELL_NOWRAP}">${vals.custo}</div>
+                            <div style="text-align:right;color:#22c55e;font-weight:700;${PECAS_LISTA_CELL_NOWRAP}">${vals.venda}</div>
                             <div style="text-align:right;font-weight:700;${PECAS_LISTA_CELL_NOWRAP}">${vals.total}</div>
                             <div style="display:flex;gap:8px;justify-content:center;">
                                 <button type="button" class="btn-icon" onclick="window.editarPecaOrcamentoProposta(${i})" title="Editar" style="color:#f1c40f;"><i data-lucide="pencil" style="width:16px;height:16px;"></i></button>
@@ -1995,7 +1990,7 @@
                 <td>${fmtDataBR(p.criado_em)}</td>
                 <td style="color: #e74c3c; font-weight: 500;">${fmtBRL(p.gastos_pecas || 0)}</td>
                 <td style="color: #3498db; font-weight: 500;">${fmtBRL((Number(p.cobrado_pecas) || 0) + (Number(p.valor_mao_obra) || 0))}</td>
-                <td style="color: #2ecc71; font-weight: 500;">${fmtBRL(((Number(p.cobrado_pecas) || 0) + (Number(p.valor_mao_obra) || 0)) - (Number(p.gastos_pecas) || 0) - (Number(p.valor_frete) || 0))}</td>
+                <td style="color: #2ecc71; font-weight: 500;">${fmtBRL(((Number(p.cobrado_pecas) || 0) + (Number(p.valor_mao_obra) || 0)) - (Number(p.gastos_pecas) || 0) - (Number(p.valor_frete) || 0) - (Number(p.gastos_variados) || 0))}</td>
                 <td><span class="badge ${statusClass}">${displayStatus}</span></td>
                 <td class="actions-cell">
                     <button class="btn-icon btn-action-blue" title="Visualizar" onclick="window.visualizarProposta(${p.id})"><i data-lucide="eye"></i></button>
