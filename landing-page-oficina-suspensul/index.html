@@ -144,41 +144,46 @@
             animation-play-state: paused;
         }
 
-        /* === Botão com borda animada === */
+        /* === Botão com borda animada (Rotação pura transform para suporte total) === */
         .animated-border-btn {
             position: relative;
             z-index: 0;
+            overflow: hidden;
+            background: transparent !important;
+            border: none !important;
         }
         .animated-border-btn::before {
             content: '';
             position: absolute;
-            inset: -2px;
-            border-radius: 14px;
+            z-index: -2;
+            left: -50%;
+            top: -50%;
+            width: 200%;
+            height: 200%;
             background: conic-gradient(
-                from var(--border-angle, 0deg),
-                transparent 0%,
-                #FFD700 15%,
-                transparent 30%
+                from 0deg,
+                transparent 30%,
+                #FFD700 50%,
+                transparent 70%
             );
-            z-index: -1;
-            animation: rotateBorder 2s linear infinite;
+            animation: rotateBorder 2.5s linear infinite;
         }
         .animated-border-btn::after {
             content: '';
             position: absolute;
-            inset: 1px;
-            border-radius: 12px;
-            background: #0a0a0a;
+            inset: 2px;
+            border-radius: 10px;
+            background: #121212; /* cardBg */
             z-index: -1;
+            transition: background 0.3s;
+        }
+        .animated-border-btn:hover::after {
+            background: #1a1a1a;
         }
         @keyframes rotateBorder {
-            from { --border-angle: 0deg; }
-            to   { --border-angle: 360deg; }
-        }
-        @property --border-angle {
-            syntax: '<angle>';
-            inherits: true;
-            initial-value: 0deg;
+            100% {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
@@ -240,7 +245,7 @@
     </header>
 
     <!-- Hero Section -->
-    <section id="inicio" class="relative min-h-[calc(100vh-5rem)] flex items-center justify-center overflow-hidden py-16 sm:py-24">
+    <section id="inicio" class="relative min-h-0 sm:min-h-[calc(100vh-5rem)] flex items-center justify-center overflow-hidden py-10 sm:py-24">
         <!-- Background Overlay / Image -->
         <div class="absolute inset-0 z-0">
             <img src="fundo.png" 
@@ -250,16 +255,16 @@
         </div>
 
         <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <!-- Badge Google / Mafra -->
+            <!-- Badge Google / Mafra (Dinâmico) -->
             <div class="inline-flex items-center gap-2 bg-brand-cardBg border border-brand-border px-4 py-1.5 rounded-full mb-8 animate-fade-in">
-                <span class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
-                <span class="text-xs font-semibold tracking-wider uppercase text-brand-textMuted">Disponível agora em Mafra - SC</span>
+                <span id="status-dot" class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
+                <span id="status-text" class="text-xs font-semibold tracking-wider uppercase text-brand-textMuted">Verificando status...</span>
             </div>
 
             <!-- Title -->
             <h1 class="font-outfit text-4xl sm:text-6xl md:text-7xl font-black tracking-tight leading-none mb-6">
                 A MELHOR OFICINA MECÂNICA<br class="hidden md:block" />
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-yellow to-white">DE </span><span id="typewriter-city" class="text-transparent bg-clip-text bg-gradient-to-r from-brand-yellow to-white"></span><span id="typewriter-cursor" class="text-brand-yellow animate-pulse">|</span>
+                <span class="text-white font-black">DE </span><br class="block sm:hidden" /><span id="typewriter-city" class="text-transparent bg-clip-text bg-gradient-to-r from-brand-yellow to-white"></span>
             </h1>
 
             <!-- Subtitle -->
@@ -278,7 +283,7 @@
                 </a>
                 
                 <!-- Botão Nossos Serviços com borda animada -->
-                <a href="#servicos" class="animated-border-btn w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-brand-cardBg hover:bg-neutral-900 text-white font-outfit font-semibold px-8 py-4 rounded-xl text-lg transition-all duration-300">
+                <a href="#servicos" class="animated-border-btn w-full sm:w-auto inline-flex items-center justify-center gap-2 text-white font-outfit font-semibold px-8 py-4 rounded-xl text-lg transition-all duration-300">
                     <span>Nossos Serviços</span>
                     <i class="fa-solid fa-arrow-right text-sm text-brand-yellow"></i>
                 </a>
@@ -337,7 +342,7 @@
     </section>
 
     <!-- Marcas Section (Carrossel Infinito com Desfoque Lateral) -->
-    <section id="marcas" class="py-16 bg-brand-cardBg/30 border-y border-brand-border relative overflow-hidden">
+    <section id="marcas" class="py-8 sm:py-16 bg-brand-cardBg/30 border-y border-brand-border relative overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
             <p class="text-center text-xs font-bold uppercase tracking-[0.25em] text-brand-textMuted">
                 TRABALHAMOS COM AS MELHORES PEÇAS E MARCAS DO MERCADO
@@ -530,7 +535,7 @@
     </section>
 
     <!-- Serviços Section -->
-    <section id="servicos" class="py-24 sm:py-32 relative">
+    <section id="servicos" class="py-12 sm:py-32 relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
             <!-- Section Header -->
@@ -695,7 +700,7 @@
     </section>
 
     <!-- Estrutura Completa da Oficina (Substituindo Dicas Técnicas por Estrutura Completa/Institucional) -->
-    <section id="estrutura" class="py-20 bg-brand-cardBg/40 border-y border-brand-border relative">
+    <section id="estrutura" class="py-10 sm:py-20 bg-brand-cardBg/40 border-y border-brand-border relative">
         <div class="absolute inset-0 glow-radial opacity-60"></div>
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
             
@@ -736,7 +741,7 @@
     </section>
 
     <!-- Google Reviews Section (Com Carrossel Automático de 5 Avaliações) -->
-    <section id="avaliacoes" class="py-24 sm:py-32 relative overflow-hidden">
+    <section id="avaliacoes" class="py-12 sm:py-32 relative overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
             <!-- Header -->
@@ -1019,13 +1024,11 @@
 
             </div>
 
-            <!-- Direitos autorais -->
             <div class="border-t border-brand-border pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-center sm:text-left">
                 <span>&copy; 2026 Oficina Suspensul. Todos os direitos reservados.</span>
-                <span class="flex items-center justify-center gap-1 text-brand-textMuted">
-                    <i class="fa-solid fa-location-dot text-brand-yellow"></i>
+                <a href="https://maps.app.goo.gl/GhYuH4qnx9dUQdMs7" target="_blank" rel="noopener noreferrer" class="text-brand-textMuted hover:text-brand-yellow hover:underline transition-colors">
                     Próximo ao Posto Nove – BR-280, Km 167 – Campo da Lança, Mafra - SC, 89300-000
-                </span>
+                </a>
             </div>
         </div>
     </footer>
@@ -1210,7 +1213,6 @@
         (function() {
             var cities = ['MAFRA - SC', 'RIO NEGRO - PR'];
             var el = document.getElementById('typewriter-city');
-            var cursor = document.getElementById('typewriter-cursor');
             var cityIndex = 0;
             var charIndex = 0;
             var isDeleting = false;
@@ -1220,6 +1222,7 @@
             var pauseAfterDelete = 400;
 
             function type() {
+                if (!el) return;
                 var current = cities[cityIndex];
                 if (!isDeleting) {
                     el.textContent = current.substring(0, charIndex + 1);
@@ -1244,6 +1247,73 @@
             }
             setTimeout(type, 600);
         })();
+    </script>
+
+    <!-- Status de Horário Dinâmico -->
+    <script>
+        function updateStatusBadge() {
+            const now = new Date();
+            // Converter para horário de Brasília (UTC-3)
+            const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+            const dateSP = new Date(utc + (3600000 * -3));
+
+            const day = dateSP.getDay(); // 0: Domingo, 1: Segunda, ..., 6: Sábado
+            const hr = dateSP.getHours();
+            const min = dateSP.getMinutes();
+            const timeVal = hr + min / 60;
+
+            let statusText = "";
+            let isOpen = false;
+
+            const weekdays = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"];
+
+            if (day === 0) { // Domingo
+                statusText = "Fechado - Abre segunda-feira às 08:00";
+                isOpen = false;
+            } else if (day === 6) { // Sábado
+                if (timeVal >= 8 && timeVal < 12) {
+                    statusText = "Aberto das 08:00 às 12:00";
+                    isOpen = true;
+                } else if (timeVal < 8) {
+                    statusText = "Fechado - Abre às 08:00";
+                    isOpen = false;
+                } else {
+                    statusText = "Fechado - Abre segunda-feira às 08:00";
+                    isOpen = false;
+                }
+            } else { // Segunda a Sexta
+                if (timeVal >= 8 && timeVal < 18) {
+                    statusText = "Aberto das 08:00 às 18:00";
+                    isOpen = true;
+                } else if (timeVal < 8) {
+                    statusText = "Fechado - Abre às 08:00";
+                    isOpen = false;
+                } else {
+                    // Após as 18:00
+                    if (day === 5) { // Sexta-feira à noite abre sábado
+                        statusText = "Fechado - Abre sábado às 08:00";
+                    } else {
+                        const nextDayName = weekdays[day + 1];
+                        statusText = `Fechado - Abre ${nextDayName} às 08:00`;
+                    }
+                    isOpen = false;
+                }
+            }
+
+            const dot = document.getElementById("status-dot");
+            const text = document.getElementById("status-text");
+
+            if (dot && text) {
+                text.textContent = statusText;
+                if (isOpen) {
+                    dot.className = "w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse";
+                } else {
+                    dot.className = "w-2.5 h-2.5 rounded-full bg-red-500";
+                }
+            }
+        }
+        updateStatusBadge();
+        setInterval(updateStatusBadge, 30000); // Atualiza a cada 30 segundos
     </script>
 </body>
 </html>
