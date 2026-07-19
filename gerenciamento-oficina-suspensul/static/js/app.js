@@ -1752,7 +1752,7 @@
             cont.innerHTML = '<div style="background:var(--bg-input);border-radius:8px;padding:20px;text-align:center;color:var(--text-muted);font-size:13px;">Nenhum produto adicionado</div>';
         } else {
             cont.innerHTML = `
-                <div style="background:var(--bg-input);border-radius:8px;min-width:720px;">
+                <div style="background:var(--bg-input);border-radius:8px;width:max-content;min-width:100%;">
                     <div style="display:grid;grid-template-columns:${PECAS_LISTA_GRID};gap:8px;align-items:center;padding:12px;background:var(--primary);color:#000;font-size:11px;font-weight:700;text-transform:uppercase;text-align:center;position:sticky;top:0;z-index:1;border-radius:8px 8px 0 0;">
                         <div>Qtd</div>
                         <div style="text-align:left;">Descrição</div>
