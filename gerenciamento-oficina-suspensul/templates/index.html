@@ -1550,6 +1550,15 @@
             .sidebar-toggle { display: none; }
         }
 
+        /* Responsive Fornecedor Placeholder */
+        .peca-fornecedor-label.placeholder::after {
+            content: 'Selecione...';
+        }
+        @media (max-width: 480px) {
+            .peca-fornecedor-label.placeholder::after {
+                content: 'Escolha';
+            }
+        }
     </style>
 </head>
 <body>
@@ -2640,7 +2649,7 @@
                         <label>Fornecedor</label>
                         <div style="display:flex;gap:8px;align-items:stretch;">
                             <button type="button" class="btn custom-picker-trigger" id="peca-os-fornecedor-btn" onclick="abrirSeletorFornecedor(this)" style="flex:1;">
-                                <span class="peca-fornecedor-label" style="color: var(--text-muted);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left;">Selecione...</span>
+                                <span class="peca-fornecedor-label placeholder" style="color: var(--text-muted);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left;"></span>
                                 <i data-lucide="chevron-down"></i>
                             </button>
                             <button type="button" class="btn" title="Cadastrar novo fornecedor" onclick="openNovoFornecedorDaPeca()" style="padding:0;width:42px;flex:0 0 42px;display:inline-flex;align-items:center;justify-content:center;background:var(--primary);color:#000;">
@@ -2650,7 +2659,7 @@
                         <input type="hidden" class="peca-fornecedor-id" id="peca-os-fornecedor-id">
                     </div>
                     <div class="form-group" style="flex:1;min-width:0;">
-                        <label>Marca <span id="peca-os-marca-obrigatorio" style="color:var(--primary);display:none;">*</span></label>
+                        <label>Marca</label>
                         <input type="text" id="peca-os-marca" placeholder="Ex: Cofap">
                     </div>
                 </div>
@@ -3855,7 +3864,11 @@
             document.getElementById('peca-os-fornecedor-id').value = '';
             document.getElementById('peca-os-marca').value = '';
             const lbl = document.querySelector('#peca-os-fornecedor-btn .peca-fornecedor-label');
-            if (lbl) { lbl.textContent = 'Selecione...'; lbl.style.color = 'var(--text-muted)'; }
+            if (lbl) {
+                lbl.textContent = '';
+                lbl.classList.add('placeholder');
+                lbl.style.color = 'var(--text-muted)';
+            }
             
             // Enable inputs on default reset
             document.getElementById('peca-os-custo').disabled = false;
@@ -4144,7 +4157,7 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
                         <label>Fornecedor</label>
                         <div style="display:flex;gap:8px;align-items:stretch;">
                             <button type="button" class="btn custom-picker-trigger" id="peca-proposta-fornecedor-btn" onclick="abrirSeletorFornecedor(this)" style="flex:1;">
-                                <span class="peca-fornecedor-label" style="color:var(--text-muted);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left;">Selecione...</span>
+                                <span class="peca-fornecedor-label placeholder" style="color:var(--text-muted);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left;"></span>
                                 <i data-lucide="chevron-down"></i>
                             </button>
                             <button type="button" class="btn" title="Cadastrar novo fornecedor" onclick="openNovoFornecedorDaPeca()" style="padding:0;width:42px;flex:0 0 42px;display:inline-flex;align-items:center;justify-content:center;background:var(--primary);color:#000;"><i data-lucide="plus"></i></button>
@@ -4152,7 +4165,7 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
                         <input type="hidden" class="peca-fornecedor-id" id="peca-proposta-fornecedor-id">
                     </div>
                     <div class="form-group" style="flex:1;min-width:0;">
-                        <label>Marca <span id="peca-proposta-marca-obrigatorio" style="color:var(--primary);display:none;">*</span></label>
+                        <label>Marca</label>
                         <input type="text" id="peca-proposta-marca" placeholder="Ex: Cofap">
                     </div>
                 </div>

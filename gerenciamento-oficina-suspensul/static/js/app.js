@@ -1111,6 +1111,7 @@
         if (hidden) hidden.value = id;
         if (label) {
             label.textContent = nome;
+            label.classList.remove('placeholder');
             label.title = nome;
             label.style.whiteSpace = 'nowrap';
             label.style.overflow = 'hidden';
@@ -1181,7 +1182,11 @@
         const hidden = _fornecedorPickerTarget.querySelector('.peca-fornecedor-id');
         const label = _fornecedorPickerTarget.querySelector('.peca-fornecedor-label');
         if (hidden) hidden.value = '';
-        if (label) { label.textContent = 'Selecione...'; label.style.color = 'var(--text-muted)'; }
+        if (label) {
+            label.textContent = '';
+            label.classList.add('placeholder');
+            label.style.color = 'var(--text-muted)';
+        }
         
         const isProposta = _fornecedorPickerTarget.id.includes('proposta') || _fornecedorPickerTarget.querySelector('#peca-proposta-fornecedor-id') || document.getElementById('modal-peca-orcamento-proposta').classList.contains('active');
         if (isProposta) {
@@ -1605,7 +1610,11 @@
                 const hiddenFor = linha.querySelector('.peca-fornecedor-id');
                 const labelFor = linha.querySelector('.peca-fornecedor-label');
                 if (hiddenFor) hiddenFor.value = '';
-                if (labelFor) { labelFor.textContent = 'Selecione...'; labelFor.style.color = 'var(--text-muted)'; }
+                if (labelFor) {
+                    labelFor.textContent = '';
+                    labelFor.classList.add('placeholder');
+                    labelFor.style.color = 'var(--text-muted)';
+                }
             }
         };
         wrap.appendChild(btnRm);
@@ -1629,7 +1638,11 @@
         const hiddenFor = nova.querySelector('.peca-fornecedor-id');
         const labelFor = nova.querySelector('.peca-fornecedor-label');
         if (hiddenFor) hiddenFor.value = '';
-        if (labelFor) { labelFor.textContent = 'Selecione...'; labelFor.style.color = 'var(--text-muted)'; }
+        if (labelFor) {
+            labelFor.textContent = '';
+            labelFor.classList.add('placeholder');
+            labelFor.style.color = 'var(--text-muted)';
+        }
 
         const custoIn = nova.querySelector('.peca-custo');
         const lucroIn = nova.querySelector('.peca-lucro');
@@ -1794,7 +1807,16 @@
         document.getElementById('peca-proposta-fornecedor-id').value = p.fornecedor_id || (p.cliente_trouxe ? 'cliente' : '');
         const lbl = document.querySelector('#peca-proposta-fornecedor-btn .peca-fornecedor-label');
         if (lbl) {
-            lbl.textContent = p.cliente_trouxe ? 'Cliente' : (p.fornecedor_name || 'Selecione...');
+            if (p.cliente_trouxe) {
+                lbl.textContent = 'Cliente';
+                lbl.classList.remove('placeholder');
+            } else if (p.fornecedor_name) {
+                lbl.textContent = p.fornecedor_name;
+                lbl.classList.remove('placeholder');
+            } else {
+                lbl.textContent = '';
+                lbl.classList.add('placeholder');
+            }
             lbl.style.color = (p.cliente_trouxe || p.fornecedor_name) ? (p.cliente_trouxe ? '#ffe54c' : 'var(--text-main)') : 'var(--text-muted)';
         }
 
@@ -1833,7 +1855,11 @@
         document.getElementById('peca-proposta-fornecedor-id').value = '';
         document.getElementById('peca-proposta-marca').value = '';
         const lbl = document.querySelector('#peca-proposta-fornecedor-btn .peca-fornecedor-label');
-        if (lbl) { lbl.textContent = 'Selecione...'; lbl.style.color = 'var(--text-muted)'; }
+        if (lbl) {
+            lbl.textContent = '';
+            lbl.classList.add('placeholder');
+            lbl.style.color = 'var(--text-muted)';
+        }
         
         // Reset disabled states
         document.getElementById('peca-proposta-custo').disabled = false;
