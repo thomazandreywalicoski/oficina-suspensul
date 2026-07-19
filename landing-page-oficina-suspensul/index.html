@@ -144,38 +144,42 @@
             animation-play-state: paused;
         }
 
-        /* === Botão com borda animada (Rotação pura transform para suporte total) === */
+        /* === Botão: borda fixa por fora + borda animada por dentro === */
         .animated-border-btn {
             position: relative;
             z-index: 0;
             overflow: hidden;
-            background: transparent !important;
-            border: none !important;
+            background: #121212 !important;
+            border: 1px solid rgba(255, 215, 0, 0.3) !important; /* Borda fixa externa */
         }
+        /* Círculo rotativo (gera a borda animada interna) */
         .animated-border-btn::before {
             content: '';
             position: absolute;
-            z-index: -2;
             left: 50%;
             top: 50%;
-            width: 300%;
-            height: 300%;
+            width: 0;
+            height: 0;
+            padding: 100vmax; /* Garante um círculo perfeito gigante */
+            border-radius: 50%;
             background: conic-gradient(
                 from 0deg,
                 #FFD700 0%,
-                transparent 50%,
+                rgba(255, 215, 0, 0.3) 10%,
+                transparent 40%,
                 transparent 100%
             );
-            transform: translate(-50%, -50%) rotate(0deg);
+            transform: translate(-50%, -50%);
             animation: rotateBorder 2.5s linear infinite;
+            z-index: -2;
         }
+        /* Painel interno (fundo do botão, deixa 2px de borda animada visível) */
         .animated-border-btn::after {
             content: '';
             position: absolute;
-            inset: 3px; /* Espaço para a borda animada aparecer na camada de fora */
+            inset: 2px;
             border-radius: 10px;
-            background: #121212; /* cardBg */
-            border: 1px solid rgba(255, 215, 0, 0.35); /* Borda fixa amarela clara */
+            background: #121212;
             z-index: -1;
             transition: background 0.3s;
         }
@@ -183,7 +187,7 @@
             background: #1a1a1a;
         }
 
-        /* === Container de vídeo com borda animada === */
+        /* === Vídeo: borda animada larga com degradê === */
         .animated-border-video {
             position: relative;
             z-index: 0;
@@ -193,33 +197,33 @@
         .animated-border-video::before {
             content: '';
             position: absolute;
-            z-index: -2;
             left: 50%;
             top: 50%;
-            width: 300%;
-            height: 300%;
+            width: 0;
+            height: 0;
+            padding: 100vmax;
+            border-radius: 50%;
             background: conic-gradient(
                 from 0deg,
                 #FFD700 0%,
-                transparent 50%,
+                rgba(255, 215, 0, 0.4) 15%,
+                transparent 45%,
                 transparent 100%
             );
-            transform: translate(-50%, -50%) rotate(0deg);
+            transform: translate(-50%, -50%);
             animation: rotateBorder 3s linear infinite;
+            z-index: -2;
         }
         .animated-border-video::after {
             content: '';
             position: absolute;
-            inset: 4px; /* Borda do vídeo mais grossa */
+            inset: 6px; /* Borda bem mais larga */
             border-radius: 12px;
             background: #000;
             z-index: -1;
         }
 
         @keyframes rotateBorder {
-            0% {
-                transform: translate(-50%, -50%) rotate(0deg);
-            }
             100% {
                 transform: translate(-50%, -50%) rotate(360deg);
             }
