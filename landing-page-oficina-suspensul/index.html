@@ -162,9 +162,9 @@
             height: 300%;
             background: conic-gradient(
                 from 0deg,
-                transparent 30%,
-                #FFD700 50%,
-                transparent 70%
+                #FFD700 0%,
+                transparent 50%,
+                transparent 100%
             );
             transform: translate(-50%, -50%) rotate(0deg);
             animation: rotateBorder 2.5s linear infinite;
@@ -172,9 +172,10 @@
         .animated-border-btn::after {
             content: '';
             position: absolute;
-            inset: 2px;
+            inset: 3px; /* Espaço para a borda animada aparecer na camada de fora */
             border-radius: 10px;
             background: #121212; /* cardBg */
+            border: 1px solid rgba(255, 215, 0, 0.35); /* Borda fixa amarela clara */
             z-index: -1;
             transition: background 0.3s;
         }
@@ -199,9 +200,9 @@
             height: 300%;
             background: conic-gradient(
                 from 0deg,
-                transparent 30%,
-                #FFD700 50%,
-                transparent 70%
+                #FFD700 0%,
+                transparent 50%,
+                transparent 100%
             );
             transform: translate(-50%, -50%) rotate(0deg);
             animation: rotateBorder 3s linear infinite;
@@ -209,8 +210,8 @@
         .animated-border-video::after {
             content: '';
             position: absolute;
-            inset: 2px;
-            border-radius: 14px;
+            inset: 4px; /* Borda do vídeo mais grossa */
+            border-radius: 12px;
             background: #000;
             z-index: -1;
         }
