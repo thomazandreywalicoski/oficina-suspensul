@@ -1710,7 +1710,7 @@
 
     window.pecasOrcamentoProposta = [];
 
-    const PECAS_LISTA_GRID = '48px minmax(120px, 1fr) 150px 110px 150px 130px 72px';
+    const PECAS_LISTA_GRID = '48px minmax(120px, 1fr) 150px 110px 150px 130px 96px';
     const PECAS_LISTA_CELL_NOWRAP = 'white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
 
     function renderPecaListaValores(p) {
@@ -1743,10 +1743,10 @@
                     <div style="display:grid;grid-template-columns:${PECAS_LISTA_GRID};gap:8px;align-items:center;padding:12px;background:var(--primary);color:#000;font-size:11px;font-weight:700;text-transform:uppercase;text-align:center;position:sticky;top:0;z-index:1;border-radius:8px 8px 0 0;">
                         <div>Qtd</div>
                         <div style="text-align:left;">Descrição</div>
-                        <div style="text-align:right;">Valor de compra (und)</div>
+                        <div style="text-align:center;">Valor de compra (und)</div>
                         <div style="text-align:center;">Lucro (%)</div>
-                        <div style="text-align:right;">Valor de venda (und)</div>
-                        <div style="text-align:right;">Total</div>
+                        <div style="text-align:center;">Valor de venda (und)</div>
+                        <div style="text-align:center;">Total</div>
                         <div>Ações</div>
                     </div>
                     ${pecas.map((p, i) => {
@@ -1756,10 +1756,10 @@
                         <div style="display:grid;grid-template-columns:${PECAS_LISTA_GRID};gap:8px;align-items:center;padding:12px;border-top:1px solid rgba(255,255,255,0.04);font-size:13px;">
                             <div style="text-align:center;font-weight:600;${PECAS_LISTA_CELL_NOWRAP}">${p.qtd}</div>
                             <div style="text-align:left;font-weight:500;color:var(--text-main);min-width:0;${PECAS_LISTA_CELL_NOWRAP}" title="${escapeHtml(p.nome)}">${escapeHtml(truncatedNome)}</div>
-                            <div style="text-align:right;font-weight:600;${PECAS_LISTA_CELL_NOWRAP}">${vals.custo}</div>
+                            <div style="text-align:center;font-weight:600;${PECAS_LISTA_CELL_NOWRAP}">${vals.custo}</div>
                             <div style="text-align:center;font-weight:600;color:var(--text-muted);${PECAS_LISTA_CELL_NOWRAP}">${vals.lucro}</div>
-                            <div style="text-align:right;color:#22c55e;font-weight:700;${PECAS_LISTA_CELL_NOWRAP}">${vals.venda}</div>
-                            <div style="text-align:right;font-weight:700;${PECAS_LISTA_CELL_NOWRAP}">${vals.total}</div>
+                            <div style="text-align:center;color:#22c55e;font-weight:700;${PECAS_LISTA_CELL_NOWRAP}">${vals.venda}</div>
+                            <div style="text-align:center;font-weight:700;${PECAS_LISTA_CELL_NOWRAP}">${vals.total}</div>
                             <div style="display:flex;gap:8px;justify-content:center;">
                                 <button type="button" class="btn-icon" onclick="window.editarPecaOrcamentoProposta(${i})" title="Editar" style="color:#f1c40f;"><i data-lucide="pencil" style="width:16px;height:16px;"></i></button>
                                 <button type="button" class="btn-icon" onclick="window.removerPecaOrcamentoProposta(${i})" title="Remover" style="color:#e74c3c;"><i data-lucide="trash-2" style="width:16px;height:16px;"></i></button>
