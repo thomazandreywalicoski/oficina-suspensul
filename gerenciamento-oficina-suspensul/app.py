@@ -1161,7 +1161,10 @@ def obter_os(oid):
                        JOIN clientes c ON os.cliente_id = c.id
                        JOIN veiculos v ON os.veiculo_id = v.id
                        WHERE os.id = %s""", (oid,), fetch=True, one=True)
-    pecas = query("SELECT * FROM ordens_servico_pecas WHERE ordem_id = %s", (oid,), fetch=True)
+    pecas = query("""SELECT osp.*, f.nome as fornecedor_nome
+                     FROM ordens_servico_pecas osp
+                     LEFT JOIN fornecedores f ON osp.fornecedor_id = f.id
+                     WHERE osp.ordem_id = %s""", (oid,), fetch=True)
     return jsonify({'os': to_json(os_data), 'pecas': to_json(pecas)})
 
 @app.route('/api/os', methods=['POST'])
@@ -1260,7 +1263,10 @@ def obter_proposta(pid):
                    JOIN clientes c ON op.cliente_id = c.id
                    JOIN veiculos v ON op.veiculo_id = v.id
                    WHERE op.id = %s""", (pid,), fetch=True, one=True)
-    pecas = query("SELECT * FROM orcamentos_propostas_pecas WHERE proposta_id = %s", (pid,), fetch=True)
+    pecas = query("""SELECT opp.*, f.nome as fornecedor_nome
+                     FROM orcamentos_propostas_pecas opp
+                     LEFT JOIN fornecedores f ON opp.fornecedor_id = f.id
+                     WHERE opp.proposta_id = %s""", (pid,), fetch=True)
     return jsonify({'proposta': to_json(row), 'pecas': to_json(pecas)})
 
 @app.route('/api/propostas/<int:pid>', methods=['PUT'])

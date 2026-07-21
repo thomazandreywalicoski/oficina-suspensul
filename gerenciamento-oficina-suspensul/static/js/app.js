@@ -1806,18 +1806,19 @@
         
         document.getElementById('peca-proposta-fornecedor-id').value = p.fornecedor_id || (p.cliente_trouxe ? 'cliente' : '');
         const lbl = document.querySelector('#peca-proposta-fornecedor-btn .peca-fornecedor-label');
+        const fornecedorNome = p.fornecedor_nome || p.fornecedor_name || '';
         if (lbl) {
             if (p.cliente_trouxe) {
                 lbl.textContent = 'Cliente';
                 lbl.classList.remove('placeholder');
-            } else if (p.fornecedor_name) {
-                lbl.textContent = p.fornecedor_name;
+            } else if (fornecedorNome) {
+                lbl.textContent = fornecedorNome;
                 lbl.classList.remove('placeholder');
             } else {
                 lbl.textContent = '';
                 lbl.classList.add('placeholder');
             }
-            lbl.style.color = (p.cliente_trouxe || p.fornecedor_name) ? (p.cliente_trouxe ? '#ffe54c' : 'var(--text-main)') : 'var(--text-muted)';
+            lbl.style.color = (p.cliente_trouxe || fornecedorNome) ? (p.cliente_trouxe ? '#ffe54c' : 'var(--text-main)') : 'var(--text-muted)';
         }
 
         // Apply disabled states based on loaded supplier
@@ -2161,7 +2162,7 @@
                 valorDesconto: Number(pc.valor_desconto),
                 venda: Number(pc.valor_venda),
                 fornecedor_id: pc.cliente_trouxe ? 'cliente' : pc.fornecedor_id,
-                fornecedor_nome: pc.cliente_trouxe ? 'Cliente' : '',
+                fornecedor_nome: pc.cliente_trouxe ? 'Cliente' : (pc.fornecedor_nome || ''),
                 cliente_trouxe: pc.cliente_trouxe ? 1 : 0
             }));
             const titulo = document.getElementById('modal-novo-orcamento-titulo');
