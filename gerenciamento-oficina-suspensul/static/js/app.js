@@ -2847,9 +2847,9 @@
                 <div style="font-size:12px;color:var(--text-muted);">Data: <strong style="color:var(--text-main);">${fmtDataBR(m.data_despesa)}</strong></div>
             </div>
 
-            <div style="background:var(--bg-input);padding:14px;border-radius:8px;border:1px solid var(--border-color);">
-                <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;font-weight:700;margin-bottom:4px;">Descrição</div>
-                <div style="font-size:14px;font-weight:600;color:var(--text-main);line-height:1.4;">${escapeHtml(m.descricao || 'Sem descrição')}</div>
+            <div style="background:var(--bg-input);padding:16px;border-radius:8px;border:1px solid var(--border-color);">
+                <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;font-weight:700;margin-bottom:8px;letter-spacing:0.5px;">Descrição</div>
+                <div style="font-size:14px;font-weight:400;color:var(--text-main);line-height:1.5;">${escapeHtml(m.descricao || 'Sem descrição')}</div>
             </div>
 
             <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-muted);padding:0 4px;">
