@@ -781,7 +781,7 @@ def listar_clientes():
     sql = "SELECT * FROM clientes"
     if where:
         sql += " WHERE " + " AND ".join(where)
-    sql += " ORDER BY nome_completo"
+    sql += " ORDER BY id DESC"
     rows = query(sql, tuple(params), fetch=True)
     return jsonify(to_json(rows))
 
@@ -821,7 +821,7 @@ def listar_fornecedores():
     sql = "SELECT * FROM fornecedores"
     if where:
         sql += " WHERE " + " AND ".join(where)
-    sql += " ORDER BY nome"
+    sql += " ORDER BY id DESC"
     rows = query(sql, tuple(params), fetch=True)
     return jsonify(to_json(rows))
 
@@ -915,7 +915,7 @@ def listar_veiculos():
     sql = base
     if where:
         sql += " WHERE " + " AND ".join(where)
-    sql += " ORDER BY v.placa"
+    sql += " ORDER BY v.id DESC"
     rows = query(sql, tuple(params), fetch=True)
     return jsonify(to_json(rows))
 
@@ -1538,7 +1538,7 @@ def listar_estoque_produtos():
                            (SELECT MAX(m.data_movimentacao) FROM estoque_movimentacoes m WHERE m.produto_id = p.id) AS ultima_movimentacao
                     FROM estoque_produtos p
                     WHERE p.ativo = 1
-                    ORDER BY p.descricao ASC""", fetch=True)
+                    ORDER BY p.id DESC""", fetch=True)
     return jsonify(to_json(rows))
 
 @app.route('/api/estoque/entrada', methods=['POST'])
