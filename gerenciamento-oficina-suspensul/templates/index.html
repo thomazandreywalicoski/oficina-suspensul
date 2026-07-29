@@ -1447,6 +1447,26 @@
                 margin-right: 6px;
                 display: inline-block;
             }
+            .modal-dividas-header {
+                display: grid !important;
+                grid-template-columns: 1fr auto !important;
+                grid-template-areas:
+                    "title close"
+                    "search search" !important;
+                gap: 10px !important;
+            }
+            .modal-dividas-header .modal-title {
+                grid-area: title;
+            }
+            .modal-dividas-header .btn-icon {
+                grid-area: close;
+            }
+            .modal-dividas-header .modal-dividas-search-wrap {
+                grid-area: search;
+                max-width: 100% !important;
+                width: 100% !important;
+                margin-left: 0 !important;
+            }
         }
 
         @media (max-width: 479px) {
@@ -4348,15 +4368,17 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
 
     <!-- ===== MODAL: Dívidas da Pessoa ===== -->
     <div class="modal-overlay" id="modal-dividas-pessoa">
-        <div class="modal" style="max-width:900px;">
-            <div class="modal-header">
-                <h3 class="modal-title" id="modal-dividas-pessoa-title">Dívidas</h3>
-                <input type="text" id="dividas-pessoa-busca" placeholder="Buscar" oninput="filtrarDividasPessoa(this.value)" style="margin-left:auto;max-width:220px;padding:10px 12px;background:var(--bg-input);color:var(--text-main);border:1px solid var(--border-color);border-radius:var(--border-radius);font-size:13px;">
+        <div class="modal" style="max-width:920px;">
+            <div class="modal-header modal-dividas-header" style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+                <h3 class="modal-title" id="modal-dividas-pessoa-title" style="margin:0;">Dívidas</h3>
+                <div class="modal-dividas-search-wrap" style="margin-left:auto;max-width:240px;width:100%;">
+                    <input type="text" id="dividas-pessoa-busca" placeholder="Buscar" oninput="filtrarDividasPessoa(this.value)" style="width:100%;padding:10px 12px;background:var(--bg-input);color:var(--text-main);border:1px solid var(--border-color);border-radius:var(--border-radius);font-size:13px;">
+                </div>
                 <button class="btn-icon" onclick="closeModal('modal-dividas-pessoa')"><i data-lucide="x"></i></button>
             </div>
             <div class="modal-body" style="padding:16px;">
                 <div style="overflow-x:auto;overflow-y:auto;max-height:380px;width:100%;-webkit-overflow-scrolling:touch;">
-                    <div id="dividas-pessoa-list" style="display:flex;flex-direction:column;gap:10px;min-width:780px;width:100%;"></div>
+                    <div id="dividas-pessoa-list" style="display:flex;flex-direction:column;gap:10px;min-width:860px;width:100%;"></div>
                 </div>
             </div>
             <div class="modal-footer">

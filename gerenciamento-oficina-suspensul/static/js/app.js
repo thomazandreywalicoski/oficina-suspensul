@@ -3233,11 +3233,12 @@
             listEl.innerHTML = dividas.map(d => {
                 const valorRestante = Number(d.valor) - Number(d.valor_pago || 0);
                 const isPaga = d.status === 'Paga';
-                const nomeTrunc = String(d.nome || '').length > 25 ? String(d.nome).slice(0, 25) + '...' : d.nome;
+                const nomeStr = String(d.nome || '');
+                const nomeTrunc = nomeStr.length > 15 ? nomeStr.slice(0, 15) + '...' : nomeStr;
                 const statusBg = isPaga ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)';
                 const statusColor = isPaga ? '#22c55e' : '#ef4444';
-                return `<div style="display:grid;grid-template-columns:2fr 110px 110px 110px 110px 90px 130px;gap:10px;align-items:center;padding:12px 16px;background:rgba(128,128,128,0.08);border-radius:8px;font-size:13px;min-width:780px;width:100%;box-sizing:border-box;">
-                    <div style="font-weight:600;color:var(--text-main);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center;display:flex;align-items:center;justify-content:center;" title="${escapeHtml(d.nome)}">${escapeHtml(nomeTrunc)}</div>
+                return `<div style="display:grid;grid-template-columns:200px 110px 110px 110px 110px 90px 130px;gap:10px;align-items:center;padding:12px 16px;background:rgba(128,128,128,0.08);border-radius:8px;font-size:13px;min-width:860px;width:100%;box-sizing:border-box;">
+                    <div style="font-weight:600;color:var(--text-main);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center;width:100%;" title="${escapeHtml(nomeStr)}">${escapeHtml(nomeTrunc)}</div>
                     <div style="color:var(--text-muted);text-align:center;display:flex;align-items:center;justify-content:center;">${fmtDataBR(d.data_divida)}</div>
                     <div style="color:var(--text-main);font-weight:600;text-align:center;display:flex;align-items:center;justify-content:center;">${fmtBRL(d.valor)}</div>
                     <div style="color:#22c55e;font-weight:600;text-align:center;display:flex;align-items:center;justify-content:center;">${fmtBRL(d.valor_pago || 0)}</div>
