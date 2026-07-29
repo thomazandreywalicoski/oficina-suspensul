@@ -1243,16 +1243,17 @@
         }
 
         // Busca cliente
-        const inputCliente = m.querySelector('input[placeholder="Nome ou CPF..."]');
-        const inputVeiculo = m.querySelector('input[placeholder="ABC1D23"]');
+        const inputs = m.querySelectorAll('.form-group input');
+        const inputCliente = inputs[0] || m.querySelector('input[placeholder="Nome ou CPF..."]');
+        const inputVeiculo = inputs[1] || m.querySelector('input[placeholder="ABC1D23"]');
         if (!inputCliente || !inputVeiculo) return;
 
         let dropdown1 = criarDropdown(inputCliente, async (q) => {
             const arr = await api('GET', '/api/clientes?q=' + encodeURIComponent(q));
-            return arr.map(c => ({ label: `${c.nome_completo} - ${c.cpf || 'CPF não informado'}`, value: c.id, raw: c }));
+            return arr.map(c => ({ label: `${c.nome_completo} - ${c.whatsapp || 'WhatsApp não informado'}`, value: c.id, raw: c }));
         }, (item) => {
             state.novaOSCliente = item.raw;
-            inputCliente.value = `${item.raw.nome_completo} - ${item.raw.cpf || 'CPF não informado'}`;
+            inputCliente.value = `${item.raw.nome_completo} - ${item.raw.whatsapp || 'WhatsApp não informado'}`;
         });
         let dropdown2 = criarDropdown(inputVeiculo, async (q) => {
             const arr = await api('GET', '/api/veiculos?q=' + encodeURIComponent(q));
@@ -2149,7 +2150,7 @@
             const p = data.proposta;
             const pecas = data.pecas || [];
             state.editandoProposta = p;
-            state.propostaCliente = { id: p.cliente_id, nome_completo: p.nome_completo, cpf: p.cpf };
+            state.propostaCliente = { id: p.cliente_id, nome_completo: p.nome_completo, cpf: p.cpf, whatsapp: p.whatsapp };
             state.propostaVeiculo = { id: p.veiculo_id, placa: p.placa, marca: p.marca, modelo: p.modelo };
             window.pecasOrcamentoProposta = pecas.map(pc => ({
                 nome: pc.descricao,
@@ -2170,7 +2171,7 @@
             const idInput = document.getElementById('orcamento-proposta-id');
             if (idInput) idInput.value = p.id;
             const clienteInput = document.getElementById('orcamento-proposta-cliente-input');
-            if (clienteInput) clienteInput.value = `${p.nome_completo} - ${p.cpf || 'CPF não informado'}`;
+            if (clienteInput) clienteInput.value = `${p.nome_completo} - ${p.whatsapp || 'WhatsApp não informado'}`;
             const veiculoInput = document.getElementById('orcamento-proposta-veiculo-input');
             if (veiculoInput) veiculoInput.value = `${p.placa} - ${p.marca || ''} ${p.modelo || ''}`;
             const maoObraInput = document.getElementById('orcamento-proposta-mao-obra');
@@ -2257,10 +2258,10 @@
         if (!inputCliente || !inputVeiculo) return;
         criarDropdown(inputCliente, async (q) => {
             const arr = await api('GET', '/api/clientes?q=' + encodeURIComponent(q));
-            return arr.map(c => ({ label: `${c.nome_completo} - ${c.cpf || 'CPF não informado'}`, value: c.id, raw: c }));
+            return arr.map(c => ({ label: `${c.nome_completo} - ${c.whatsapp || 'WhatsApp não informado'}`, value: c.id, raw: c }));
         }, (item) => {
             state.propostaCliente = item.raw;
-            inputCliente.value = `${item.raw.nome_completo} - ${item.raw.cpf || 'CPF não informado'}`;
+            inputCliente.value = `${item.raw.nome_completo} - ${item.raw.whatsapp || 'WhatsApp não informado'}`;
         });
         criarDropdown(inputVeiculo, async (q) => {
             const arr = await api('GET', '/api/veiculos?q=' + encodeURIComponent(q));
@@ -2278,10 +2279,10 @@
         const inputs = m.querySelectorAll('input');
         criarDropdown(inputs[0], async (q) => {
             const arr = await api('GET', '/api/clientes?q=' + encodeURIComponent(q));
-            return arr.map(c => ({ label: `${c.nome_completo} - ${c.cpf || 'CPF não informado'}`, value: c.id, raw: c }));
+            return arr.map(c => ({ label: `${c.nome_completo} - ${c.whatsapp || 'WhatsApp não informado'}`, value: c.id, raw: c }));
         }, (item) => {
             state.novoAgClienteId = item.raw.id;
-            inputs[0].value = `${item.raw.nome_completo} - ${item.raw.cpf || 'CPF não informado'}`;
+            inputs[0].value = `${item.raw.nome_completo} - ${item.raw.whatsapp || 'WhatsApp não informado'}`;
         });
         criarDropdown(inputs[1], async (q) => {
             const arr = await api('GET', '/api/veiculos?q=' + encodeURIComponent(q));
@@ -2686,7 +2687,7 @@
                     || fmtBRL(d.lucro).toLowerCase().includes(termoComp);
             });
             compContainer.innerHTML = detalhesFiltrados.length ? detalhesFiltrados.map(d => `
-                <div class="fin-comp-card">
+                <div class="fin-comp-card" onclick="abrirModalDetalheComprovanteFinanceiro(${d.id})">
                     <div class="fin-comp-card-info">
                         <div class="fin-comp-card-num">Nº ${String(d.numero).padStart(6,'0')}</div>
                         <div class="fin-comp-card-veiculo">${escapeHtml([d.veiculo, d.placa].filter(Boolean).join(' - '))}</div>
@@ -2702,6 +2703,7 @@
             params.set('ano', year);
             params.set('mes', month);
             const movimentos = await api('GET', '/api/despesas?' + params.toString());
+            state.movimentosCaixa = movimentos;
             movimentos.sort((a, b) => {
                 const dataA = `${a.data_despesa || ''} ${String(a.id || 0).padStart(10, '0')}`;
                 const dataB = `${b.data_despesa || ''} ${String(b.id || 0).padStart(10, '0')}`;
@@ -2722,7 +2724,7 @@
                 const valorClass = isEntrada ? 'entrada' : 'saida';
                 const descricaoCurta = String(m.descricao || '').length > 30 ? `${String(m.descricao || '').slice(0, 30)}...` : String(m.descricao || '');
                 return `
-                <div class="fin-caixa-card">
+                <div class="fin-caixa-card" onclick="abrirModalDetalheCaixaFinanceiro(${m.id})">
                     <div class="fin-caixa-card-info">
                         <span class="${tagClass}">${tagText}</span>
                         <span class="fin-caixa-card-desc" title="${escapeHtml(m.descricao)}">${escapeHtml(descricaoCurta)}</span>
@@ -2733,6 +2735,159 @@
             }).join('') : `<div style="text-align:center;color:var(--text-muted);padding:20px;">Nenhuma movimentação encontrada.</div>`;
         }
     }
+
+    window.abrirModalDetalheComprovanteFinanceiro = async function(osId) {
+        try {
+            const data = await api('GET', `/api/ordens/${osId}`);
+            const os = data.ordem || data;
+            const pecas = data.pecas || [];
+            
+            const body = document.getElementById('detalhe-comp-body');
+            const acoes = document.getElementById('detalhe-comp-acoes');
+            if (!body) return;
+
+            const valorMaoObra = Number(os.valor_mao_obra || 0);
+            const frete = Number(os.valor_frete || 0);
+            const gastosVariados = Number(os.gastos_variados || 0);
+
+            let pecasVenda = 0;
+            let pecasCusto = 0;
+            pecas.forEach(p => {
+                pecasVenda += Number(p.valor_venda || 0) * Number(p.quantidade || 1);
+                pecasCusto += Number(p.valor_custo || 0) * Number(p.quantidade || 1);
+            });
+
+            const totalRecebido = pecasVenda + valorMaoObra;
+            const lucroLiquido = totalRecebido - pecasCusto - frete - gastosVariados;
+
+            const pecasHtml = pecas.length ? `
+                <div style="margin-top:6px;">
+                    <strong style="color:var(--text-main);font-size:13px;display:block;margin-bottom:8px;">Peças e Produtos</strong>
+                    <div style="max-height:180px;overflow-y:auto;border:1px solid var(--border-color);border-radius:6px;">
+                        <table style="width:100%;font-size:12px;border-collapse:collapse;">
+                            <thead>
+                                <tr style="background:var(--bg-input);text-align:left;color:var(--text-muted);">
+                                    <th style="padding:6px 10px;">Qtd</th>
+                                    <th style="padding:6px 10px;">Descrição</th>
+                                    <th style="padding:6px 10px;text-align:right;">Custo un.</th>
+                                    <th style="padding:6px 10px;text-align:right;">Venda un.</th>
+                                    <th style="padding:6px 10px;text-align:right;">Total Venda</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${pecas.map(p => `
+                                    <tr style="border-top:1px solid var(--border-color);color:var(--text-main);">
+                                        <td style="padding:6px 10px;">${p.quantidade}</td>
+                                        <td style="padding:6px 10px;">${escapeHtml(p.descricao)} ${p.marca ? `<span style="color:var(--text-muted);">(${escapeHtml(p.marca)})</span>` : ''}</td>
+                                        <td style="padding:6px 10px;text-align:right;">${fmtBRL(p.valor_custo)}</td>
+                                        <td style="padding:6px 10px;text-align:right;">${fmtBRL(p.valor_venda)}</td>
+                                        <td style="padding:6px 10px;text-align:right;font-weight:600;">${fmtBRL(Number(p.valor_venda) * Number(p.quantidade))}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            ` : '<div style="color:var(--text-muted);font-size:13px;">Nenhuma peça registrada neste comprovante.</div>';
+
+            body.innerHTML = `
+                <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;border-bottom:1px solid var(--border-color);">
+                    <div>
+                        <span style="font-size:18px;font-weight:800;color:var(--text-main);">Comprovante Nº ${String(os.numero).padStart(6, '0')}</span>
+                        <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Data Pagamento: <strong style="color:var(--text-main);">${os.data_pagamento ? fmtDataBR(os.data_pagamento) : 'Não informada'}</strong></div>
+                    </div>
+                    <span class="tag-entrada" style="background:#2ecc71;color:#fff;padding:4px 12px;border-radius:12px;font-size:12px;font-weight:700;">PAGA / COMPROVANTE</span>
+                </div>
+
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;background:var(--bg-card);padding:14px;border-radius:8px;border:1px solid var(--border-color);">
+                    <div>
+                        <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;font-weight:700;">Cliente</div>
+                        <div style="font-size:14px;font-weight:700;color:var(--text-main);">${escapeHtml(os.nome_completo || 'Cliente não informado')}</div>
+                        <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">WhatsApp: ${escapeHtml(os.whatsapp || 'Não informado')}</div>
+                        <div style="font-size:12px;color:var(--text-muted);">CPF: ${escapeHtml(os.cpf || 'Não informado')}</div>
+                    </div>
+                    <div>
+                        <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;font-weight:700;">Veículo</div>
+                        <div style="font-size:14px;font-weight:700;color:var(--text-main);">${escapeHtml([os.marca, os.modelo].filter(Boolean).join(' ') || 'Sem veículo')}</div>
+                        <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">Placa: <strong style="color:var(--text-main);">${escapeHtml(os.placa || 'Sem placa')}</strong></div>
+                    </div>
+                </div>
+
+                <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:10px;">
+                    <div style="background:var(--bg-input);padding:10px;border-radius:6px;text-align:center;">
+                        <div style="font-size:11px;color:var(--text-muted);">Mão de Obra</div>
+                        <div style="font-size:13px;font-weight:700;color:var(--text-main);margin-top:2px;">${fmtBRL(valorMaoObra)}</div>
+                    </div>
+                    <div style="background:var(--bg-input);padding:10px;border-radius:6px;text-align:center;">
+                        <div style="font-size:11px;color:var(--text-muted);">Venda de Peças</div>
+                        <div style="font-size:13px;font-weight:700;color:var(--text-main);margin-top:2px;">${fmtBRL(pecasVenda)}</div>
+                    </div>
+                    <div style="background:var(--bg-input);padding:10px;border-radius:6px;text-align:center;">
+                        <div style="font-size:11px;color:var(--text-muted);">Custo de Peças</div>
+                        <div style="font-size:13px;font-weight:700;color:#e74c3c;margin-top:2px;">${fmtBRL(pecasCusto)}</div>
+                    </div>
+                    <div style="background:var(--bg-input);padding:10px;border-radius:6px;text-align:center;">
+                        <div style="font-size:11px;color:var(--text-muted);">Frete / Variados</div>
+                        <div style="font-size:13px;font-weight:700;color:#e74c3c;margin-top:2px;">${fmtBRL(frete + gastosVariados)}</div>
+                    </div>
+                    <div style="background:var(--bg-input);padding:10px;border-radius:6px;text-align:center;">
+                        <div style="font-size:11px;color:var(--text-muted);">Total Recebido</div>
+                        <div style="font-size:14px;font-weight:800;color:#2ecc71;margin-top:2px;">${fmtBRL(totalRecebido)}</div>
+                    </div>
+                    <div style="background:var(--bg-input);padding:10px;border-radius:6px;text-align:center;">
+                        <div style="font-size:11px;color:var(--text-muted);">Lucro Líquido</div>
+                        <div style="font-size:14px;font-weight:800;color:${lucroLiquido>=0?'#2ecc71':'#e74c3c'};margin-top:2px;">${fmtBRL(lucroLiquido)}</div>
+                    </div>
+                </div>
+
+                ${pecasHtml}
+            `;
+
+            if (acoes) {
+                acoes.innerHTML = `
+                    <button class="btn btn-secondary" onclick="window.open('/os/${os.id}?imprimir=1', '_blank')"><i data-lucide="printer"></i> Imprimir</button>
+                    <button class="btn btn-primary" onclick="enviarWhatsapp(${os.id})"><i data-lucide="share-2"></i> WhatsApp</button>
+                `;
+            }
+
+            openModal('modal-detalhe-comprovante-financeiro');
+            refreshIcons();
+        } catch (e) {
+            window.showAlert('Erro ao carregar detalhes do comprovante: ' + e.message, 'Erro');
+        }
+    };
+
+    window.abrirModalDetalheCaixaFinanceiro = function(id) {
+        const m = (state.movimentosCaixa || []).find(x => x.id === id);
+        if (!m) return;
+        const body = document.getElementById('detalhe-caixa-body');
+        if (!body) return;
+
+        const isEntrada = m.tipo === 'entrada';
+        const cor = isEntrada ? '#2ecc71' : '#e74c3c';
+        const tipoLabel = isEntrada ? 'ENTRADA NO CAIXA' : 'SAÍDA DO CAIXA';
+
+        body.innerHTML = `
+            <div style="text-align:center;padding:16px;background:var(--bg-card);border-radius:12px;border:1px solid var(--border-color);">
+                <span style="background:${cor};color:#fff;padding:4px 14px;border-radius:20px;font-weight:800;font-size:11px;letter-spacing:0.5px;display:inline-block;margin-bottom:10px;">${tipoLabel}</span>
+                <div style="font-size:28px;font-weight:800;color:${cor};margin:6px 0;">${isEntrada ? '+' : '-'}${fmtBRL(m.valor)}</div>
+                <div style="font-size:12px;color:var(--text-muted);">Data: <strong style="color:var(--text-main);">${fmtDataBR(m.data_despesa)}</strong></div>
+            </div>
+
+            <div style="background:var(--bg-input);padding:14px;border-radius:8px;border:1px solid var(--border-color);">
+                <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;font-weight:700;margin-bottom:4px;">Descrição</div>
+                <div style="font-size:14px;font-weight:600;color:var(--text-main);line-height:1.4;">${escapeHtml(m.descricao || 'Sem descrição')}</div>
+            </div>
+
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-muted);padding:0 4px;">
+                <span>ID da Movimentação: <strong>#${m.id}</strong></span>
+                <span>Status: <strong style="color:#2ecc71;">Ativo</strong></span>
+            </div>
+        `;
+
+        openModal('modal-detalhe-caixa-financeiro');
+        refreshIcons();
+    };
 
     // ===================== CONFIGURAÇÕES =====================
     async function carregarConfig() {

@@ -945,6 +945,14 @@
             align-items: center;
             gap: 12px;
             min-height: 56px;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+            border: 1px solid transparent;
+        }
+        .fin-comp-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            border-color: var(--primary);
         }
         .fin-comp-card-info {
             display: flex;
@@ -996,6 +1004,14 @@
             align-items: center;
             gap: 12px;
             min-height: 56px;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+            border: 1px solid transparent;
+        }
+        .fin-caixa-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            border-color: var(--primary);
         }
         .fin-caixa-card-info {
             display: flex;
@@ -1396,6 +1412,34 @@
             }
             .modal-footer {
                 padding-bottom: 25px;
+            }
+            .financeiro-layout {
+                grid-template-columns: 1fr;
+            }
+            .financeiro-col-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            .financeiro-col-header h4 {
+                width: 100%;
+            }
+            .financeiro-col-search {
+                max-width: 100%;
+                width: 100%;
+            }
+            .fin-caixa-card-info > .tag-entrada,
+            .fin-caixa-card-info > .tag-saida {
+                flex: 0 0 10px;
+                width: 10px;
+                height: 10px;
+                min-width: 10px;
+                border-radius: 50%;
+                font-size: 0;
+                line-height: 0;
+                padding: 0;
+                margin-right: 6px;
+                display: inline-block;
             }
         }
 
@@ -4394,6 +4438,38 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeModal('modal-pagar-divida')">Cancelar</button>
                 <button class="btn btn-primary" onclick="confirmarPagamentoDivida()">Pagar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL: Detalhe do Comprovante Pago (Financeiro) ===== -->
+    <div class="modal-overlay" id="modal-detalhe-comprovante-financeiro">
+        <div class="modal modal-lg" style="max-width:720px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Detalhes do Comprovante</h3>
+                <button class="btn-icon" onclick="closeModal('modal-detalhe-comprovante-financeiro')"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body" id="detalhe-comp-body" style="padding:20px; display:flex; flex-direction:column; gap:16px;">
+            </div>
+            <div class="modal-footer" style="justify-content: space-between;">
+                <button class="btn btn-secondary" onclick="closeModal('modal-detalhe-comprovante-financeiro')">Fechar</button>
+                <div style="display:flex;gap:10px;" id="detalhe-comp-acoes">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL: Detalhe da Movimentação do Caixa (Financeiro) ===== -->
+    <div class="modal-overlay" id="modal-detalhe-caixa-financeiro">
+        <div class="modal" style="max-width:500px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Detalhe da Movimentação</h3>
+                <button class="btn-icon" onclick="closeModal('modal-detalhe-caixa-financeiro')"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body" id="detalhe-caixa-body" style="padding:20px; display:flex; flex-direction:column; gap:16px;">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('modal-detalhe-caixa-financeiro')">Fechar</button>
             </div>
         </div>
     </div>

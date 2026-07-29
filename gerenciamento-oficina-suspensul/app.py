@@ -1258,7 +1258,7 @@ def criar_proposta():
 
 @app.route('/api/propostas/<int:pid>', methods=['GET'])
 def obter_proposta(pid):
-    row = query("""SELECT op.*, c.nome_completo, c.cpf, v.placa, v.marca, v.modelo
+    row = query("""SELECT op.*, c.nome_completo, c.cpf, c.whatsapp, v.placa, v.marca, v.modelo
                    FROM orcamentos_propostas op
                    JOIN clientes c ON op.cliente_id = c.id
                    JOIN veiculos v ON op.veiculo_id = v.id
