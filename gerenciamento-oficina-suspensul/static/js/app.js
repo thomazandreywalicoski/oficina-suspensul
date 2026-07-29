@@ -2792,27 +2792,27 @@
 
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px;">
                     <!-- Linha 1: Custo de Peças & Frete / Variados -->
-                    <div style="background:var(--bg-card);padding:14px 16px;border-radius:8px;border:1px solid var(--border-color);">
+                    <div style="background:#252525;padding:14px 16px;border-radius:8px;border:1px solid #383838;">
                         <div style="font-size:12px;color:var(--text-muted);font-weight:400;text-align:left;">Custo de Peças</div>
                         <div style="font-size:16px;font-weight:700;color:#e74c3c;text-align:center;width:100%;margin-top:4px;">${fmtBRL(pecasCusto)}</div>
                     </div>
-                    <div style="background:var(--bg-card);padding:14px 16px;border-radius:8px;border:1px solid var(--border-color);">
+                    <div style="background:#252525;padding:14px 16px;border-radius:8px;border:1px solid #383838;">
                         <div style="font-size:12px;color:var(--text-muted);font-weight:400;text-align:left;">Frete / Variados</div>
                         <div style="font-size:16px;font-weight:700;color:#e74c3c;text-align:center;width:100%;margin-top:4px;">${fmtBRL(frete + gastosVariados)}</div>
                     </div>
 
                     <!-- Linha 2: Venda de Peças & Mão de Obra -->
-                    <div style="background:var(--bg-card);padding:14px 16px;border-radius:8px;border:1px solid var(--border-color);">
+                    <div style="background:#252525;padding:14px 16px;border-radius:8px;border:1px solid #383838;">
                         <div style="font-size:12px;color:var(--text-muted);font-weight:400;text-align:left;">Venda de Peças</div>
                         <div style="font-size:16px;font-weight:700;color:var(--text-main);text-align:center;width:100%;margin-top:4px;">${fmtBRL(pecasVenda)}</div>
                     </div>
-                    <div style="background:var(--bg-card);padding:14px 16px;border-radius:8px;border:1px solid var(--border-color);">
+                    <div style="background:#252525;padding:14px 16px;border-radius:8px;border:1px solid #383838;">
                         <div style="font-size:12px;color:var(--text-muted);font-weight:400;text-align:left;">Mão de Obra</div>
                         <div style="font-size:16px;font-weight:700;color:var(--text-main);text-align:center;width:100%;margin-top:4px;">${fmtBRL(valorMaoObra)}</div>
                     </div>
 
                     <!-- Linha 3: Total Recebido & Lucro Líquido (Card Verde) -->
-                    <div style="background:var(--bg-card);padding:14px 16px;border-radius:8px;border:1px solid var(--border-color);">
+                    <div style="background:#252525;padding:14px 16px;border-radius:8px;border:1px solid #383838;">
                         <div style="font-size:12px;color:var(--text-muted);font-weight:400;text-align:left;">Total Recebido</div>
                         <div style="font-size:16px;font-weight:700;color:#2ecc71;text-align:center;width:100%;margin-top:4px;">${fmtBRL(totalRecebido)}</div>
                     </div>
