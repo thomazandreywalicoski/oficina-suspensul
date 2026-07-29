@@ -2760,62 +2760,55 @@
             const lucroLiquido = totalRecebido - pecasCusto - frete - gastosVariados;
 
             body.innerHTML = `
-                <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;border-bottom:1px solid var(--border-color);">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:12px;border-bottom:1px solid var(--border-color);">
                     <div>
-                        <span style="font-size:18px;font-weight:800;color:var(--text-main);">Comprovante Nº ${String(os.numero).padStart(6, '0')}</span>
-                        <div style="font-size:13px;color:var(--text-muted);margin-top:2px;">Data Pagamento: <strong style="color:var(--text-main);font-weight:600;">${os.data_pagamento ? fmtDataBR(os.data_pagamento) : 'Não informada'}</strong></div>
+                        <div style="font-size:18px;font-weight:700;color:var(--text-main);">Comprovante Nº ${String(os.numero).padStart(6, '0')}</div>
+                        <div style="font-size:13px;color:var(--text-muted);margin-top:4px;font-weight:400;">Data Pagamento: <span style="color:var(--text-main);font-weight:400;">${os.data_pagamento ? fmtDataBR(os.data_pagamento) : 'Não informada'}</span></div>
                     </div>
-                    <span class="tag-entrada" style="background:#2ecc71;color:#fff;padding:4px 12px;border-radius:12px;font-size:12px;font-weight:700;">PAGA / COMPROVANTE</span>
+                    <span class="tag-entrada" style="background:#2ecc71;color:#fff;padding:4px 12px;border-radius:12px;font-size:11px;font-weight:700;">PAGA / COMPROVANTE</span>
                 </div>
 
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:4px 0;">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;background:var(--bg-card);padding:14px 16px;border-radius:8px;border:1px solid var(--border-color);">
                     <div>
-                        <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;font-weight:600;margin-bottom:2px;">CLIENTE</div>
-                        <div style="font-size:14px;font-weight:400;color:var(--text-main);">${escapeHtml(os.nome_completo || 'Cliente não informado')}</div>
-                        <div style="font-size:13px;font-weight:400;color:var(--text-muted);margin-top:2px;">WhatsApp: ${escapeHtml(os.whatsapp || 'Não informado')}</div>
+                        <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;font-weight:700;margin-bottom:6px;letter-spacing:0.5px;">CLIENTE</div>
+                        <div style="font-size:14px;font-weight:400;color:var(--text-main);margin-bottom:2px;">${escapeHtml(os.nome_completo || 'Cliente não informado')}</div>
+                        <div style="font-size:13px;font-weight:400;color:var(--text-muted);">WhatsApp: ${escapeHtml(os.whatsapp || 'Não informado')}</div>
                         <div style="font-size:13px;font-weight:400;color:var(--text-muted);">CPF: ${escapeHtml(os.cpf || 'Não informado')}</div>
                     </div>
                     <div>
-                        <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;font-weight:600;margin-bottom:2px;">VEÍCULO</div>
-                        <div style="font-size:14px;font-weight:400;color:var(--text-main);">${escapeHtml([os.marca, os.modelo].filter(Boolean).join(' ') || 'Sem veículo')}</div>
-                        <div style="font-size:13px;font-weight:400;color:var(--text-muted);margin-top:2px;">Placa: ${escapeHtml(os.placa || 'Sem placa')}</div>
+                        <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;font-weight:700;margin-bottom:6px;letter-spacing:0.5px;">VEÍCULO</div>
+                        <div style="font-size:14px;font-weight:400;color:var(--text-main);margin-bottom:2px;">${escapeHtml([os.marca, os.modelo].filter(Boolean).join(' ') || 'Sem veículo')}</div>
+                        <div style="font-size:13px;font-weight:400;color:var(--text-muted);">Placa: ${escapeHtml(os.placa || 'Sem placa')}</div>
                     </div>
                 </div>
 
-                <div style="display:grid;grid-template-columns:repeat(2, 1fr);gap:12px;">
-                    <div style="background:var(--bg-card);padding:14px;border-radius:8px;border:1px solid var(--border-color);text-align:center;">
-                        <div style="font-size:12px;color:var(--text-muted);font-weight:500;">Custo de Peças</div>
-                        <div style="font-size:16px;font-weight:700;color:#e74c3c;margin-top:4px;">${fmtBRL(pecasCusto)}</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px;">
+                    <div style="background:var(--bg-card);padding:14px 16px;border-radius:8px;border:1px solid var(--border-color);text-align:center;">
+                        <div style="font-size:12px;color:var(--text-muted);font-weight:400;margin-bottom:4px;">Mão de Obra</div>
+                        <div style="font-size:16px;font-weight:700;color:var(--text-main);">${fmtBRL(valorMaoObra)}</div>
                     </div>
-                    <div style="background:var(--bg-card);padding:14px;border-radius:8px;border:1px solid var(--border-color);text-align:center;">
-                        <div style="font-size:12px;color:var(--text-muted);font-weight:500;">Venda de Peças</div>
-                        <div style="font-size:16px;font-weight:700;color:var(--text-main);margin-top:4px;">${fmtBRL(pecasVenda)}</div>
+                    <div style="background:var(--bg-card);padding:14px 16px;border-radius:8px;border:1px solid var(--border-color);text-align:center;">
+                        <div style="font-size:12px;color:var(--text-muted);font-weight:400;margin-bottom:4px;">Venda de Peças</div>
+                        <div style="font-size:16px;font-weight:700;color:var(--text-main);">${fmtBRL(pecasVenda)}</div>
                     </div>
-                    <div style="background:var(--bg-card);padding:14px;border-radius:8px;border:1px solid var(--border-color);text-align:center;">
-                        <div style="font-size:12px;color:var(--text-muted);font-weight:500;">Frete / Variados</div>
-                        <div style="font-size:16px;font-weight:700;color:#e74c3c;margin-top:4px;">${fmtBRL(frete + gastosVariados)}</div>
+                    <div style="background:var(--bg-card);padding:14px 16px;border-radius:8px;border:1px solid var(--border-color);text-align:center;">
+                        <div style="font-size:12px;color:var(--text-muted);font-weight:400;margin-bottom:4px;">Custo de Peças</div>
+                        <div style="font-size:16px;font-weight:700;color:#e74c3c;">${fmtBRL(pecasCusto)}</div>
                     </div>
-                    <div style="background:var(--bg-card);padding:14px;border-radius:8px;border:1px solid var(--border-color);text-align:center;">
-                        <div style="font-size:12px;color:var(--text-muted);font-weight:500;">Mão de Obra</div>
-                        <div style="font-size:16px;font-weight:700;color:var(--text-main);margin-top:4px;">${fmtBRL(valorMaoObra)}</div>
+                    <div style="background:var(--bg-card);padding:14px 16px;border-radius:8px;border:1px solid var(--border-color);text-align:center;">
+                        <div style="font-size:12px;color:var(--text-muted);font-weight:400;margin-bottom:4px;">Frete / Variados</div>
+                        <div style="font-size:16px;font-weight:700;color:#e74c3c;">${fmtBRL(frete + gastosVariados)}</div>
                     </div>
-                    <div style="background:var(--bg-card);padding:14px;border-radius:8px;border:1px solid var(--border-color);text-align:center;">
-                        <div style="font-size:12px;color:var(--text-muted);font-weight:500;">Total Recebido</div>
-                        <div style="font-size:16px;font-weight:700;color:#2ecc71;margin-top:4px;">${fmtBRL(totalRecebido)}</div>
+                    <div style="background:var(--bg-card);padding:14px 16px;border-radius:8px;border:1px solid var(--border-color);text-align:center;">
+                        <div style="font-size:12px;color:var(--text-muted);font-weight:400;margin-bottom:4px;">Total Recebido</div>
+                        <div style="font-size:16px;font-weight:700;color:#2ecc71;">${fmtBRL(totalRecebido)}</div>
                     </div>
-                    <div style="background:#2ecc71;padding:14px;border-radius:8px;text-align:center;color:#fff;">
-                        <div style="font-size:12px;color:#fff;font-weight:600;opacity:0.95;">Lucro Líquido</div>
-                        <div style="font-size:18px;font-weight:800;color:#fff;margin-top:4px;">${fmtBRL(lucroLiquido)}</div>
+                    <div style="background:#2ecc71;padding:14px 16px;border-radius:8px;text-align:center;color:#ffffff;">
+                        <div style="font-size:12px;color:rgba(255,255,255,0.9);font-weight:400;margin-bottom:4px;">Lucro Líquido</div>
+                        <div style="font-size:16px;font-weight:800;color:#ffffff;">${fmtBRL(lucroLiquido)}</div>
                     </div>
                 </div>
             `;
-
-            openModal('modal-detalhe-comprovante-financeiro');
-            refreshIcons();
-        } catch (e) {
-            window.showAlert('Erro ao carregar detalhes do comprovante: ' + e.message, 'Erro');
-        }
-    };
 
             openModal('modal-detalhe-comprovante-financeiro');
             refreshIcons();
