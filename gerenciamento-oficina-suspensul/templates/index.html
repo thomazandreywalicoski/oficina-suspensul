@@ -946,13 +946,11 @@
             gap: 12px;
             min-height: 56px;
             cursor: pointer;
-            transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-            border: 1px solid transparent;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
         }
         .fin-comp-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            border-color: var(--primary);
         }
         .fin-comp-card-info {
             display: flex;
@@ -1005,13 +1003,11 @@
             gap: 12px;
             min-height: 56px;
             cursor: pointer;
-            transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
-            border: 1px solid transparent;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
         }
         .fin-caixa-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            border-color: var(--primary);
         }
         .fin-caixa-card-info {
             display: flex;
@@ -1412,6 +1408,13 @@
             }
             .modal-footer {
                 padding-bottom: 25px;
+            }
+            .financeiro-cards .fin-card-value {
+                text-align: center !important;
+                width: 100%;
+            }
+            .btn-text-extra {
+                display: none !important;
             }
             .financeiro-layout {
                 grid-template-columns: 1fr;
@@ -1929,7 +1932,7 @@
                         Todo o período
                     </button>
                     <button class="btn calendar-period-trigger" onclick="openFinancialPeriodModal()">
-                        <span id="financial-period-label">Mês - Ano</span>
+                        <span id="financial-period-label"><span class="btn-text-extra">Selecionar </span>Data</span>
                         <i data-lucide="chevron-down"></i>
                     </button>
                 </div>
@@ -3296,7 +3299,7 @@
         let financeiroPickerMes = new Date().getMonth();
         window.financeiroAnoSelecionado = financeiroAnoSelecionado;
         window.financeiroMesSelecionado = 0;
-        (function(){ const l = document.getElementById('financial-period-label'); if(l) l.innerText = 'Selecionar data'; })();
+        (function(){ const l = document.getElementById('financial-period-label'); if(l) l.innerHTML = '<span class="btn-text-extra">Selecionar </span>Data'; })();
 
         function openFinancialPeriodModal() {
             financeiroPickerAno = financeiroAnoSelecionado;
@@ -3346,7 +3349,7 @@
 
         function aplicarTodoPeriodo() {
             const label = document.getElementById('financial-period-label');
-            if (label) label.innerText = 'Selecionar data';
+            if (label) label.innerHTML = '<span class="btn-text-extra">Selecionar </span>Data';
         }
 
         let despesasAnoSelecionado = new Date().getFullYear();

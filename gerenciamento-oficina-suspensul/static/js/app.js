@@ -2738,8 +2738,8 @@
 
     window.abrirModalDetalheComprovanteFinanceiro = async function(osId) {
         try {
-            const data = await api('GET', `/api/ordens/${osId}`);
-            const os = data.ordem || data;
+            const data = await api('GET', `/api/os/${osId}`);
+            const os = data.os || data.ordem || data;
             const pecas = data.pecas || [];
             
             const body = document.getElementById('detalhe-comp-body');
@@ -3061,7 +3061,7 @@
             state.financeiroFiltroAno = new Date().getFullYear();
             state.financeiroFiltroMes = 0;
             const label = document.getElementById('financial-period-label');
-            if (label) label.innerText = 'Selecionar data';
+            if (label) label.innerHTML = '<span class="btn-text-extra">Selecionar </span>Data';
             atualizarBotoesFiltroFinanceiro();
             carregarFinanceiro();
         };
