@@ -1356,6 +1356,8 @@
         }
 
         @media (max-width: 768px) {
+            .credito-header-wrap { flex-direction: column !important; align-items: stretch !important; }
+            .credito-search-wrap { max-width: 100% !important; width: 100% !important; }
             .main-content { padding: 15px 15px 80px 15px; }
             .sidebar-toggle { left: 15px; }
             body.sidebar-closed .sidebar-toggle {
@@ -2070,18 +2072,18 @@
             <div class="dividas-cards-grid" id="credito-fornecedores-cards-grid" style="margin-bottom: 24px;">
             </div>
 
-            <!-- Histórico com as atualizações de crédito (Estilo Movimentações do Caixa) -->
-            <div class="card" style="padding: 20px; background: var(--bg-card); border-radius: var(--border-radius);">
-                <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom: 16px;">
-                    <h4 style="margin:0; font-size:15px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-main);">ATUALIZAÇÕES DE CRÉDITO</h4>
-                    <div style="position:relative; width:100%; max-width:280px;">
-                        <input type="text" id="credito-search" placeholder="Buscar..." oninput="carregarCreditoMovimentacoes(this.value)" style="width:100%; padding:8px 36px 8px 12px; background:var(--bg-input); color:var(--text-main); border:1px solid var(--border-color); border-radius:var(--border-radius); font-size:13px;">
-                        <i data-lucide="search" class="input-icon-right" style="top:50%; transform:translateY(-50%); right:10px;"></i>
-                    </div>
+            <!-- Cabeçalho de Atualizações de Crédito (Separado dos cards da lista) -->
+            <div class="credito-header-wrap" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom: 16px;">
+                <h4 style="margin:0; font-size:15px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-main);">ATUALIZAÇÕES DE CRÉDITO</h4>
+                <div class="credito-search-wrap" style="position:relative; width:100%; max-width:280px;">
+                    <input type="text" id="credito-search" placeholder="Buscar..." oninput="carregarCreditoMovimentacoes(this.value)" style="width:100%; padding:8px 36px 8px 12px; background:var(--bg-input); color:var(--text-main); border:1px solid var(--border-color); border-radius:var(--border-radius); font-size:13px;">
+                    <i data-lucide="search" class="input-icon-right" style="top:50%; transform:translateY(-50%); right:10px;"></i>
                 </div>
-                <div id="credito-movimentacoes-lista" style="display:flex; flex-direction:column; gap:8px;">
-                    <div style="text-align:center; color:#777; padding:24px;">Carregando histórico de crédito...</div>
-                </div>
+            </div>
+
+            <!-- Lista de Cards de Atualização de Crédito (Separados) -->
+            <div id="credito-movimentacoes-lista" style="display:flex; flex-direction:column; gap:8px;">
+                <div style="text-align:center; color:#777; padding:24px; background:var(--bg-card); border-radius:12px;">Carregando histórico de crédito...</div>
             </div>
         </div>
 
@@ -4663,8 +4665,7 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
                     <div>Status: <span style="color:#22c55e; font-weight:700;">Ativo</span></div>
                 </div>
             </div>
-            <div class="modal-footer" style="border-top:1px solid #1f1f1f; justify-content:space-between;">
-                <button class="btn btn-secondary btn-action-red" id="btn-excluir-detalhe-credito" style="color:#ef4444; border-color:#ef4444;" title="Excluir movimentação">Excluir</button>
+            <div class="modal-footer" style="border-top:1px solid #1f1f1f; justify-content:flex-end;">
                 <button class="btn btn-secondary" onclick="closeModal('modal-detalhe-credito')">Fechar</button>
             </div>
         </div>

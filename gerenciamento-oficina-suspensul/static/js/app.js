@@ -3507,25 +3507,27 @@
             const rows = await api('GET', url);
             window._creditoMovimentacoesCache = rows || [];
             if (!rows || rows.length === 0) {
-                container.innerHTML = '<div style="text-align:center;color:#777;padding:24px;">Nenhuma movimentação de crédito encontrada.</div>';
+                container.innerHTML = '<div style="text-align:center;color:#777;padding:24px;background:var(--bg-card);border-radius:12px;">Nenhuma movimentação de crédito encontrada.</div>';
                 return;
             }
             container.innerHTML = rows.map(r => {
                 const isEntrada = r.tipo === 'entrada';
                 const badgeBg = isEntrada ? '#22c55e' : '#ef4444';
-                const badgeColor = isEntrada ? '#000' : '#fff';
                 const badgeText = isEntrada ? 'ENTRADA' : 'SAÍDA';
                 const valorCor = isEntrada ? '#22c55e' : '#ef4444';
                 const sinal = isEntrada ? '+' : '-';
+                const descLimpa = (r.descricao || '').trim();
+                const descFormatada = descLimpa.length > 30 ? descLimpa.slice(0, 30) + '...' : descLimpa;
+
                 return `
                 <div onclick="abrirDetalheCredito(${r.id})" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; gap: 14px; cursor: pointer; transition: transform 0.15s ease, border-color 0.15s ease;" onmouseover="this.style.borderColor='#333';this.style.transform='translateY(-1px)'" onmouseout="this.style.borderColor='var(--border-color)';this.style.transform='none'">
                     <div style="display: flex; align-items: center; gap: 14px; min-width: 0; flex: 1;">
-                        <span style="padding: 5px 12px; font-size: 11px; font-weight: 800; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; background: ${badgeBg}; color: ${badgeColor}; flex-shrink: 0;">
+                        <span style="padding: 5px 12px; font-size: 11px; font-weight: 800; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; background: ${badgeBg}; color: #ffffff; flex-shrink: 0;">
                             ${badgeText}
                         </span>
                         <div style="min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                            <span style="font-weight: 700; color: var(--text-main); font-size: 14px;">${escapeHtml(r.fornecedor_nome)}</span>
-                            <span style="color: var(--text-muted); font-size: 14px; margin-left: 6px;">- ${escapeHtml(r.descricao)}</span>
+                            <span style="font-weight: 400; color: var(--text-main); font-size: 14px;">${escapeHtml(r.fornecedor_nome)}</span>
+                            <span style="color: var(--text-muted); font-size: 14px; margin-left: 8px;" title="${escapeHtml(r.descricao)}">${escapeHtml(descFormatada)}</span>
                         </div>
                     </div>
                     <div style="display: flex; align-items: center; gap: 24px; flex-shrink: 0;">
@@ -3537,7 +3539,7 @@
                 </div>`;
             }).join('');
         } catch(e) {
-            container.innerHTML = '<div style="text-align:center;color:red;padding:24px;">Erro ao carregar movimentações.</div>';
+            container.innerHTML = '<div style="text-align:center;color:red;padding:24px;background:var(--bg-card);border-radius:12px;">Erro ao carregar movimentações.</div>';
         }
     }
 
@@ -3550,7 +3552,7 @@
         if (badge) {
             badge.textContent = isEntrada ? 'ENTRADA DO CRÉDITO' : 'SAÍDA DO CRÉDITO';
             badge.style.background = isEntrada ? '#22c55e' : '#ef4444';
-            badge.style.color = isEntrada ? '#000' : '#fff';
+            badge.style.color = '#ffffff';
         }
         if (valor) {
             valor.textContent = (isEntrada ? '+' : '-') + fmtBRL(item.valor);
@@ -3560,14 +3562,6 @@
         document.getElementById('detalhe-credito-fornecedor').textContent = item.fornecedor_nome;
         document.getElementById('detalhe-credito-descricao').textContent = item.descricao;
         document.getElementById('detalhe-credito-id').textContent = '#' + item.id;
-        
-        const btnExcluir = document.getElementById('btn-excluir-detalhe-credito');
-        if (btnExcluir) {
-            btnExcluir.onclick = function() {
-                closeModal('modal-detalhe-credito');
-                excluirMovimentacaoCredito(item.id);
-            };
-        }
         openModal('modal-detalhe-credito');
     };
 
