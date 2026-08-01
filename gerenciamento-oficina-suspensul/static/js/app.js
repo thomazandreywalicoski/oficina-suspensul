@@ -3588,11 +3588,15 @@
                 const fornecedores = await api('GET', '/api/fornecedores');
                 fornecedores.sort((a, b) => a.nome.localeCompare(b.nome));
                 grid.innerHTML = fornecedores.map(f => {
-                    const inicial = (f.nome || 'F')[0].toUpperCase();
+                    const nomeCurto = (f.nome || '')
+                        .replace(/\s*auto\s*peças?/gi, '')
+                        .replace(/\s*autopeças?/gi, '')
+                        .trim() || f.nome;
+                    const inicial = (nomeCurto || 'F')[0].toUpperCase();
                     return `
                     <div onclick="selecionarFornecedorCredito(${f.id}, '${escapeHtml(f.nome)}')" style="background:var(--bg-card);border:1px solid #2a2a2a;border-radius:8px;padding:16px 8px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:var(--transition);" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='#2a2a2a'">
                         <div style="width:40px;height:40px;border-radius:50%;background:var(--primary);color:#000;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;">${inicial}</div>
-                        <span style="font-size:12px;font-weight:600;color:var(--text-main);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;" title="${escapeHtml(f.nome)}">${escapeHtml(f.nome)}</span>
+                        <span style="font-size:13px;font-weight:600;color:var(--text-main);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;" title="${escapeHtml(f.nome)}">${escapeHtml(nomeCurto)}</span>
                     </div>`;
                 }).join('');
             } catch(e) {
