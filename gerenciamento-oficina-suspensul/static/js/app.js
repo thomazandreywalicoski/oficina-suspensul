@@ -3515,63 +3515,83 @@
         }
     }
 
-    window.setTipoMovimentacaoCredito = function(tipo) {
-        document.getElementById('credito-tipo').value = tipo;
-        const btnEntrada = document.getElementById('btn-credito-tipo-entrada');
-        const btnSaida = document.getElementById('btn-credito-tipo-saida');
-        if (tipo === 'entrada') {
-            btnEntrada.style.background = '#22c55e';
-            btnEntrada.style.color = '#000';
-            btnSaida.style.background = 'var(--bg-input)';
-            btnSaida.style.color = 'var(--text-muted)';
-        } else {
-            btnSaida.style.background = '#ef4444';
-            btnSaida.style.color = '#fff';
-            btnEntrada.style.background = 'var(--bg-input)';
-            btnEntrada.style.color = 'var(--text-muted)';
-        }
+    window.abrirModalCreditoSeletor = function() {
+        openModal('modal-credito-seletor');
     };
 
-    window.abrirModalMovimentacaoCredito = async function() {
-        setTipoMovimentacaoCredito('entrada');
-        document.getElementById('credito-descricao').value = '';
-        document.getElementById('credito-valor').value = '';
-        document.getElementById('credito-data').value = formatLocalDateISO(new Date());
+    async function carregarDropdownFornecedores(selectId) {
+        const select = document.getElementById(selectId);
+        if (!select) return;
+        try {
+            const fornecedores = await api('GET', '/api/fornecedores');
+            fornecedores.sort((a, b) => a.nome.localeCompare(b.nome));
+            select.innerHTML = '<option value="">Selecione o fornecedor...</option>' +
+                fornecedores.map(f => `<option value="${f.id}">${escapeHtml(f.nome)}</option>`).join('');
+        } catch(_) {}
+    }
 
-        const selectFornecedor = document.getElementById('credito-fornecedor-id');
-        if (selectFornecedor) {
-            try {
-                const fornecedores = await api('GET', '/api/fornecedores');
-                fornecedores.sort((a, b) => a.nome.localeCompare(b.nome));
-                selectFornecedor.innerHTML = '<option value="">Selecione o fornecedor...</option>' +
-                    fornecedores.map(f => `<option value="${f.id}">${escapeHtml(f.nome)}</option>`).join('');
-            } catch(_) {}
-        }
-        openModal('modal-movimentacao-credito');
+    window.abrirModalCreditoEntrada = async function() {
+        document.getElementById('credito-entrada-descricao').value = '';
+        document.getElementById('credito-entrada-valor').value = '';
+        document.getElementById('credito-entrada-data').value = formatLocalDateISO(new Date());
+        await carregarDropdownFornecedores('credito-entrada-fornecedor-id');
+        openModal('modal-credito-entrada');
     };
 
-    window.salvarMovimentacaoCredito = async function() {
-        const tipo = document.getElementById('credito-tipo').value;
-        const fornecedor_id = document.getElementById('credito-fornecedor-id').value;
-        const descricao = document.getElementById('credito-descricao').value.trim();
-        const valor = parseFloat(document.getElementById('credito-valor').value) || 0;
-        const data_movimentacao = document.getElementById('credito-data').value;
+    window.abrirModalCreditoSaida = async function() {
+        document.getElementById('credito-saida-descricao').value = '';
+        document.getElementById('credito-saida-valor').value = '';
+        document.getElementById('credito-saida-data').value = formatLocalDateISO(new Date());
+        await carregarDropdownFornecedores('credito-saida-fornecedor-id');
+        openModal('modal-credito-saida');
+    };
+
+    window.salvarCreditoEntrada = async function() {
+        const fornecedor_id = document.getElementById('credito-entrada-fornecedor-id').value;
+        const descricao = document.getElementById('credito-entrada-descricao').value.trim();
+        const valor = parseFloat(document.getElementById('credito-entrada-valor').value) || 0;
+        const data_movimentacao = document.getElementById('credito-entrada-data').value;
 
         if (!fornecedor_id) return showToast('Selecione o fornecedor', true);
-        if (!descricao) return showToast('Preencha o motivo/descrição', true);
+        if (!descricao) return showToast('Preencha o motivo/descrição da entrada', true);
         if (valor <= 0) return showToast('Informe um valor válido', true);
         if (!data_movimentacao) return showToast('Informe a data', true);
 
         try {
             await api('POST', '/api/creditos/movimentacoes', {
                 fornecedor_id: parseInt(fornecedor_id, 10),
-                tipo,
+                tipo: 'entrada',
                 descricao,
                 valor,
                 data_movimentacao
             });
-            showToast('Movimentação de crédito registrada!');
-            closeModal('modal-movimentacao-credito');
+            showToast('Entrada de crédito registrada!');
+            closeModal('modal-credito-entrada');
+            await carregarCreditos();
+        } catch(e) { window.showAlert(e.message, 'Erro'); }
+    };
+
+    window.salvarCreditoSaida = async function() {
+        const fornecedor_id = document.getElementById('credito-saida-fornecedor-id').value;
+        const descricao = document.getElementById('credito-saida-descricao').value.trim();
+        const valor = parseFloat(document.getElementById('credito-saida-valor').value) || 0;
+        const data_movimentacao = document.getElementById('credito-saida-data').value;
+
+        if (!fornecedor_id) return showToast('Selecione o fornecedor', true);
+        if (!descricao) return showToast('Preencha o motivo/descrição da saída', true);
+        if (valor <= 0) return showToast('Informe um valor válido', true);
+        if (!data_movimentacao) return showToast('Informe a data', true);
+
+        try {
+            await api('POST', '/api/creditos/movimentacoes', {
+                fornecedor_id: parseInt(fornecedor_id, 10),
+                tipo: 'saida',
+                descricao,
+                valor,
+                data_movimentacao
+            });
+            showToast('Saída de crédito registrada!');
+            closeModal('modal-credito-saida');
             await carregarCreditos();
         } catch(e) { window.showAlert(e.message, 'Erro'); }
     };

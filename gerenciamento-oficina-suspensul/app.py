@@ -1566,8 +1566,24 @@ def excluir_divida(did):
 
 # ===================== API: CRÉDITOS DE FORNECEDORES =====================
 
+def ensure_creditos_table():
+    try:
+        query("""CREATE TABLE IF NOT EXISTS creditos_movimentacoes (
+                     id INT AUTO_INCREMENT PRIMARY KEY,
+                     fornecedor_id INT NOT NULL,
+                     tipo ENUM('entrada', 'saida') NOT NULL DEFAULT 'entrada',
+                     descricao VARCHAR(255) NOT NULL,
+                     valor DECIMAL(10,2) NOT NULL,
+                     data_movimentacao DATE NOT NULL,
+                     criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
+                     FOREIGN KEY (fornecedor_id) REFERENCES fornecedores(id) ON DELETE CASCADE
+                   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci""", commit=True)
+    except Exception as e:
+        print("Erro ao garantir tabela creditos_movimentacoes:", e)
+
 @app.route('/api/creditos/resumo', methods=['GET'])
 def creditos_resumo():
+    ensure_creditos_table()
     rows = query("""
         SELECT f.id, f.nome,
                COALESCE(SUM(CASE WHEN cm.tipo = 'entrada' THEN cm.valor ELSE -cm.valor END), 0) AS saldo_credito
@@ -1582,6 +1598,7 @@ def creditos_resumo():
 
 @app.route('/api/creditos/movimentacoes', methods=['GET'])
 def listar_creditos_movimentacoes():
+    ensure_creditos_table()
     fornecedor_id = request.args.get('fornecedor_id')
     q = request.args.get('q', '').strip()
     where = []
@@ -1604,6 +1621,7 @@ def listar_creditos_movimentacoes():
 
 @app.route('/api/creditos/movimentacoes', methods=['POST'])
 def criar_credito_movimentacao():
+    ensure_creditos_table()
     d = request.json
     fornecedor_id = d.get('fornecedor_id')
     tipo = str(d.get('tipo', 'entrada')).lower()
