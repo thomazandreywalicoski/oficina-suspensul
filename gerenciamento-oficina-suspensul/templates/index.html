@@ -2070,31 +2070,17 @@
             <div class="dividas-cards-grid" id="credito-fornecedores-cards-grid" style="margin-bottom: 24px;">
             </div>
 
-            <!-- Tabela com as atualizações de crédito -->
-            <div class="card" style="padding:0; overflow:hidden;">
-                <div style="padding:16px 20px; border-bottom:1px solid var(--border-color); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
-                    <h4 style="margin:0; font-size:16px; font-weight:700; color:var(--text-main);">Atualizações de Crédito</h4>
+            <!-- Histórico com as atualizações de crédito (Estilo Movimentações do Caixa) -->
+            <div class="card" style="padding: 20px; background: var(--bg-card); border-radius: var(--border-radius);">
+                <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom: 16px;">
+                    <h4 style="margin:0; font-size:15px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-main);">ATUALIZAÇÕES DE CRÉDITO</h4>
                     <div style="position:relative; width:100%; max-width:280px;">
                         <input type="text" id="credito-search" placeholder="Buscar..." oninput="carregarCreditoMovimentacoes(this.value)" style="width:100%; padding:8px 36px 8px 12px; background:var(--bg-input); color:var(--text-main); border:1px solid var(--border-color); border-radius:var(--border-radius); font-size:13px;">
                         <i data-lucide="search" class="input-icon-right" style="top:50%; transform:translateY(-50%); right:10px;"></i>
                     </div>
                 </div>
-                <div class="table-container" style="box-shadow:none; border-radius:0;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Data</th>
-                                <th>Tipo</th>
-                                <th>Fornecedor</th>
-                                <th>Motivo / Descrição</th>
-                                <th style="text-align:right;">Valor</th>
-                                <th style="text-align:center;">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="credito-movimentacoes-tbody">
-                            <tr><td colspan="6" style="text-align:center;color:#777;padding:24px;">Carregando histórico de crédito...</td></tr>
-                        </tbody>
-                    </table>
+                <div id="credito-movimentacoes-lista" style="display:flex; flex-direction:column; gap:8px;">
+                    <div style="text-align:center; color:#777; padding:24px;">Carregando histórico de crédito...</div>
                 </div>
             </div>
         </div>
@@ -4575,9 +4561,8 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
             <div class="modal-body">
                 <div class="form-group">
                     <label>Fornecedor</label>
-                    <select id="credito-entrada-fornecedor-id" style="width:100%; height:46px; background:var(--bg-input); color:var(--text-main); border:1px solid var(--border-color); border-radius:10px; padding:0 14px; font-size:14px; outline:none;">
-                        <option value="">Selecione o fornecedor...</option>
-                    </select>
+                    <input type="text" id="credito-entrada-fornecedor-nome" placeholder="Selecione um fornecedor..." readonly style="cursor:pointer; background:var(--bg-input);" onclick="abrirSeletorFornecedorCredito('entrada')">
+                    <input type="hidden" id="credito-entrada-fornecedor-id">
                 </div>
                 <div class="form-group">
                     <label>Motivo / Descrição da Entrada</label>
@@ -4611,9 +4596,8 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
             <div class="modal-body">
                 <div class="form-group">
                     <label>Fornecedor</label>
-                    <select id="credito-saida-fornecedor-id" style="width:100%; height:46px; background:var(--bg-input); color:var(--text-main); border:1px solid var(--border-color); border-radius:10px; padding:0 14px; font-size:14px; outline:none;">
-                        <option value="">Selecione o fornecedor...</option>
-                    </select>
+                    <input type="text" id="credito-saida-fornecedor-nome" placeholder="Selecione um fornecedor..." readonly style="cursor:pointer; background:var(--bg-input);" onclick="abrirSeletorFornecedorCredito('saida')">
+                    <input type="hidden" id="credito-saida-fornecedor-id">
                 </div>
                 <div class="form-group">
                     <label>Motivo / Descrição da Saída</label>
@@ -4633,6 +4617,55 @@ Gostaría de solicitar um orçamento para as peças/produtos do veículo abaixo<
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeModal('modal-credito-saida')">Cancelar</button>
                 <button class="btn btn-primary" onclick="salvarCreditoSaida()" style="background:#ef4444; color:#fff;">Salvar Saída</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL: Selecionar Fornecedor (Crédito) ===== -->
+    <div class="modal-overlay" id="modal-selecionar-fornecedor-credito">
+        <div class="modal" style="max-width:440px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Selecionar Fornecedor</h3>
+                <button class="btn-icon" onclick="closeModal('modal-selecionar-fornecedor-credito')"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <div id="fornecedor-credito-picker-grid" style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; max-height:360px; overflow-y:auto; padding:2px;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL: Detalhe da Movimentação de Crédito ===== -->
+    <div class="modal-overlay" id="modal-detalhe-credito">
+        <div class="modal" style="max-width:460px;">
+            <div class="modal-header" style="border-bottom:1px solid #1f1f1f;">
+                <h3 class="modal-title">Detalhe da Movimentação</h3>
+                <button class="btn-icon" onclick="closeModal('modal-detalhe-credito')"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body" style="padding:24px 20px; display:flex; flex-direction:column; align-items:center; text-align:center;">
+                <span id="detalhe-credito-badge" style="padding:6px 16px; border-radius:20px; font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:14px; display:inline-block;">ENTRADA DO CRÉDITO</span>
+                <div id="detalhe-credito-valor" style="font-size:32px; font-weight:800; margin-bottom:6px;">+R$ 0,00</div>
+                <div style="font-size:14px; color:var(--text-muted); margin-bottom:20px;">Data: <span id="detalhe-credito-data" style="color:var(--text-main); font-weight:600;">--/--/----</span></div>
+                
+                <div style="width:100%; background:#161616; border-radius:12px; padding:16px; text-align:left; margin-bottom:20px; border:1px solid #222;">
+                    <div style="margin-bottom:12px;">
+                        <div style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">FORNECEDOR</div>
+                        <div id="detalhe-credito-fornecedor" style="font-size:15px; font-weight:700; color:var(--text-main);">--</div>
+                    </div>
+                    <div>
+                        <div style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px;">MOTIVO / DESCRIÇÃO</div>
+                        <div id="detalhe-credito-descricao" style="font-size:14px; color:var(--text-main); line-height:1.4;">--</div>
+                    </div>
+                </div>
+
+                <div style="width:100%; display:flex; justify-content:space-between; align-items:center; font-size:13px; color:var(--text-muted);">
+                    <div>ID da Movimentação: <span id="detalhe-credito-id" style="color:var(--text-main); font-weight:700;">#0</span></div>
+                    <div>Status: <span style="color:#22c55e; font-weight:700;">Ativo</span></div>
+                </div>
+            </div>
+            <div class="modal-footer" style="border-top:1px solid #1f1f1f; justify-content:space-between;">
+                <button class="btn btn-secondary btn-action-red" id="btn-excluir-detalhe-credito" style="color:#ef4444; border-color:#ef4444;" title="Excluir movimentação">Excluir</button>
+                <button class="btn btn-secondary" onclick="closeModal('modal-detalhe-credito')">Fechar</button>
             </div>
         </div>
     </div>

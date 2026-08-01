@@ -3465,14 +3465,32 @@
                 grid.innerHTML = '<div style="grid-column: 1 / -1; color: var(--text-muted); font-size: 14px; text-align: center; padding: 16px; background: var(--bg-card); border-radius: var(--border-radius);">Nenhum fornecedor cadastrado.</div>';
                 return;
             }
+
+            const ordemDesejada = ['scherer', 'cj', 'dicuto', 'rene', 'jrc', '111'];
+            function getFornecedorOrderIdx(nome) {
+                const lower = (nome || '').toLowerCase().trim();
+                for (let i = 0; i < ordemDesejada.length; i++) {
+                    if (lower.startsWith(ordemDesejada[i]) || lower.includes(ordemDesejada[i])) {
+                        return i;
+                    }
+                }
+                return 999;
+            }
+            rows.sort((a, b) => {
+                const idxA = getFornecedorOrderIdx(a.nome);
+                const idxB = getFornecedorOrderIdx(b.nome);
+                if (idxA !== idxB) return idxA - idxB;
+                return a.nome.localeCompare(b.nome);
+            });
+
             grid.innerHTML = rows.map(f => {
                 const saldo = Number(f.saldo_credito || 0);
-                const corClass = saldo > 0 ? 'positivo' : (saldo < 0 ? 'negativo' : '');
+                const corEstilo = saldo > 0 ? 'color: #22c55e;' : (saldo < 0 ? 'color: #ef4444;' : 'color: var(--text-muted);');
                 return `
                 <div class="divida-person-card" style="cursor:default;">
                     <div class="divida-person-icon"><i data-lucide="building-2"></i></div>
                     <div class="divida-person-name" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${escapeHtml(f.nome)}">${escapeHtml(f.nome)}</div>
-                    <div class="divida-person-total ${corClass}" style="font-size:18px; font-weight:800;">${fmtBRL(saldo)}</div>
+                    <div class="divida-person-total" style="font-size:18px; font-weight:800; ${corEstilo}">${fmtBRL(saldo)}</div>
                 </div>`;
             }).join('');
             refreshIcons();
@@ -3482,67 +3500,126 @@
     }
 
     async function carregarCreditoMovimentacoes(busca) {
-        const tbody = document.getElementById('credito-movimentacoes-tbody');
-        if (!tbody) return;
+        const container = document.getElementById('credito-movimentacoes-lista');
+        if (!container) return;
         try {
             const url = '/api/creditos/movimentacoes' + (busca ? '?q=' + encodeURIComponent(busca.trim()) : '');
             const rows = await api('GET', url);
+            window._creditoMovimentacoesCache = rows || [];
             if (!rows || rows.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#777;padding:24px;">Nenhuma movimentação de crédito encontrada.</td></tr>';
+                container.innerHTML = '<div style="text-align:center;color:#777;padding:24px;">Nenhuma movimentação de crédito encontrada.</div>';
                 return;
             }
-            tbody.innerHTML = rows.map(r => {
+            container.innerHTML = rows.map(r => {
                 const isEntrada = r.tipo === 'entrada';
-                const badgeClass = isEntrada ? 'badge-sucesso' : 'badge-danger';
-                const badgeText = isEntrada ? 'Entrada (+)' : 'Saída (-)';
+                const badgeBg = isEntrada ? '#22c55e' : '#ef4444';
+                const badgeColor = isEntrada ? '#000' : '#fff';
+                const badgeText = isEntrada ? 'ENTRADA' : 'SAÍDA';
                 const valorCor = isEntrada ? '#22c55e' : '#ef4444';
                 const sinal = isEntrada ? '+' : '-';
                 return `
-                <tr>
-                    <td>${fmtDataBR(r.data_movimentacao)}</td>
-                    <td><span class="badge ${badgeClass}" style="font-weight:700;">${badgeText}</span></td>
-                    <td style="font-weight:600;">${escapeHtml(r.fornecedor_nome)}</td>
-                    <td>${escapeHtml(r.descricao)}</td>
-                    <td style="text-align:right; font-weight:700; color:${valorCor};">${sinal} ${fmtBRL(r.valor)}</td>
-                    <td style="text-align:center;">
-                        <button class="btn-icon btn-action-red" onclick="excluirMovimentacaoCredito(${r.id})" title="Excluir"><i data-lucide="trash-2"></i></button>
-                    </td>
-                </tr>`;
+                <div onclick="abrirDetalheCredito(${r.id})" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; gap: 14px; cursor: pointer; transition: transform 0.15s ease, border-color 0.15s ease;" onmouseover="this.style.borderColor='#333';this.style.transform='translateY(-1px)'" onmouseout="this.style.borderColor='var(--border-color)';this.style.transform='none'">
+                    <div style="display: flex; align-items: center; gap: 14px; min-width: 0; flex: 1;">
+                        <span style="padding: 5px 12px; font-size: 11px; font-weight: 800; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; background: ${badgeBg}; color: ${badgeColor}; flex-shrink: 0;">
+                            ${badgeText}
+                        </span>
+                        <div style="min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                            <span style="font-weight: 700; color: var(--text-main); font-size: 14px;">${escapeHtml(r.fornecedor_nome)}</span>
+                            <span style="color: var(--text-muted); font-size: 14px; margin-left: 6px;">- ${escapeHtml(r.descricao)}</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 24px; flex-shrink: 0;">
+                        <span style="color: var(--text-muted); font-size: 13px; font-weight: 500;">${fmtDataBR(r.data_movimentacao)}</span>
+                        <span style="font-size: 15px; font-weight: 800; color: ${valorCor}; min-width: 90px; text-align: right;">
+                            ${sinal}${fmtBRL(r.valor)}
+                        </span>
+                    </div>
+                </div>`;
             }).join('');
-            refreshIcons();
         } catch(e) {
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:red;padding:24px;">Erro ao carregar movimentações.</td></tr>';
+            container.innerHTML = '<div style="text-align:center;color:red;padding:24px;">Erro ao carregar movimentações.</div>';
         }
     }
+
+    window.abrirDetalheCredito = function(id) {
+        const item = (window._creditoMovimentacoesCache || []).find(r => r.id === id);
+        if (!item) return;
+        const isEntrada = item.tipo === 'entrada';
+        const badge = document.getElementById('detalhe-credito-badge');
+        const valor = document.getElementById('detalhe-credito-valor');
+        if (badge) {
+            badge.textContent = isEntrada ? 'ENTRADA DO CRÉDITO' : 'SAÍDA DO CRÉDITO';
+            badge.style.background = isEntrada ? '#22c55e' : '#ef4444';
+            badge.style.color = isEntrada ? '#000' : '#fff';
+        }
+        if (valor) {
+            valor.textContent = (isEntrada ? '+' : '-') + fmtBRL(item.valor);
+            valor.style.color = isEntrada ? '#22c55e' : '#ef4444';
+        }
+        document.getElementById('detalhe-credito-data').textContent = fmtDataBR(item.data_movimentacao);
+        document.getElementById('detalhe-credito-fornecedor').textContent = item.fornecedor_nome;
+        document.getElementById('detalhe-credito-descricao').textContent = item.descricao;
+        document.getElementById('detalhe-credito-id').textContent = '#' + item.id;
+        
+        const btnExcluir = document.getElementById('btn-excluir-detalhe-credito');
+        if (btnExcluir) {
+            btnExcluir.onclick = function() {
+                closeModal('modal-detalhe-credito');
+                excluirMovimentacaoCredito(item.id);
+            };
+        }
+        openModal('modal-detalhe-credito');
+    };
 
     window.abrirModalCreditoSeletor = function() {
         openModal('modal-credito-seletor');
     };
 
-    async function carregarDropdownFornecedores(selectId) {
-        const select = document.getElementById(selectId);
-        if (!select) return;
-        try {
-            const fornecedores = await api('GET', '/api/fornecedores');
-            fornecedores.sort((a, b) => a.nome.localeCompare(b.nome));
-            select.innerHTML = '<option value="">Selecione o fornecedor...</option>' +
-                fornecedores.map(f => `<option value="${f.id}">${escapeHtml(f.nome)}</option>`).join('');
-        } catch(_) {}
-    }
+    window.abrirSeletorFornecedorCredito = async function(tipo) {
+        window._creditoTargetTipo = tipo;
+        const grid = document.getElementById('fornecedor-credito-picker-grid');
+        if (grid) {
+            grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; color:#777; padding:16px;">Carregando...</div>';
+            openModal('modal-selecionar-fornecedor-credito');
+            try {
+                const fornecedores = await api('GET', '/api/fornecedores');
+                fornecedores.sort((a, b) => a.nome.localeCompare(b.nome));
+                grid.innerHTML = fornecedores.map(f => {
+                    const inicial = (f.nome || 'F')[0].toUpperCase();
+                    return `
+                    <div onclick="selecionarFornecedorCredito(${f.id}, '${escapeHtml(f.nome)}')" style="background:var(--bg-card);border:1px solid #2a2a2a;border-radius:8px;padding:16px 8px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;transition:var(--transition);" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='#2a2a2a'">
+                        <div style="width:40px;height:40px;border-radius:50%;background:var(--primary);color:#000;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;">${inicial}</div>
+                        <span style="font-size:12px;font-weight:600;color:var(--text-main);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;" title="${escapeHtml(f.nome)}">${escapeHtml(f.nome)}</span>
+                    </div>`;
+                }).join('');
+            } catch(e) {
+                grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; color:red; padding:16px;">Erro ao carregar fornecedores.</div>';
+            }
+        }
+    };
 
-    window.abrirModalCreditoEntrada = async function() {
+    window.selecionarFornecedorCredito = function(id, nome) {
+        const tipo = window._creditoTargetTipo || 'entrada';
+        document.getElementById(`credito-${tipo}-fornecedor-id`).value = id;
+        document.getElementById(`credito-${tipo}-fornecedor-nome`).value = nome;
+        closeModal('modal-selecionar-fornecedor-credito');
+    };
+
+    window.abrirModalCreditoEntrada = function() {
+        document.getElementById('credito-entrada-fornecedor-id').value = '';
+        document.getElementById('credito-entrada-fornecedor-nome').value = '';
         document.getElementById('credito-entrada-descricao').value = '';
         document.getElementById('credito-entrada-valor').value = '';
         document.getElementById('credito-entrada-data').value = formatLocalDateISO(new Date());
-        await carregarDropdownFornecedores('credito-entrada-fornecedor-id');
         openModal('modal-credito-entrada');
     };
 
-    window.abrirModalCreditoSaida = async function() {
+    window.abrirModalCreditoSaida = function() {
+        document.getElementById('credito-saida-fornecedor-id').value = '';
+        document.getElementById('credito-saida-fornecedor-nome').value = '';
         document.getElementById('credito-saida-descricao').value = '';
         document.getElementById('credito-saida-valor').value = '';
         document.getElementById('credito-saida-data').value = formatLocalDateISO(new Date());
-        await carregarDropdownFornecedores('credito-saida-fornecedor-id');
         openModal('modal-credito-saida');
     };
 
