@@ -1585,15 +1585,15 @@ def ensure_creditos_table():
 def creditos_resumo():
     ensure_creditos_table()
     rows = query("""
-        SELECT f.id, f.nome,
+        SELECT f.id, f.nome, f.ativo,
                COALESCE(SUM(CASE WHEN cm.tipo = 'entrada' THEN cm.valor ELSE -cm.valor END), 0) AS saldo_credito
         FROM fornecedores f
         LEFT JOIN creditos_movimentacoes cm ON f.id = cm.fornecedor_id
-        WHERE f.ativo = 1 OR cm.id IS NOT NULL
-        GROUP BY f.id, f.nome
-        HAVING saldo_credito != 0 OR f.ativo = 1
+        GROUP BY f.id, f.nome, f.ativo
         ORDER BY f.nome ASC
     """, fetch=True)
+    if rows:
+        rows = [r for r in rows if r.get('ativo') == 1 or r.get('saldo_credito') != 0]
     return jsonify(to_json(rows))
 
 @app.route('/api/creditos/movimentacoes', methods=['GET'])
