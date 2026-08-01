@@ -403,6 +403,7 @@
                 case 'orcamento': await carregarOrcamento(); break;
                 case 'financeiro': await carregarFinanceiro(); break;
                 case 'dividas': await carregarDividas(); break;
+                case 'credito': await carregarCreditos(); break;
                 case 'estoque': await carregarEstoque(); break;
                 case 'configuracoes': await carregarConfig(); break;
                 case 'agendamentos':
@@ -3448,4 +3449,143 @@
             } catch(e) { window.showAlert(e.message, 'Erro'); }
         });
     };
+
+    // ===================== CRÉDITO EM FORNECEDORES =====================
+    async function carregarCreditos() {
+        await carregarCreditoResumo();
+        await carregarCreditoMovimentacoes(document.getElementById('credito-search')?.value || '');
+    }
+
+    async function carregarCreditoResumo() {
+        const grid = document.getElementById('credito-fornecedores-cards-grid');
+        if (!grid) return;
+        try {
+            const rows = await api('GET', '/api/creditos/resumo');
+            if (!rows || rows.length === 0) {
+                grid.innerHTML = '<div style="grid-column: 1 / -1; color: var(--text-muted); font-size: 14px; text-align: center; padding: 16px; background: var(--bg-card); border-radius: var(--border-radius);">Nenhum fornecedor cadastrado.</div>';
+                return;
+            }
+            grid.innerHTML = rows.map(f => {
+                const saldo = Number(f.saldo_credito || 0);
+                const corClass = saldo > 0 ? 'positivo' : (saldo < 0 ? 'negativo' : '');
+                return `
+                <div class="divida-person-card" style="cursor:default;">
+                    <div class="divida-person-icon"><i data-lucide="building-2"></i></div>
+                    <div class="divida-person-name" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;" title="${escapeHtml(f.nome)}">${escapeHtml(f.nome)}</div>
+                    <div class="divida-person-total ${corClass}" style="font-size:18px; font-weight:800;">${fmtBRL(saldo)}</div>
+                </div>`;
+            }).join('');
+            refreshIcons();
+        } catch(e) {
+            grid.innerHTML = '<div style="color:red; padding:12px;">Erro ao carregar resumo de créditos</div>';
+        }
+    }
+
+    async function carregarCreditoMovimentacoes(busca) {
+        const tbody = document.getElementById('credito-movimentacoes-tbody');
+        if (!tbody) return;
+        try {
+            const url = '/api/creditos/movimentacoes' + (busca ? '?q=' + encodeURIComponent(busca.trim()) : '');
+            const rows = await api('GET', url);
+            if (!rows || rows.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#777;padding:24px;">Nenhuma movimentação de crédito encontrada.</td></tr>';
+                return;
+            }
+            tbody.innerHTML = rows.map(r => {
+                const isEntrada = r.tipo === 'entrada';
+                const badgeClass = isEntrada ? 'badge-sucesso' : 'badge-danger';
+                const badgeText = isEntrada ? 'Entrada (+)' : 'Saída (-)';
+                const valorCor = isEntrada ? '#22c55e' : '#ef4444';
+                const sinal = isEntrada ? '+' : '-';
+                return `
+                <tr>
+                    <td>${fmtDataBR(r.data_movimentacao)}</td>
+                    <td><span class="badge ${badgeClass}" style="font-weight:700;">${badgeText}</span></td>
+                    <td style="font-weight:600;">${escapeHtml(r.fornecedor_nome)}</td>
+                    <td>${escapeHtml(r.descricao)}</td>
+                    <td style="text-align:right; font-weight:700; color:${valorCor};">${sinal} ${fmtBRL(r.valor)}</td>
+                    <td style="text-align:center;">
+                        <button class="btn-icon btn-action-red" onclick="excluirMovimentacaoCredito(${r.id})" title="Excluir"><i data-lucide="trash-2"></i></button>
+                    </td>
+                </tr>`;
+            }).join('');
+            refreshIcons();
+        } catch(e) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:red;padding:24px;">Erro ao carregar movimentações.</td></tr>';
+        }
+    }
+
+    window.setTipoMovimentacaoCredito = function(tipo) {
+        document.getElementById('credito-tipo').value = tipo;
+        const btnEntrada = document.getElementById('btn-credito-tipo-entrada');
+        const btnSaida = document.getElementById('btn-credito-tipo-saida');
+        if (tipo === 'entrada') {
+            btnEntrada.style.background = '#22c55e';
+            btnEntrada.style.color = '#000';
+            btnSaida.style.background = 'var(--bg-input)';
+            btnSaida.style.color = 'var(--text-muted)';
+        } else {
+            btnSaida.style.background = '#ef4444';
+            btnSaida.style.color = '#fff';
+            btnEntrada.style.background = 'var(--bg-input)';
+            btnEntrada.style.color = 'var(--text-muted)';
+        }
+    };
+
+    window.abrirModalMovimentacaoCredito = async function() {
+        setTipoMovimentacaoCredito('entrada');
+        document.getElementById('credito-descricao').value = '';
+        document.getElementById('credito-valor').value = '';
+        document.getElementById('credito-data').value = formatLocalDateISO(new Date());
+
+        const selectFornecedor = document.getElementById('credito-fornecedor-id');
+        if (selectFornecedor) {
+            try {
+                const fornecedores = await api('GET', '/api/fornecedores');
+                fornecedores.sort((a, b) => a.nome.localeCompare(b.nome));
+                selectFornecedor.innerHTML = '<option value="">Selecione o fornecedor...</option>' +
+                    fornecedores.map(f => `<option value="${f.id}">${escapeHtml(f.nome)}</option>`).join('');
+            } catch(_) {}
+        }
+        openModal('modal-movimentacao-credito');
+    };
+
+    window.salvarMovimentacaoCredito = async function() {
+        const tipo = document.getElementById('credito-tipo').value;
+        const fornecedor_id = document.getElementById('credito-fornecedor-id').value;
+        const descricao = document.getElementById('credito-descricao').value.trim();
+        const valor = parseFloat(document.getElementById('credito-valor').value) || 0;
+        const data_movimentacao = document.getElementById('credito-data').value;
+
+        if (!fornecedor_id) return showToast('Selecione o fornecedor', true);
+        if (!descricao) return showToast('Preencha o motivo/descrição', true);
+        if (valor <= 0) return showToast('Informe um valor válido', true);
+        if (!data_movimentacao) return showToast('Informe a data', true);
+
+        try {
+            await api('POST', '/api/creditos/movimentacoes', {
+                fornecedor_id: parseInt(fornecedor_id, 10),
+                tipo,
+                descricao,
+                valor,
+                data_movimentacao
+            });
+            showToast('Movimentação de crédito registrada!');
+            closeModal('modal-movimentacao-credito');
+            await carregarCreditos();
+        } catch(e) { window.showAlert(e.message, 'Erro'); }
+    };
+
+    window.excluirMovimentacaoCredito = function(id) {
+        window.showConfirm('Deseja excluir esta movimentação de crédito?', async () => {
+            try {
+                await api('DELETE', `/api/creditos/movimentacoes/${id}`);
+                showToast('Movimentação excluída com sucesso');
+                await carregarCreditos();
+            } catch(e) { window.showAlert(e.message, 'Erro'); }
+        });
+    };
+
+    window.carregarCreditos = carregarCreditos;
+    window.carregarCreditoMovimentacoes = carregarCreditoMovimentacoes;
 })();

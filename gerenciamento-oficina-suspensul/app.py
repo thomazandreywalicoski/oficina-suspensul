@@ -529,6 +529,18 @@ def run_migrations():
                          criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
                          atualizado_em DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci""")
+
+        # ── Tabela de Créditos de Fornecedores ──
+        cur.execute("""CREATE TABLE IF NOT EXISTS creditos_movimentacoes (
+                         id INT AUTO_INCREMENT PRIMARY KEY,
+                         fornecedor_id INT NOT NULL,
+                         tipo ENUM('entrada', 'saida') NOT NULL DEFAULT 'entrada',
+                         descricao VARCHAR(255) NOT NULL,
+                         valor DECIMAL(10,2) NOT NULL,
+                         data_movimentacao DATE NOT NULL,
+                         criado_em DATETIME DEFAULT CURRENT_TIMESTAMP,
+                         FOREIGN KEY (fornecedor_id) REFERENCES fornecedores(id) ON DELETE CASCADE
+                       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci""")
         # Migração: converter status antigo 'Aprovado' para 'Concluido' ou 'Em andamento'
         cur.execute("UPDATE orcamentos_propostas SET status = 'Concluido' WHERE status = 'Aprovado' AND os_id IS NOT NULL")
         cur.execute("UPDATE orcamentos_propostas SET status = 'Em andamento' WHERE status = 'Aprovado' AND os_id IS NULL")
@@ -1550,6 +1562,64 @@ def editar_divida(did):
 @app.route('/api/dividas/<int:did>', methods=['DELETE'])
 def excluir_divida(did):
     query("DELETE FROM dividas WHERE id=%s", (did,), commit=True)
+    return jsonify({'ok': True})
+
+# ===================== API: CRÉDITOS DE FORNECEDORES =====================
+
+@app.route('/api/creditos/resumo', methods=['GET'])
+def creditos_resumo():
+    rows = query("""
+        SELECT f.id, f.nome,
+               COALESCE(SUM(CASE WHEN cm.tipo = 'entrada' THEN cm.valor ELSE -cm.valor END), 0) AS saldo_credito
+        FROM fornecedores f
+        LEFT JOIN creditos_movimentacoes cm ON f.id = cm.fornecedor_id
+        WHERE f.ativo = 1 OR cm.id IS NOT NULL
+        GROUP BY f.id, f.nome
+        HAVING saldo_credito != 0 OR f.ativo = 1
+        ORDER BY f.nome ASC
+    """, fetch=True)
+    return jsonify(to_json(rows))
+
+@app.route('/api/creditos/movimentacoes', methods=['GET'])
+def listar_creditos_movimentacoes():
+    fornecedor_id = request.args.get('fornecedor_id')
+    q = request.args.get('q', '').strip()
+    where = []
+    params = []
+    if fornecedor_id:
+        where.append("cm.fornecedor_id = %s")
+        params.append(fornecedor_id)
+    if q:
+        where.append("(cm.descricao LIKE %s OR f.nome LIKE %s)")
+        params.extend([f'%{q}%', f'%{q}%'])
+    where_str = (" WHERE " + " AND ".join(where)) if where else ""
+    rows = query(f"""
+        SELECT cm.*, f.nome AS fornecedor_nome
+        FROM creditos_movimentacoes cm
+        JOIN fornecedores f ON cm.fornecedor_id = f.id
+        {where_str}
+        ORDER BY cm.data_movimentacao DESC, cm.id DESC
+    """, tuple(params), fetch=True)
+    return jsonify(to_json(rows))
+
+@app.route('/api/creditos/movimentacoes', methods=['POST'])
+def criar_credito_movimentacao():
+    d = request.json
+    fornecedor_id = d.get('fornecedor_id')
+    tipo = str(d.get('tipo', 'entrada')).lower()
+    descricao = (d.get('descricao') or '').strip()
+    valor = float(d.get('valor', 0))
+    data_movimentacao = d.get('data_movimentacao') or date.today().isoformat()
+    if not fornecedor_id or not descricao or valor <= 0 or tipo not in ('entrada', 'saida'):
+        return jsonify({'erro': 'Preencha todos os campos obrigatórios com valores válidos'}), 400
+    cid = query("""INSERT INTO creditos_movimentacoes (fornecedor_id, tipo, descricao, valor, data_movimentacao)
+                   VALUES (%s, %s, %s, %s, %s)""",
+                (fornecedor_id, tipo, descricao, valor, data_movimentacao), commit=True)
+    return jsonify({'id': cid}), 201
+
+@app.route('/api/creditos/movimentacoes/<int:cid>', methods=['DELETE'])
+def excluir_credito_movimentacao(cid):
+    query("DELETE FROM creditos_movimentacoes WHERE id=%s", (cid,), commit=True)
     return jsonify({'ok': True})
 
 # ===================== API: ESTOQUE =====================
