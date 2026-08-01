@@ -1355,7 +1355,36 @@
             .page-title { margin-left: 60px; }
         }
 
+        .credito-tipo-tag {
+            padding: 5px 12px;
+            font-size: 11px;
+            font-weight: 800;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #ffffff;
+            flex-shrink: 0;
+            min-width: 80px;
+            text-align: center;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 24px;
+        }
+
         @media (max-width: 768px) {
+            .credito-tipo-tag {
+                width: 10px !important;
+                height: 10px !important;
+                min-width: 10px !important;
+                max-width: 10px !important;
+                padding: 0 !important;
+                border-radius: 50% !important;
+                margin-right: 12px !important;
+            }
+            .credito-tipo-tag .credito-tipo-text {
+                display: none !important;
+            }
             .credito-header-wrap { flex-direction: column !important; align-items: stretch !important; }
             .credito-search-wrap { max-width: 100% !important; width: 100% !important; }
             .main-content { padding: 15px 15px 80px 15px; }

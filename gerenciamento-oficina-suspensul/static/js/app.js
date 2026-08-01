@@ -3522,8 +3522,8 @@
                 return `
                 <div onclick="abrirDetalheCredito(${r.id})" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; gap: 16px; cursor: pointer; transition: transform 0.15s ease, border-color 0.15s ease;" onmouseover="this.style.borderColor='#333';this.style.transform='translateY(-1px)'" onmouseout="this.style.borderColor='var(--border-color)';this.style.transform='none'">
                     <!-- Badge -->
-                    <span style="padding: 5px 12px; font-size: 11px; font-weight: 800; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; background: ${badgeBg}; color: #ffffff; flex-shrink: 0; min-width: 80px; text-align: center;">
-                        ${badgeText}
+                    <span class="credito-tipo-tag" style="background: ${badgeBg};">
+                        <span class="credito-tipo-text">${badgeText}</span>
                     </span>
 
                     <!-- Motivo (Branco & Negrito) -->
