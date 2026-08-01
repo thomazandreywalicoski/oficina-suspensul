@@ -677,6 +677,12 @@ def to_json(rows):
         return [{k: serialize(v) for k, v in r.items()} for r in rows]
     return {k: serialize(v) for k, v in rows.items()}
 
+def to_title_case(text):
+    if not text:
+        return text
+    words = str(text).split(' ')
+    return ' '.join(w[0].upper() + w[1:].lower() if w else '' for w in words)
+
 def login_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -689,6 +695,10 @@ def login_required(f):
 
 @app.before_request
 def exigir_login():
+    if session.get('remember_me'):
+        app.permanent_session_lifetime = timedelta(days=7)
+    else:
+        app.permanent_session_lifetime = timedelta(hours=24)
     rotas_livres = {'login', 'static', 'visualizar_solicitacao_orcamento', 'visualizar_orcamento_proposta', 'visualizar_comprovante'}
     if request.endpoint in rotas_livres or request.path.startswith('/uploads/'):
         return None
@@ -719,7 +729,13 @@ def login():
             session.clear()
             session['admin_logged_in'] = True
             session['admin_email'] = email
+            lembrar = bool(request.form.get('lembrar'))
+            session['remember_me'] = lembrar
             session.permanent = True
+            if lembrar:
+                app.permanent_session_lifetime = timedelta(days=7)
+            else:
+                app.permanent_session_lifetime = timedelta(hours=24)
             return redirect(url_for('index'))
         attempt['count'] += 1
         if attempt['count'] >= LOGIN_MAX_ATTEMPTS:
@@ -788,17 +804,19 @@ def listar_clientes():
 @app.route('/api/clientes', methods=['POST'])
 def criar_cliente():
     d = request.json
+    nome_completo = to_title_case(d.get('nome_completo', '').strip())
     cpf_val = d.get('cpf', '').strip() or None
     cid = query("INSERT INTO clientes (nome_completo, cpf, whatsapp) VALUES (%s, %s, %s)",
-                (d['nome_completo'], cpf_val, d.get('whatsapp')), commit=True)
+                (nome_completo, cpf_val, d.get('whatsapp')), commit=True)
     return jsonify({'id': cid}), 201
 
 @app.route('/api/clientes/<int:cid>', methods=['PUT'])
 def atualizar_cliente(cid):
     d = request.json
+    nome_completo = to_title_case(d.get('nome_completo', '').strip())
     cpf_val = d.get('cpf', '').strip() or None
     query("UPDATE clientes SET nome_completo=%s, cpf=%s, whatsapp=%s WHERE id=%s",
-          (d['nome_completo'], cpf_val, d.get('whatsapp'), cid), commit=True)
+          (nome_completo, cpf_val, d.get('whatsapp'), cid), commit=True)
     return jsonify({'ok': True})
 
 @app.route('/api/clientes/<int:cid>/toggle-ativo', methods=['PATCH'])
@@ -1247,9 +1265,11 @@ def criar_proposta():
                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 'Pendente')""",
                 (numero, slug, d['cliente_id'], d['veiculo_id'], d.get('valor_mao_obra', 0), d.get('valor_frete', 0), d.get('gastos_variados', 0), mao_obra_texto), commit=True)
     for p in d.get('pecas', []):
+        desc = to_title_case(p.get('descricao', '').strip())
+        marca = to_title_case(p.get('marca', '').strip()) if p.get('marca') else None
         query("""INSERT INTO orcamentos_propostas_pecas (proposta_id, descricao, marca, fornecedor_id, quantidade, valor_custo, lucro_percentual, desconto_percentual, valor_venda_sem_desconto, valor_desconto, valor_venda, cliente_trouxe)
                  VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
-              (pid, p['descricao'], p.get('marca') or None, p.get('fornecedor_id') or None,
+              (pid, desc, marca, p.get('fornecedor_id') or None,
                p.get('quantidade', 1), p.get('valor_custo', 0), p.get('lucro_percentual', 0),
                p.get('desconto_percentual', 0), p.get('valor_venda_sem_desconto', 0),
                p.get('valor_desconto', 0), p.get('valor_venda', 0),
@@ -1277,9 +1297,11 @@ def atualizar_proposta(pid):
           (d['cliente_id'], d['veiculo_id'], d.get('valor_mao_obra', 0), d.get('valor_frete', 0), d.get('gastos_variados', 0), mao_obra_texto, pid), commit=True)
     query("DELETE FROM orcamentos_propostas_pecas WHERE proposta_id=%s", (pid,), commit=True)
     for p in d.get('pecas', []):
+        desc = to_title_case(p.get('descricao', '').strip())
+        marca = to_title_case(p.get('marca', '').strip()) if p.get('marca') else None
         query("""INSERT INTO orcamentos_propostas_pecas (proposta_id, descricao, marca, fornecedor_id, quantidade, valor_custo, lucro_percentual, desconto_percentual, valor_venda_sem_desconto, valor_desconto, valor_venda, cliente_trouxe)
                  VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
-              (pid, p['descricao'], p.get('marca') or None, p.get('fornecedor_id') or None,
+              (pid, desc, marca, p.get('fornecedor_id') or None,
                p.get('quantidade', 1), p.get('valor_custo', 0), p.get('lucro_percentual', 0),
                p.get('desconto_percentual', 0), p.get('valor_venda_sem_desconto', 0),
                p.get('valor_desconto', 0), p.get('valor_venda', 0),

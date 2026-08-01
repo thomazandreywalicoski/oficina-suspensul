@@ -46,6 +46,36 @@
             '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
         }[c]));
     }
+    function toTitleCase(str) {
+        if (!str) return '';
+        return str.split(' ').map(w => w ? w.charAt(0).toUpperCase() + w.slice(1).toLowerCase() : '').join(' ');
+    }
+    function formatarCPF(v) {
+        if (!v) return '';
+        v = v.replace(/\D/g, '').slice(0, 11);
+        if (v.length > 9) {
+            return v.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, '$1.$2.$3-$4');
+        } else if (v.length > 6) {
+            return v.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
+        } else if (v.length > 3) {
+            return v.replace(/(\d{3})(\d{1,3})/, '$1.$2');
+        }
+        return v;
+    }
+    function formatarTelefone(v) {
+        if (!v) return '';
+        v = v.replace(/\D/g, '').slice(0, 11);
+        if (v.length > 10) {
+            return v.replace(/^(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+        } else if (v.length > 6) {
+            return v.replace(/^(\d{2})(\d{4,5})(\d{0,4})/, '($1) $2-$3');
+        } else if (v.length > 2) {
+            return v.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
+        } else if (v.length > 0) {
+            return v.replace(/^(\d{0,2})/, '($1');
+        }
+        return v;
+    }
     function formatLocalDateISO(date) {
         if (!(date instanceof Date) || isNaN(date)) return null;
         const year = date.getFullYear();
@@ -424,9 +454,9 @@
         const m = document.getElementById('modal-cliente');
         m.querySelector('.modal-title').innerText = 'Editar Cliente';
         const inputs = m.querySelectorAll('input');
-        inputs[0].value = c.nome_completo;
-        inputs[1].value = c.cpf;
-        inputs[2].value = c.whatsapp || '';
+        inputs[0].value = toTitleCase(c.nome_completo || '');
+        inputs[1].value = formatarCPF(c.cpf || '');
+        inputs[2].value = formatarTelefone(c.whatsapp || '');
         m.querySelector('.btn-primary').innerText = 'Salvar';
         window.openModal('modal-cliente');
     };
@@ -456,7 +486,7 @@
         const m = document.getElementById('modal-cliente');
         const inputs = m.querySelectorAll('input');
         const data = {
-            nome_completo: inputs[0].value.trim(),
+            nome_completo: toTitleCase(inputs[0].value.trim()),
             cpf: inputs[1].value.trim(),
             whatsapp: inputs[2].value.trim(),
         };
@@ -1925,7 +1955,12 @@
     };
 
     window.adicionarPecaOrcamentoProposta = function() {
-        const nome = document.getElementById('peca-proposta-nome').value.trim();
+        const rawNome = document.getElementById('peca-proposta-nome').value.trim();
+        const rawMarca = document.getElementById('peca-proposta-marca').value.trim();
+        const nome = toTitleCase(rawNome);
+        const marca = toTitleCase(rawMarca);
+        document.getElementById('peca-proposta-nome').value = nome;
+        document.getElementById('peca-proposta-marca').value = marca;
         const qtd = parseInt(document.getElementById('peca-proposta-qtd').value, 10) || 0;
         const custo = parseFloat(document.getElementById('peca-proposta-custo').value) || 0;
         const lucro = parseFloat(document.getElementById('peca-proposta-lucro').value) || 0;
@@ -1933,7 +1968,6 @@
         const fornecedorId = document.getElementById('peca-proposta-fornecedor-id').value || null;
         const fornecedorLabel = document.querySelector('#peca-proposta-fornecedor-btn .peca-fornecedor-label')?.textContent || '';
         const clienteTrouxe = (fornecedorId === 'cliente');
-        const marca = document.getElementById('peca-proposta-marca').value.trim();
 
         if (!nome) { showToast('Informe o nome da peça/produto', true); return; }
         if (qtd <= 0) { showToast('Informe a quantidade', true); return; }
@@ -3150,6 +3184,42 @@
         // OS e Despesas: não devem ter toggle (sempre ativos)
     }
 
+    function setupMasksEFormatting() {
+        const clienteNome = document.getElementById('cliente-nome-input');
+        const clienteCpf = document.getElementById('cliente-cpf-input');
+        const clienteWats = document.getElementById('cliente-whatsapp-input');
+
+        if (clienteNome) {
+            clienteNome.addEventListener('blur', function() {
+                this.value = toTitleCase(this.value);
+            });
+        }
+        if (clienteCpf) {
+            clienteCpf.addEventListener('input', function() {
+                this.value = formatarCPF(this.value);
+            });
+        }
+        if (clienteWats) {
+            clienteWats.addEventListener('input', function() {
+                this.value = formatarTelefone(this.value);
+            });
+        }
+
+        const pecaPropostaNome = document.getElementById('peca-proposta-nome');
+        const pecaPropostaMarca = document.getElementById('peca-proposta-marca');
+
+        if (pecaPropostaNome) {
+            pecaPropostaNome.addEventListener('blur', function() {
+                this.value = toTitleCase(this.value);
+            });
+        }
+        if (pecaPropostaMarca) {
+            pecaPropostaMarca.addEventListener('blur', function() {
+                this.value = toTitleCase(this.value);
+            });
+        }
+    }
+
     // ===================== Inicialização =====================
     document.addEventListener('DOMContentLoaded', () => {
         hookarModais();
@@ -3162,6 +3232,7 @@
         initPlacaBusca();
         setupOrcamentoPage();
         setupConfigPage();
+        setupMasksEFormatting();
         const activePage = (() => {
             try { return localStorage.getItem('activePage') || 'agendamentos'; } catch (_) { return 'agendamentos'; }
         })();
