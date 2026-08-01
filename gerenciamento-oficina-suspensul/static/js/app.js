@@ -3520,21 +3520,30 @@
                 const descFormatada = descLimpa.length > 30 ? descLimpa.slice(0, 30) + '...' : descLimpa;
 
                 return `
-                <div onclick="abrirDetalheCredito(${r.id})" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; gap: 14px; cursor: pointer; transition: transform 0.15s ease, border-color 0.15s ease;" onmouseover="this.style.borderColor='#333';this.style.transform='translateY(-1px)'" onmouseout="this.style.borderColor='var(--border-color)';this.style.transform='none'">
-                    <div style="display: flex; align-items: center; gap: 14px; min-width: 0; flex: 1;">
-                        <span style="padding: 5px 12px; font-size: 11px; font-weight: 800; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; background: ${badgeBg}; color: #ffffff; flex-shrink: 0;">
-                            ${badgeText}
-                        </span>
-                        <div style="min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                            <span style="font-weight: 400; color: var(--text-main); font-size: 14px;">${escapeHtml(r.fornecedor_nome)}</span>
-                            <span style="color: var(--text-muted); font-size: 14px; margin-left: 8px;" title="${escapeHtml(r.descricao)}">${escapeHtml(descFormatada)}</span>
-                        </div>
+                <div onclick="abrirDetalheCredito(${r.id})" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; gap: 16px; cursor: pointer; transition: transform 0.15s ease, border-color 0.15s ease;" onmouseover="this.style.borderColor='#333';this.style.transform='translateY(-1px)'" onmouseout="this.style.borderColor='var(--border-color)';this.style.transform='none'">
+                    <!-- Badge -->
+                    <span style="padding: 5px 12px; font-size: 11px; font-weight: 800; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px; background: ${badgeBg}; color: #ffffff; flex-shrink: 0; min-width: 80px; text-align: center;">
+                        ${badgeText}
+                    </span>
+
+                    <!-- Motivo (Branco & Negrito) -->
+                    <div style="flex: 1.5; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700; color: var(--text-main); font-size: 14px;" title="${escapeHtml(r.descricao)}">
+                        ${escapeHtml(descFormatada)}
                     </div>
-                    <div style="display: flex; align-items: center; gap: 24px; flex-shrink: 0;">
-                        <span style="color: var(--text-muted); font-size: 13px; font-weight: 500;">${fmtDataBR(r.data_movimentacao)}</span>
-                        <span style="font-size: 15px; font-weight: 800; color: ${valorCor}; min-width: 90px; text-align: right;">
-                            ${sinal}${fmtBRL(r.valor)}
-                        </span>
+
+                    <!-- Fornecedor (Meio Cinza) -->
+                    <div style="flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 400; color: var(--text-muted); font-size: 14px;" title="${escapeHtml(r.fornecedor_nome)}">
+                        ${escapeHtml(r.fornecedor_nome)}
+                    </div>
+
+                    <!-- Data -->
+                    <div style="color: var(--text-muted); font-size: 13px; font-weight: 500; flex-shrink: 0;">
+                        ${fmtDataBR(r.data_movimentacao)}
+                    </div>
+
+                    <!-- Valor -->
+                    <div style="font-size: 15px; font-weight: 800; color: ${valorCor}; min-width: 90px; text-align: right; flex-shrink: 0;">
+                        ${sinal}${fmtBRL(r.valor)}
                     </div>
                 </div>`;
             }).join('');

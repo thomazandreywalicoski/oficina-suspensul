@@ -2075,9 +2075,9 @@
             <!-- Cabeçalho de Atualizações de Crédito (Separado dos cards da lista) -->
             <div class="credito-header-wrap" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom: 16px;">
                 <h4 style="margin:0; font-size:15px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; color:var(--text-main);">ATUALIZAÇÕES DE CRÉDITO</h4>
-                <div class="credito-search-wrap" style="position:relative; width:100%; max-width:280px;">
-                    <input type="text" id="credito-search" placeholder="Buscar..." oninput="carregarCreditoMovimentacoes(this.value)" style="width:100%; padding:8px 36px 8px 12px; background:var(--bg-input); color:var(--text-main); border:1px solid var(--border-color); border-radius:var(--border-radius); font-size:13px;">
-                    <i data-lucide="search" class="input-icon-right" style="top:50%; transform:translateY(-50%); right:10px;"></i>
+                <div class="search-input-wrap credito-search-wrap">
+                    <input type="text" id="credito-search" placeholder="Buscar" oninput="carregarCreditoMovimentacoes(this.value)">
+                    <i data-lucide="search" class="input-icon-right"></i>
                 </div>
             </div>
 
