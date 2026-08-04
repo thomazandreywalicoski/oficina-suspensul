@@ -1025,6 +1025,7 @@
                     <button class="btn-icon btn-action-purple" title="Imprimir Cupom" onclick="window.imprimirCupom('${o.slug || o.id}')"><i data-lucide="file-text"></i></button>
                     <button class="btn-icon btn-action-orange" title="Baixar PDF" onclick="window.baixarOSPDF('${o.slug || o.id}')"><i data-lucide="download"></i></button>
                     <button class="btn-icon btn-action-green" title="Compartilhar" onclick="enviarWhatsapp(${o.id})"><i data-lucide="share-2"></i></button>
+                    <button class="btn-icon" title="Avaliar Atendimento" onclick="enviarAvaliacaoWhatsapp(${o.id})" style="background:#ffe54c;color:#000;border:none;"><i data-lucide="star"></i></button>
                     <button class="btn-icon ${o.status === 'Paga' ? 'btn-action-yellow' : 'btn-action-green'}" title="${o.status === 'Paga' ? 'Marcar Pendente' : 'Marcar Paga'}" onclick="alternarStatusOS(${o.id}, '${o.status}')"><i data-lucide="${o.status === 'Paga' ? 'rotate-ccw' : 'check'}"></i></button>
                     ${o.status === 'Paga' ? '' : `<button class="btn-icon btn-action-red" title="Excluir" onclick="excluirOS(${o.id})"><i data-lucide="trash-2"></i></button>`}
                 </td>
@@ -1086,6 +1087,22 @@
         const baseUrl = window.location.origin;
         const url = `${baseUrl}/comprovante-pagamento/${slug}?preview=1`;
         const msg = encodeURIComponent(`Olá ${o.nome_completo}, segue seu Comprovante Nº ${String(o.numero).padStart(6,'0')}: ${url}`);
+        const wpp = fone ? `https://wa.me/55${fone}?text=${msg}` : `https://wa.me/?text=${msg}`;
+        window.open(wpp, '_blank');
+    };
+
+    window.enviarAvaliacaoWhatsapp = async function(id) {
+        const o = state.os.find(x => x.id === id);
+        if (!o) return;
+        let cliente = state.clientes.find(c => c.id === o.cliente_id);
+        if (!cliente) {
+            try { cliente = await api('GET', `/api/clientes`).then(arr => arr.find(c => c.id === o.cliente_id)); } catch(e) { cliente = null; }
+        }
+        const fone = (cliente && cliente.whatsapp || '').replace(/\D/g, '');
+        const nome = (o.nome_completo || '').split(' ')[0];
+        const linkAvaliacao = 'https://g.page/r/CQjIgid_7b2XEBM/review';
+        const mensagem = `Olá ${nome}! 😊\n\nObrigado por confiar na *Oficina Suspensul*! Foi um prazer atender você e garantir que seu veículo está nas melhores condições. 🚗🔧\n\nSua opinião é muito importante para nós! Se ficou satisfeito com o serviço, poderia nos dar 5 estrelas no Google? Isso nos ajuda muito a continuar crescendo e atendendo cada vez melhor! ⭐⭐⭐⭐⭐\n\n👇 Clique aqui para avaliar:\n${linkAvaliacao}\n\nMuito obrigado! 🙏`;
+        const msg = encodeURIComponent(mensagem);
         const wpp = fone ? `https://wa.me/55${fone}?text=${msg}` : `https://wa.me/?text=${msg}`;
         window.open(wpp, '_blank');
     };
