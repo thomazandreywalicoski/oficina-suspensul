@@ -1,10 +1,46 @@
 <!-- Módulo de Devolução de Produtos / Peças — Focus NFe Integration -->
+<style>
+/* Remoção total de bordas e contornos em inputs, selects e textareas do módulo */
+.devolucao-container input,
+.devolucao-container select,
+.devolucao-container textarea,
+#modal-devolucao input,
+#modal-devolucao select,
+#modal-devolucao textarea,
+#modal-cancelamento-devolucao input {
+    background-color: #202020 !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    color: #ffffff !important;
+}
+
+.devolucao-container input:focus,
+.devolucao-container select:focus,
+.devolucao-container textarea:focus,
+#modal-devolucao input:focus,
+#modal-devolucao select:focus,
+#modal-devolucao textarea:focus,
+#modal-cancelamento-devolucao input:focus {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+#modal-loading-devolucao.active {
+    display: flex !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    z-index: 999999 !important;
+}
+</style>
+
 <div class="devolucao-container">
     
     <!-- Top Header: Search & Action Button -->
     <div class="page-header" style="margin-bottom: 25px;">
         <div class="search-input-wrap">
-            <input type="text" id="devolucao-busca" placeholder="Buscar por ref, fornecedor, CNPJ ou chave..." onkeyup="filtrarDevolucoes()" style="background: #202020; color: #ffffff; border: none;">
+            <input type="text" id="devolucao-busca" placeholder="Buscar por ref, fornecedor, CNPJ ou chave..." onkeyup="filtrarDevolucoes()" style="background: #202020; color: #ffffff; border: none !important; outline: none !important;">
             <i data-lucide="search" class="input-icon-right"></i>
         </div>
         <button class="btn btn-primary" type="button" onclick="abrirModalNovaDevolucao()">
@@ -126,7 +162,7 @@
                         <div class="form-group" style="margin-bottom: 0;">
                             <label style="display: block; color: var(--text-muted, #888888); margin-bottom: 8px; font-size: 13px; font-weight: 400;">Chave de Acesso da NF-e (44 dígitos):</label>
                             <div style="display: flex; gap: 10px; align-items: center;">
-                                <input type="text" id="dev-chave-original" class="form-input" maxlength="44" style="flex: 1; height: 44px; padding: 0 14px; font-size: 14px; font-weight: 400; background: #202020; color: #ffffff; border: none; border-radius: 8px; box-sizing: border-box;">
+                                <input type="text" id="dev-chave-original" class="form-input" maxlength="44" style="flex: 1; height: 44px; padding: 0 14px; font-size: 14px; font-weight: 400; background: #202020; color: #ffffff; border: none !important; outline: none !important; border-radius: 8px; box-sizing: border-box;">
                                 <button class="btn btn-primary" type="button" onclick="consultarNfeOriginal()" id="btn-consultar-nfe" style="height: 44px; padding: 0 20px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; border-radius: 8px;">
                                     <i data-lucide="search" style="width: 16px; height: 16px;"></i>
                                     <span>Buscar NF-e</span>
@@ -138,7 +174,7 @@
                         <div class="form-group" style="margin-bottom: 0;">
                             <label style="display: block; color: var(--text-muted, #888888); margin-bottom: 8px; font-size: 13px; font-weight: 400;">Ou importar arquivo XML original:</label>
                             <input type="file" id="dev-xml-file" accept=".xml" style="display: none;" onchange="importarXmlOriginal(this)">
-                            <button type="button" class="btn btn-secondary" onclick="document.getElementById('dev-xml-file').click()" style="width: 100%; height: 44px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 400; font-size: 14px; background: #202020; color: #ffffff; border: none; border-radius: 8px;">
+                            <button type="button" class="btn btn-secondary" onclick="document.getElementById('dev-xml-file').click()" style="width: 100%; height: 44px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 400; font-size: 14px; background: #202020; color: #ffffff; border: none !important; outline: none !important; border-radius: 8px;">
                                 <i data-lucide="upload" style="width: 16px; height: 16px;"></i>
                                 <span id="label-xml-file">Fazer upload do arquivo</span>
                             </button>
@@ -223,15 +259,15 @@
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
                             <div class="form-group" style="margin-bottom: 0;">
                                 <label style="display: block; color: var(--text-muted, #888888); margin-bottom: 8px; font-size: 13px; font-weight: 400;">Natureza da Operação:</label>
-                                <input type="text" id="dev-natureza-operacao" class="form-input" value="Devolução de Mercadoria" style="width: 100%; height: 44px; padding: 0 14px; font-size: 14px; background: #202020; color: #ffffff; border: none; border-radius: 8px; box-sizing: border-box;">
+                                <input type="text" id="dev-natureza-operacao" class="form-input" value="Devolução de Mercadoria" style="width: 100%; height: 44px; padding: 0 14px; font-size: 14px; background: #202020; color: #ffffff; border: none !important; outline: none !important; border-radius: 8px; box-sizing: border-box;">
                             </div>
                             <div class="form-group" style="margin-bottom: 0;">
                                 <label style="display: block; color: var(--text-muted, #888888); margin-bottom: 8px; font-size: 13px; font-weight: 400;">CFOP Padrão:</label>
-                                <input type="text" id="dev-cfop-padrao" class="form-input" value="5202" style="width: 100%; height: 44px; padding: 0 14px; font-size: 14px; background: #202020; color: #ffffff; border: none; border-radius: 8px; box-sizing: border-box;">
+                                <input type="text" id="dev-cfop-padrao" class="form-input" value="5202" style="width: 100%; height: 44px; padding: 0 14px; font-size: 14px; background: #202020; color: #ffffff; border: none !important; outline: none !important; border-radius: 8px; box-sizing: border-box;">
                             </div>
                             <div class="form-group" style="margin-bottom: 0;">
                                 <label style="display: block; color: var(--text-muted, #888888); margin-bottom: 8px; font-size: 13px; font-weight: 400;">Modalidade de Frete:</label>
-                                <select id="dev-modalidade-frete" class="form-input" style="width: 100%; height: 44px; padding: 0 14px; font-size: 14px; background: #202020; color: #ffffff; border: none; border-radius: 8px; box-sizing: border-box;">
+                                <select id="dev-modalidade-frete" class="form-input" style="width: 100%; height: 44px; padding: 0 14px; font-size: 14px; background: #202020; color: #ffffff; border: none !important; outline: none !important; border-radius: 8px; box-sizing: border-box;">
                                     <option value="9" selected>9 - Sem Transporte / Frete</option>
                                     <option value="0">0 - Por conta do Emitente</option>
                                     <option value="1">1 - Por conta do Destinatário</option>
@@ -243,7 +279,7 @@
                         <!-- Input normal de 44px de altura com background #202020 -->
                         <div class="form-group" style="margin-bottom: 0;">
                             <label style="display: block; color: var(--text-muted, #888888); margin-bottom: 8px; font-size: 13px; font-weight: 400;">Observações Fiscais / Informações Adicionais:</label>
-                            <input type="text" id="dev-observacoes" class="form-input" style="width: 100%; height: 44px; padding: 0 14px; font-size: 14px; background: #202020; color: #ffffff; border: none; border-radius: 8px; box-sizing: border-box;">
+                            <input type="text" id="dev-observacoes" class="form-input" style="width: 100%; height: 44px; padding: 0 14px; font-size: 14px; background: #202020; color: #ffffff; border: none !important; outline: none !important; border-radius: 8px; box-sizing: border-box;">
                         </div>
                     </div>
 
@@ -256,15 +292,15 @@
                             </div>
                             <div>
                                 <label style="display: block; color: var(--text-muted, #888888); margin-bottom: 8px; font-size: 13px; font-weight: 400;">Frete (R$)</label>
-                                <input type="number" step="0.01" id="dev-val-frete" class="form-input" value="0.00" style="text-align: center; height: 44px; font-weight: 500; font-size: 14px; width: 100%; background: #202020; color: #ffffff; border: none; border-radius: 8px; box-sizing: border-box;" onchange="recalcularTotaisDevolucao()">
+                                <input type="number" step="0.01" id="dev-val-frete" class="form-input" value="0.00" style="text-align: center; height: 44px; font-weight: 500; font-size: 14px; width: 100%; background: #202020; color: #ffffff; border: none !important; outline: none !important; border-radius: 8px; box-sizing: border-box;" onchange="recalcularTotaisDevolucao()">
                             </div>
                             <div>
                                 <label style="display: block; color: var(--text-muted, #888888); margin-bottom: 8px; font-size: 13px; font-weight: 400;">Desconto (R$)</label>
-                                <input type="number" step="0.01" id="dev-val-desconto" class="form-input" value="0.00" style="text-align: center; height: 44px; font-weight: 500; font-size: 14px; width: 100%; background: #202020; color: #ffffff; border: none; border-radius: 8px; box-sizing: border-box;" onchange="recalcularTotaisDevolucao()">
+                                <input type="number" step="0.01" id="dev-val-desconto" class="form-input" value="0.00" style="text-align: center; height: 44px; font-weight: 500; font-size: 14px; width: 100%; background: #202020; color: #ffffff; border: none !important; outline: none !important; border-radius: 8px; box-sizing: border-box;" onchange="recalcularTotaisDevolucao()">
                             </div>
                             <div>
                                 <label style="display: block; color: var(--text-muted, #888888); margin-bottom: 8px; font-size: 13px; font-weight: 400;">Outras Desp. (R$)</label>
-                                <input type="number" step="0.01" id="dev-val-outras" class="form-input" value="0.00" style="text-align: center; height: 44px; font-weight: 500; font-size: 14px; width: 100%; background: #202020; color: #ffffff; border: none; border-radius: 8px; box-sizing: border-box;" onchange="recalcularTotaisDevolucao()">
+                                <input type="number" step="0.01" id="dev-val-outras" class="form-input" value="0.00" style="text-align: center; height: 44px; font-weight: 500; font-size: 14px; width: 100%; background: #202020; color: #ffffff; border: none !important; outline: none !important; border-radius: 8px; box-sizing: border-box;" onchange="recalcularTotaisDevolucao()">
                             </div>
                             <div>
                                 <label style="display: block; color: var(--text-muted, #888888); margin-bottom: 8px; font-size: 13px; font-weight: 400;">Total da NF-e</label>
@@ -305,8 +341,8 @@
     </div>
 </div>
 
-<!-- Modal: Loading Consulta NF-e (Mínimo 5s, Máximo 1 min, Fundo Escuro) -->
-<div class="modal-overlay" id="modal-loading-devolucao" style="display: none; align-items: center; justify-content: center; background: rgba(0, 0, 0, 0.85); z-index: 99999;">
+<!-- Modal: Loading Consulta NF-e (Mínimo 5s, Máximo 1 min, Fundo Escuro, Z-Index Alto) -->
+<div class="modal-overlay" id="modal-loading-devolucao" style="display: none; align-items: center; justify-content: center; background: rgba(0, 0, 0, 0.85); z-index: 999999;">
     <style>
         @keyframes spinDevolucao { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
@@ -326,7 +362,7 @@
         <div class="modal-body">
             <input type="hidden" id="cancelar-dev-id">
             <p style="font-size: 13px; color: var(--text-muted, #888888); margin-bottom: 12px;">Informe a justificativa do cancelamento perante a SEFAZ (mínimo de 15 caracteres):</p>
-            <input type="text" id="cancelar-justificativa" class="form-input" placeholder="Ex: Emissão cancelada devido a erro no preenchimento do valor do item." style="width: 100%; height: 44px; padding: 0 14px; background: #202020; color: #ffffff; border: none; border-radius: 8px;">
+            <input type="text" id="cancelar-justificativa" class="form-input" placeholder="Ex: Emissão cancelada devido a erro no preenchimento do valor do item." style="width: 100%; height: 44px; padding: 0 14px; background: #202020; color: #ffffff; border: none !important; outline: none !important; border-radius: 8px;">
         </div>
         <div class="modal-footer" style="border-top: 1px solid #1a1a1a;">
             <button class="btn btn-secondary" onclick="closeModal('modal-cancelamento-devolucao')" type="button">Voltar</button>

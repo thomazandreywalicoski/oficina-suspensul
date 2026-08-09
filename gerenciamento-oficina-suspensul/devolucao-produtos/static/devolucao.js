@@ -338,6 +338,23 @@
     };
 
 
+    window.abrirModalLoadingDevolucao = function() {
+        const el = document.getElementById('modal-loading-devolucao');
+        if (el) {
+            el.style.display = 'flex';
+            el.style.zIndex = '999999';
+            el.classList.add('active');
+        }
+    };
+
+    window.fecharModalLoadingDevolucao = function() {
+        const el = document.getElementById('modal-loading-devolucao');
+        if (el) {
+            el.style.display = 'none';
+            el.classList.remove('active');
+        }
+    };
+
     window.consultarNfeOriginal = async function() {
         const chave = (document.getElementById('dev-chave-original').value || '').trim();
         if (!chave || chave.length !== 44) {
@@ -348,7 +365,7 @@
         const btn = document.getElementById('btn-consultar-nfe');
         if (btn) btn.disabled = true;
 
-        if (typeof openModal === 'function') openModal('modal-loading-devolucao');
+        abrirModalLoadingDevolucao();
 
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 60000); // Máximo 1 minuto (60s)
@@ -364,7 +381,7 @@
         try {
             const [_, data] = await Promise.all([delayPromise, fetchPromise]);
             clearTimeout(timeoutId);
-            if (typeof closeModal === 'function') closeModal('modal-loading-devolucao');
+            fecharModalLoadingDevolucao();
 
             if (!data || !data.sucesso) {
                 alert(data?.erro || 'NF-e não encontrada. Verifique a chave digitada ou tente importar o arquivo XML.');
@@ -374,7 +391,7 @@
             preencherDadosNotaOriginal(data.dados);
         } catch (err) {
             clearTimeout(timeoutId);
-            if (typeof closeModal === 'function') closeModal('modal-loading-devolucao');
+            fecharModalLoadingDevolucao();
             if (err.name === 'AbortError') {
                 alert('Tempo limite de consulta excedido (1 minuto). Tente novamente ou faça o upload do XML.');
             } else {
@@ -394,7 +411,7 @@
             document.getElementById('label-xml-file').innerText = file.name;
         }
 
-        if (typeof openModal === 'function') openModal('modal-loading-devolucao');
+        abrirModalLoadingDevolucao();
 
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 60000); // Máximo 1 minuto (60s)
@@ -412,7 +429,7 @@
         try {
             const [_, data] = await Promise.all([delayPromise, fetchPromise]);
             clearTimeout(timeoutId);
-            if (typeof closeModal === 'function') closeModal('modal-loading-devolucao');
+            fecharModalLoadingDevolucao();
 
             if (!data || !data.sucesso) {
                 alert(data?.erro || 'Não foi possível importar o arquivo XML. Nota não encontrada.');
@@ -422,7 +439,7 @@
             preencherDadosNotaOriginal(data.dados);
         } catch (err) {
             clearTimeout(timeoutId);
-            if (typeof closeModal === 'function') closeModal('modal-loading-devolucao');
+            fecharModalLoadingDevolucao();
             if (err.name === 'AbortError') {
                 alert('Tempo limite de importação excedido (1 minuto). Tente novamente.');
             } else {
