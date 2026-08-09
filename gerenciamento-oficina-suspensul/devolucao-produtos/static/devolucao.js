@@ -218,17 +218,23 @@
         const btnNext = document.getElementById('btn-step-next');
         const btnRascunho = document.getElementById('btn-salvar-rascunho');
         const btnEmitir = document.getElementById('btn-emitir-nfe');
-
-        if (btnPrev) btnPrev.style.display = (step > 1) ? 'inline-flex' : 'none';
+        const footerLeft = document.getElementById('dev-footer-left');
+        const footerCenter = document.getElementById('dev-footer-center');
 
         if (step === 1) {
+            if (btnPrev) btnPrev.style.display = 'none';
             if (btnNext) {
                 btnNext.style.display = 'inline-flex';
                 btnNext.innerHTML = `<i data-lucide="chevron-right" style="width: 20px; height: 20px;"></i>`;
+                if (footerCenter && btnNext.parentNode !== footerCenter) footerCenter.appendChild(btnNext);
             }
             if (btnRascunho) btnRascunho.style.display = 'none';
             if (btnEmitir) btnEmitir.style.display = 'none';
         } else if (step === 2) {
+            if (btnPrev) {
+                btnPrev.style.display = 'inline-flex';
+                if (footerCenter && btnPrev.parentNode !== footerCenter) footerCenter.insertBefore(btnPrev, btnNext);
+            }
             if (btnNext) {
                 btnNext.style.display = 'inline-flex';
                 btnNext.innerHTML = `<i data-lucide="chevron-right" style="width: 20px; height: 20px;"></i>`;
@@ -236,6 +242,10 @@
             if (btnRascunho) btnRascunho.style.display = 'none';
             if (btnEmitir) btnEmitir.style.display = 'none';
         } else if (step === 3) {
+            if (btnPrev) {
+                btnPrev.style.display = 'inline-flex';
+                if (footerLeft && btnPrev.parentNode !== footerLeft) footerLeft.appendChild(btnPrev);
+            }
             if (btnNext) btnNext.style.display = 'none';
             if (btnRascunho) btnRascunho.style.display = 'inline-flex';
             if (btnEmitir) btnEmitir.style.display = 'inline-flex';
@@ -405,16 +415,16 @@
                         <input type="checkbox" class="item-select" data-idx="${idx}" onchange="recalcularTotaisDevolucao()" style="accent-color: var(--primary, #ffe54c); width: 18px; height: 18px; cursor: pointer;">
                     </td>
                     <td style="padding: 8px;">
-                        <input type="text" class="form-input item-cprod" data-idx="${idx}" value="${cProd}" style="font-size: 0.85rem; background: #202020; color: #ffffff; border: none; border-radius: 6px; padding: 6px 8px; width: 100%; box-sizing: border-box;">
+                        <input type="text" class="form-input item-cprod" data-idx="${idx}" value="${cProd}" style="font-size: 0.85rem; text-align: center; background: #202020; color: #ffffff; border: none; border-radius: 6px; padding: 6px 8px; width: 100%; box-sizing: border-box;">
                     </td>
                     <td style="padding: 8px;">
-                        <input type="text" class="form-input item-desc" data-idx="${idx}" value="${desc}" placeholder="Descrição do produto" style="font-size: 0.85rem; background: #202020; color: #ffffff; border: none; border-radius: 6px; padding: 6px 8px; width: 100%; box-sizing: border-box;">
+                        <input type="text" class="form-input item-desc" data-idx="${idx}" value="${desc}" placeholder="Descrição do produto" style="font-size: 0.85rem; text-align: left; background: #202020; color: #ffffff; border: none; border-radius: 6px; padding: 6px 8px; width: 100%; box-sizing: border-box;">
                     </td>
                     <td style="padding: 8px;">
-                        <input type="text" class="form-input item-ncm" data-idx="${idx}" value="${ncm}" placeholder="NCM" style="font-size: 0.85rem; background: #202020; color: #ffffff; border: none; border-radius: 6px; padding: 6px 8px; width: 100%; box-sizing: border-box;">
+                        <input type="text" class="form-input item-ncm" data-idx="${idx}" value="${ncm}" placeholder="NCM" style="font-size: 0.85rem; text-align: center; background: #202020; color: #ffffff; border: none; border-radius: 6px; padding: 6px 8px; width: 100%; box-sizing: border-box;">
                     </td>
                     <td style="padding: 8px;">
-                        <input type="text" class="form-input item-cfop" data-idx="${idx}" value="${cfop}" style="font-size: 0.85rem; background: #202020; color: #ffffff; border: none; border-radius: 6px; padding: 6px 8px; width: 100%; box-sizing: border-box;">
+                        <input type="text" class="form-input item-cfop" data-idx="${idx}" value="${cfop}" style="font-size: 0.85rem; text-align: center; background: #202020; color: #ffffff; border: none; border-radius: 6px; padding: 6px 8px; width: 100%; box-sizing: border-box;">
                     </td>
                     <td style="text-align: center; padding: 8px; font-weight: 700; color: #ffffff;">
                         <span class="item-qtd-orig" data-idx="${idx}">${qtdOrig}</span>
@@ -423,9 +433,9 @@
                         <input type="number" step="0.01" max="${qtdOrig}" class="form-input item-qtd-dev" data-idx="${idx}" value="${qtdDev}" onchange="recalcularTotaisDevolucao()" style="text-align: center; font-weight: 800; font-size: 0.9rem; background: var(--primary, #ffe54c); color: #000000; border: none; border-radius: 6px; padding: 6px 4px; width: 100%; box-sizing: border-box;">
                     </td>
                     <td style="padding: 8px;">
-                        <input type="number" step="0.01" class="form-input item-vunit" data-idx="${idx}" value="${vUnit.toFixed(2)}" onchange="recalcularTotaisDevolucao()" style="text-align: right; font-size: 0.85rem; background: #202020; color: #ffffff; border: none; border-radius: 6px; padding: 6px 8px; width: 100%; box-sizing: border-box;">
+                        <input type="number" step="0.01" class="form-input item-vunit" data-idx="${idx}" value="${vUnit.toFixed(2)}" onchange="recalcularTotaisDevolucao()" style="text-align: center; font-size: 0.85rem; background: #202020; color: #ffffff; border: none; border-radius: 6px; padding: 6px 8px; width: 100%; box-sizing: border-box;">
                     </td>
-                    <td style="padding: 8px; text-align: right; font-weight: 800;">
+                    <td style="padding: 8px; text-align: center; font-weight: 800;">
                         <span class="item-subtotal" id="subtotal-${idx}" style="color: #22c55e; font-weight: 800; font-size: 0.9rem;">${fmtBRL(qtdDev * vUnit)}</span>
                     </td>
                 </tr>
