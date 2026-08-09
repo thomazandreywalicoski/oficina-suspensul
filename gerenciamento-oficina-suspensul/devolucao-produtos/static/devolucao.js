@@ -329,24 +329,32 @@
         }
 
         const btn = document.getElementById('btn-consultar-nfe');
-        btn.disabled = true;
-        btn.innerHTML = `<i data-lucide="loader"></i> Buscando...`;
+        if (btn) btn.disabled = true;
+
+        if (typeof openModal === 'function') openModal('modal-loading-devolucao');
+
+        const delayPromise = new Promise(resolve => setTimeout(resolve, 5000));
+        const fetchPromise = fetch('/api/devolucao/consultar-original', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chave })
+        }).then(r => r.json());
 
         try {
-            const res = await fetch('/api/devolucao/consultar-original', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chave })
-            });
-            const data = await res.json();
-            if (!data.sucesso) throw new Error(data.erro);
+            const [_, data] = await Promise.all([delayPromise, fetchPromise]);
+            if (typeof closeModal === 'function') closeModal('modal-loading-devolucao');
+
+            if (!data || !data.sucesso) {
+                alert(data?.erro || 'NF-e não encontrada. Verifique a chave digitada ou tente importar o arquivo XML.');
+                return;
+            }
 
             preencherDadosNotaOriginal(data.dados);
         } catch (err) {
-            alert(err.message || 'Não foi possível consultar a NF-e. Tente importar o arquivo XML da nota.');
+            if (typeof closeModal === 'function') closeModal('modal-loading-devolucao');
+            alert('Não foi possível consultar a NF-e. Nota não encontrada.');
         } finally {
-            btn.disabled = false;
-            btn.innerHTML = `<i data-lucide="search"></i> Buscar NF-e`;
+            if (btn) btn.disabled = false;
             if (window.lucide) lucide.createIcons();
         }
     };
@@ -358,21 +366,31 @@
         if (document.getElementById('label-xml-file')) {
             document.getElementById('label-xml-file').innerText = file.name;
         }
-        
+
+        if (typeof openModal === 'function') openModal('modal-loading-devolucao');
+
         const formData = new FormData();
         formData.append('xml_file', file);
 
+        const delayPromise = new Promise(resolve => setTimeout(resolve, 5000));
+        const fetchPromise = fetch('/api/devolucao/importar-xml', {
+            method: 'POST',
+            body: formData
+        }).then(r => r.json());
+
         try {
-            const res = await fetch('/api/devolucao/importar-xml', {
-                method: 'POST',
-                body: formData
-            });
-            const data = await res.json();
-            if (!data.sucesso) throw new Error(data.erro);
+            const [_, data] = await Promise.all([delayPromise, fetchPromise]);
+            if (typeof closeModal === 'function') closeModal('modal-loading-devolucao');
+
+            if (!data || !data.sucesso) {
+                alert(data?.erro || 'Não foi possível importar o arquivo XML. Nota não encontrada.');
+                return;
+            }
 
             preencherDadosNotaOriginal(data.dados);
         } catch (err) {
-            alert('Erro ao importar XML: ' + err.message);
+            if (typeof closeModal === 'function') closeModal('modal-loading-devolucao');
+            alert('Erro ao importar XML: Nota não encontrada.');
         }
     };
 
