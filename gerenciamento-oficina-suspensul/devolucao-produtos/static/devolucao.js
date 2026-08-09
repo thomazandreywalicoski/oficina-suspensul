@@ -523,9 +523,15 @@
     function extrairPayloadFormulario() {
         const id = document.getElementById('dev-id').value;
         const chaveOrig = (document.getElementById('dev-chave-original').value || '').trim();
-        const fornNome = document.getElementById('dev-fornecedor-nome').innerText;
-        const fornCnpj = document.getElementById('dev-fornecedor-cnpj').innerText;
-        const notaNumSerie = document.getElementById('dev-nota-numero').innerText.split('/');
+        
+        const elNome = document.getElementById('dev-fornecedor-nome');
+        const elCnpj = document.getElementById('dev-fornecedor-cnpj');
+        const elNota = document.getElementById('dev-nota-numero');
+
+        const fornNome = elNome ? elNome.innerText : (dadosNotaOriginal.nome_emitente || dadosNotaOriginal.nome_fornecedor || '');
+        const fornCnpj = elCnpj ? elCnpj.innerText : (dadosNotaOriginal.cnpj_emitente || dadosNotaOriginal.cnpj_fornecedor || '');
+        const notaStr = elNota ? elNota.innerText : `${dadosNotaOriginal.numero || ''}/${dadosNotaOriginal.serie || ''}`;
+        const notaNumSerie = notaStr.split('/');
 
         const items = [];
         document.querySelectorAll('#dev-itens-body tr').forEach(tr => {
