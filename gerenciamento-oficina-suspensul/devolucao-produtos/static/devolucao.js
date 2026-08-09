@@ -502,48 +502,6 @@
         recalcularTotaisDevolucao();
     }
 
-        tbody.innerHTML = html;
-        recalcularTotaisDevolucao();
-    }
-
-    window.adicionarItemManual = function() {
-        const tbody = document.getElementById('dev-itens-body');
-        const idx = tbody.querySelectorAll('tr').length;
-        
-        const tr = document.createElement('tr');
-        tr.id = `row-item-${idx}`;
-        tr.style.borderBottom = '1px solid #f1f5f9';
-        tr.innerHTML = `
-            <td style="text-align: center; padding: 6px;">
-                <input type="checkbox" class="item-select" data-idx="${idx}" checked onchange="recalcularTotaisDevolucao()">
-            </td>
-            <td style="padding: 6px;">
-                <input type="text" class="form-input item-cprod" data-idx="${idx}" value="PECA${idx+1}" style="font-size: 0.75rem; width: 80px; display: inline-block;">
-                <input type="text" class="form-input item-desc" data-idx="${idx}" value="PEÇA DEVOLVIDA" placeholder="Descrição do produto" style="font-size: 0.8rem; width: calc(100% - 90px); display: inline-block;">
-            </td>
-            <td style="padding: 6px;">
-                <input type="text" class="form-input item-ncm" data-idx="${idx}" value="87083090" placeholder="NCM" style="font-size: 0.8rem;">
-            </td>
-            <td style="padding: 6px;">
-                <input type="text" class="form-input item-cfop" data-idx="${idx}" value="5202" style="font-size: 0.8rem;">
-            </td>
-            <td style="text-align: center; padding: 6px; font-weight: 600;">
-                <span class="item-qtd-orig" data-idx="${idx}">1</span>
-            </td>
-            <td style="padding: 6px;">
-                <input type="number" step="0.01" class="form-input item-qtd-dev" data-idx="${idx}" value="1" onchange="recalcularTotaisDevolucao()" style="text-align: center; font-weight: 600; font-size: 0.8rem;">
-            </td>
-            <td style="padding: 6px;">
-                <input type="number" step="0.01" class="form-input item-vunit" data-idx="${idx}" value="100.00" onchange="recalcularTotaisDevolucao()" style="text-align: right; font-size: 0.8rem;">
-            </td>
-            <td style="padding: 6px; text-align: right; font-weight: 700; color: #0f172a;">
-                <span class="item-subtotal" id="subtotal-${idx}">${fmtBRL(100)}</span>
-            </td>
-        `;
-        tbody.appendChild(tr);
-        recalcularTotaisDevolucao();
-    };
-
     window.recalcularTotaisDevolucao = function() {
         let totalProd = 0;
         const rows = document.querySelectorAll('#dev-itens-body tr');
