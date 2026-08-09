@@ -13,7 +13,12 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 import mysql.connector
 from mysql.connector import pooling
 
+load_dotenv()
+
+app = Flask(__name__)
+
 import sys
+from jinja2 import ChoiceLoader, FileSystemLoader
 devolucao_dir = os.path.join(os.path.dirname(__file__), 'devolucao-produtos')
 if devolucao_dir not in sys.path:
     sys.path.insert(0, devolucao_dir)
@@ -21,14 +26,16 @@ try:
     from routes import devolucao_bp
     from db_service import init_devolucao_tables
     app.register_blueprint(devolucao_bp)
+    dev_tmpl_dir = os.path.join(devolucao_dir, 'templates')
+    if os.path.exists(dev_tmpl_dir):
+        app.jinja_loader = ChoiceLoader([
+            app.jinja_loader,
+            FileSystemLoader(dev_tmpl_dir)
+        ])
 except Exception as _e:
     print(f"Aviso ao carregar módulo devolucao-produtos: {_e}")
     init_devolucao_tables = None
 
-
-load_dotenv()
-
-app = Flask(__name__)
 SECRET_KEY = os.getenv('SECRET_KEY')
 if not SECRET_KEY:
     raise RuntimeError('SECRET_KEY deve ser definida no .env')
