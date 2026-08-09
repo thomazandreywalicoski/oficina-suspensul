@@ -93,31 +93,28 @@
                     <h4 style="margin: 0 0 16px 0; font-size: 1rem; font-weight: 700; color: #ffffff;">Informar NF-e Original de Compra</h4>
                     
                     <div style="background: #181818; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
-                        <div style="display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: flex-end; margin-bottom: 16px;">
-                            <div>
-                                <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 6px; color: #a1a1aa;">Chave de Acesso da NF-e (44 dígitos):</label>
-                                <input type="text" id="dev-chave-original" class="form-input" maxlength="44" placeholder="Ex: 35260811111111111111550010000000011000000010" style="font-family: monospace; background: #222222; color: #ffffff; width: 100%; padding: 10px 14px; border-radius: 6px; font-size: 0.9rem;">
+                        
+                        <!-- Chave de Acesso -->
+                        <div style="margin-bottom: 20px;">
+                            <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 6px; color: #a1a1aa; white-space: nowrap;">Chave de Acesso da NF-e (44 dígitos):</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <input type="text" id="dev-chave-original" class="form-input" maxlength="44" placeholder="Ex: 35260811111111111111550010000000011000000010" style="font-family: monospace; background: #222222; color: #ffffff; flex: 1; height: 44px; padding: 0 14px; border-radius: 8px; font-size: 0.9rem; box-sizing: border-box;">
+                                <button class="btn btn-secondary" type="button" onclick="consultarNfeOriginal()" id="btn-consultar-nfe" style="background: #2a2a2a; color: #ffffff; height: 44px; padding: 0 20px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 8px; white-space: nowrap; font-weight: 600;">
+                                    <i data-lucide="search"></i> Buscar NF-e
+                                </button>
                             </div>
-                            <button class="btn btn-secondary" type="button" onclick="consultarNfeOriginal()" id="btn-consultar-nfe" style="background: #2a2a2a; color: #ffffff; padding: 10px 18px;">
-                                <i data-lucide="search"></i> Buscar NF-e
+                        </div>
+
+                        <!-- Upload do Arquivo XML -->
+                        <div>
+                            <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 6px; color: #a1a1aa; white-space: nowrap;">Ou importar arquivo XML original:</label>
+                            <input type="file" id="dev-xml-file" accept=".xml" style="display: none;" onchange="importarXmlOriginal(this)">
+                            <button type="button" class="btn btn-secondary" onclick="document.getElementById('dev-xml-file').click()" style="width: 100%; height: 44px; display: flex; align-items: center; justify-content: center; gap: 8px; background: #262626; color: #ffffff; border-radius: 8px; font-weight: 600; font-size: 0.9rem;">
+                                <i data-lucide="upload"></i>
+                                <span id="label-xml-file">Fazer upload do arquivo</span>
                             </button>
                         </div>
 
-                        <div style="display: flex; align-items: center; gap: 12px; font-size: 0.85rem; color: #a1a1aa; padding-top: 12px; border-top: 1px solid #262626;">
-                            <span>Ou importar arquivo XML original:</span>
-                            <input type="file" id="dev-xml-file" accept=".xml" style="font-size: 0.8rem; color: #a1a1aa;" onchange="importarXmlOriginal(this)">
-                        </div>
-                    </div>
-
-                    <!-- Bloco Dados do Fornecedor / Nota -->
-                    <div id="dev-bloco-fornecedor" style="display: none; background: #1e293b; padding: 18px; border-radius: 10px;">
-                        <h5 style="margin: 0 0 12px 0; font-size: 0.9rem; font-weight: 700; color: #38bdf8;">Dados da Nota Encontrada:</h5>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; font-size: 0.9rem; color: #e2e8f0;">
-                            <div><strong>Fornecedor:</strong> <span id="dev-fornecedor-nome">-</span></div>
-                            <div><strong>CNPJ:</strong> <span id="dev-fornecedor-cnpj">-</span></div>
-                            <div><strong>Nº / Série:</strong> <span id="dev-nota-numero">-</span></div>
-                            <div><strong>Data Emissão:</strong> <span id="dev-nota-data">-</span></div>
-                        </div>
                     </div>
                 </div>
 
@@ -213,16 +210,18 @@
         </div>
 
         <!-- Footer do Modal (Navegação dinâmica por passo) -->
-        <div class="modal-footer" style="padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; background: #161616; border-top: 1px solid #222222;">
-            <div>
+        <div class="modal-footer" id="dev-modal-footer" style="padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; background: #161616; border-top: 1px solid #222222;">
+            <div id="dev-footer-left" style="min-width: 100px;">
                 <button id="btn-step-prev" class="btn btn-secondary" onclick="stepAnteriorDevolucao()" type="button" style="background: #262626; color: #ffffff; display: none;">
                     &larr; Voltar
                 </button>
             </div>
-            <div style="display: flex; gap: 10px;">
-                <button id="btn-step-next" class="btn btn-primary" onclick="stepProximoDevolucao()" type="button">
-                    Avançar para Peças &rarr;
+            <div id="dev-footer-center" style="display: flex; justify-content: center; flex: 1;">
+                <button id="btn-step-next" class="btn btn-primary" onclick="stepProximoDevolucao()" type="button" style="display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 32px; font-weight: 700; font-size: 0.95rem;">
+                    Avançar &gt;
                 </button>
+            </div>
+            <div id="dev-footer-right" style="display: flex; gap: 10px; min-width: 100px; justify-content: flex-end;">
                 <button id="btn-salvar-rascunho" class="btn btn-secondary" type="button" onclick="salvarRascunhoDevolucao()" style="background: #262626; color: #ffffff; display: none;">
                     <i data-lucide="save"></i> Salvar Rascunho
                 </button>

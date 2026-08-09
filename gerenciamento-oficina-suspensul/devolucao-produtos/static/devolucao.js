@@ -229,14 +229,14 @@
         if (step === 1) {
             if (btnNext) {
                 btnNext.style.display = 'inline-flex';
-                btnNext.innerHTML = 'Avançar para Peças &rarr;';
+                btnNext.innerHTML = 'Avançar &gt;';
             }
             if (btnRascunho) btnRascunho.style.display = 'none';
             if (btnEmitir) btnEmitir.style.display = 'none';
         } else if (step === 2) {
             if (btnNext) {
                 btnNext.style.display = 'inline-flex';
-                btnNext.innerHTML = 'Avançar para Dados Fiscais &rarr;';
+                btnNext.innerHTML = 'Avançar &gt;';
             }
             if (btnRascunho) btnRascunho.style.display = 'none';
             if (btnEmitir) btnEmitir.style.display = 'none';
@@ -264,7 +264,11 @@
         document.getElementById('dev-id').value = '';
         document.getElementById('dev-chave-original').value = '';
         document.getElementById('dev-xml-file').value = '';
-        document.getElementById('dev-bloco-fornecedor').style.display = 'none';
+        if (document.getElementById('label-xml-file')) document.getElementById('label-xml-file').innerText = 'Fazer upload do arquivo';
+        
+        const blocoF = document.getElementById('dev-bloco-fornecedor');
+        if (blocoF) blocoF.style.display = 'none';
+
         document.getElementById('dev-natureza-operacao').value = 'DEVOLUCAO DE MERCADORIA';
         document.getElementById('dev-cfop-padrao').value = '5202';
         document.getElementById('dev-modalidade-frete').value = '9';
@@ -299,14 +303,6 @@
             document.getElementById('dev-val-frete').value = dev.valor_frete || '0.00';
             document.getElementById('dev-val-desconto').value = dev.valor_desconto || '0.00';
             document.getElementById('dev-val-outras').value = dev.valor_outras_despesas || '0.00';
-
-            if (dev.nome_fornecedor) {
-                document.getElementById('dev-bloco-fornecedor').style.display = 'block';
-                document.getElementById('dev-fornecedor-nome').innerText = dev.nome_fornecedor;
-                document.getElementById('dev-fornecedor-cnpj').innerText = dev.cnpj_fornecedor || '-';
-                document.getElementById('dev-nota-numero').innerText = (dev.numero_nfe_original || '-') + ' / ' + (dev.serie_nfe_original || '-');
-                document.getElementById('dev-nota-data').innerText = fmtDataBR(dev.criado_em);
-            }
 
             renderizarTabelaItens(dev.items || []);
             document.getElementById('modal-devolucao-titulo').innerText = `Editar Devolução (${dev.ref})`;
@@ -351,6 +347,10 @@
     window.importarXmlOriginal = async function(input) {
         if (!input.files || !input.files[0]) return;
         const file = input.files[0];
+
+        if (document.getElementById('label-xml-file')) {
+            document.getElementById('label-xml-file').innerText = file.name;
+        }
         
         const formData = new FormData();
         formData.append('xml_file', file);
@@ -364,7 +364,6 @@
             if (!data.sucesso) throw new Error(data.erro);
 
             preencherDadosNotaOriginal(data.dados);
-            alert('XML importado com sucesso!');
         } catch (err) {
             alert('Erro ao importar XML: ' + err.message);
         }
@@ -375,21 +374,13 @@
             document.getElementById('dev-chave-original').value = dados.chave_acesso;
         }
 
-        const emitNome = dados.nome_emitente || dados.emitente?.nome || dados.fornecedor_nome || '';
-        const emitCnpj = dados.cnpj_emitente || dados.emitente?.cnpj || dados.fornecedor_cnpj || '';
-        const nNF = dados.numero || dados.nNF || '';
-        const serie = dados.serie || '';
-        const dhEmi = dados.data_emissao || '';
-
-        document.getElementById('dev-bloco-fornecedor').style.display = 'block';
-        document.getElementById('dev-fornecedor-nome').innerText = emitNome || 'Não informado';
-        document.getElementById('dev-fornecedor-cnpj').innerText = emitCnpj || '-';
-        document.getElementById('dev-nota-numero').innerText = (nNF || '-') + ' / ' + (serie || '-');
-        document.getElementById('dev-nota-data').innerText = fmtDataBR(dhEmi);
-
         const itens = dados.items || dados.produtos || [];
         renderizarTabelaItens(itens);
+
+        // Avançar automaticamente para a etapa de seleção das peças (Passo 2)
+        window.irParaPassoDevolucao(2);
     }
+
 
     function renderizarTabelaItens(itens) {
         const tbody = document.getElementById('dev-itens-body');
