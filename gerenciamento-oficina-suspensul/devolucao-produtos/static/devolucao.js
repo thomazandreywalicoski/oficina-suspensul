@@ -229,14 +229,14 @@
         if (step === 1) {
             if (btnNext) {
                 btnNext.style.display = 'inline-flex';
-                btnNext.innerHTML = 'Avançar &gt;';
+                btnNext.innerHTML = `<i data-lucide="chevron-right" style="width: 20px; height: 20px;"></i>`;
             }
             if (btnRascunho) btnRascunho.style.display = 'none';
             if (btnEmitir) btnEmitir.style.display = 'none';
         } else if (step === 2) {
             if (btnNext) {
                 btnNext.style.display = 'inline-flex';
-                btnNext.innerHTML = 'Avançar &gt;';
+                btnNext.innerHTML = `<i data-lucide="chevron-right" style="width: 20px; height: 20px;"></i>`;
             }
             if (btnRascunho) btnRascunho.style.display = 'none';
             if (btnEmitir) btnEmitir.style.display = 'none';
@@ -245,6 +245,8 @@
             if (btnRascunho) btnRascunho.style.display = 'inline-flex';
             if (btnEmitir) btnEmitir.style.display = 'inline-flex';
         }
+
+        if (window.lucide) lucide.createIcons();
     };
 
     window.stepProximoDevolucao = function() {
@@ -405,7 +407,7 @@
             html += `
                 <tr id="row-item-${idx}" style="border-bottom: 1px solid #262626;">
                     <td style="text-align: center; padding: 8px;">
-                        <input type="checkbox" class="item-select" data-idx="${idx}" checked onchange="recalcularTotaisDevolucao()" style="accent-color: var(--primary, #ffe54c); width: 18px; height: 18px; cursor: pointer;">
+                        <input type="checkbox" class="item-select" data-idx="${idx}" onchange="recalcularTotaisDevolucao()" style="accent-color: var(--primary, #ffe54c); width: 18px; height: 18px; cursor: pointer;">
                     </td>
                     <td style="padding: 8px;">
                         <input type="text" class="form-input item-cprod" data-idx="${idx}" value="${cProd}" style="font-size: 0.85rem; background: #202020; color: #ffffff; border: 1px solid #333333; border-radius: 6px; padding: 6px 8px; width: 100%; box-sizing: border-box;">
