@@ -392,42 +392,54 @@
             return;
         }
 
+    function renderizarTabelaItens(itens) {
+        const tbody = document.getElementById('dev-itens-body');
+        if (!tbody) return;
+
+        if (!itens || itens.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; padding: 25px; color: #888888;">Nenhum item na nota.</td></tr>`;
+            recalcularTotaisDevolucao();
+            return;
+        }
+
         let html = '';
         itens.forEach((it, idx) => {
             const qtdOrig = Number(it.quantidade_original || it.qCom || 1);
             const qtdDev = Number(it.quantidade_devolvida || qtdOrig);
             const vUnit = Number(it.valor_unitario || it.vUnCom || 0);
-            const cfop = it.cfop || document.getElementById('dev-cfop-padrao').value || '5202';
+            const cfop = it.cfop || (document.getElementById('dev-cfop-padrao') ? document.getElementById('dev-cfop-padrao').value : '5202') || '5202';
             const ncm = it.ncm || it.codigo_ncm || '';
             const desc = it.descricao || it.xProd || '';
             const cProd = it.codigo_produto || it.cProd || `ITEM${idx+1}`;
 
             html += `
-                <tr id="row-item-${idx}" style="border-bottom: 1px solid #f1f5f9;">
-                    <td style="text-align: center; padding: 6px;">
-                        <input type="checkbox" class="item-select" data-idx="${idx}" checked onchange="recalcularTotaisDevolucao()">
+                <tr id="row-item-${idx}" style="border-bottom: 1px solid #262626;">
+                    <td style="text-align: center; padding: 8px;">
+                        <input type="checkbox" class="item-select" data-idx="${idx}" checked onchange="recalcularTotaisDevolucao()" style="accent-color: var(--primary, #ffe54c); width: 18px; height: 18px; cursor: pointer;">
                     </td>
-                    <td style="padding: 6px;">
-                        <input type="text" class="form-input item-cprod" data-idx="${idx}" value="${cProd}" style="font-size: 0.75rem; width: 80px; display: inline-block;">
-                        <input type="text" class="form-input item-desc" data-idx="${idx}" value="${desc}" placeholder="Descrição do produto" style="font-size: 0.8rem; width: calc(100% - 90px); display: inline-block;">
+                    <td style="padding: 8px;">
+                        <input type="text" class="form-input item-cprod" data-idx="${idx}" value="${cProd}" style="font-size: 0.85rem; background: #202020; color: #ffffff; border: 1px solid #333333; border-radius: 6px; padding: 6px 8px; width: 100%; box-sizing: border-box;">
                     </td>
-                    <td style="padding: 6px;">
-                        <input type="text" class="form-input item-ncm" data-idx="${idx}" value="${ncm}" placeholder="NCM" style="font-size: 0.8rem;">
+                    <td style="padding: 8px;">
+                        <input type="text" class="form-input item-desc" data-idx="${idx}" value="${desc}" placeholder="Descrição do produto" style="font-size: 0.85rem; background: #202020; color: #ffffff; border: 1px solid #333333; border-radius: 6px; padding: 6px 8px; width: 100%; box-sizing: border-box;">
                     </td>
-                    <td style="padding: 6px;">
-                        <input type="text" class="form-input item-cfop" data-idx="${idx}" value="${cfop}" style="font-size: 0.8rem;">
+                    <td style="padding: 8px;">
+                        <input type="text" class="form-input item-ncm" data-idx="${idx}" value="${ncm}" placeholder="NCM" style="font-size: 0.85rem; background: #202020; color: #ffffff; border: 1px solid #333333; border-radius: 6px; padding: 6px 8px; width: 100%; box-sizing: border-box;">
                     </td>
-                    <td style="text-align: center; padding: 6px; font-weight: 600;">
+                    <td style="padding: 8px;">
+                        <input type="text" class="form-input item-cfop" data-idx="${idx}" value="${cfop}" style="font-size: 0.85rem; background: #202020; color: #ffffff; border: 1px solid #333333; border-radius: 6px; padding: 6px 8px; width: 100%; box-sizing: border-box;">
+                    </td>
+                    <td style="text-align: center; padding: 8px; font-weight: 700; color: #ffffff;">
                         <span class="item-qtd-orig" data-idx="${idx}">${qtdOrig}</span>
                     </td>
-                    <td style="padding: 6px;">
-                        <input type="number" step="0.01" max="${qtdOrig}" class="form-input item-qtd-dev" data-idx="${idx}" value="${qtdDev}" onchange="recalcularTotaisDevolucao()" style="text-align: center; font-weight: 600; font-size: 0.8rem;">
+                    <td style="padding: 8px;">
+                        <input type="number" step="0.01" max="${qtdOrig}" class="form-input item-qtd-dev" data-idx="${idx}" value="${qtdDev}" onchange="recalcularTotaisDevolucao()" style="text-align: center; font-weight: 800; font-size: 0.9rem; background: var(--primary, #ffe54c); color: #000000; border: none; border-radius: 6px; padding: 6px 4px; width: 100%; box-sizing: border-box;">
                     </td>
-                    <td style="padding: 6px;">
-                        <input type="number" step="0.01" class="form-input item-vunit" data-idx="${idx}" value="${vUnit.toFixed(2)}" onchange="recalcularTotaisDevolucao()" style="text-align: right; font-size: 0.8rem;">
+                    <td style="padding: 8px;">
+                        <input type="number" step="0.01" class="form-input item-vunit" data-idx="${idx}" value="${vUnit.toFixed(2)}" onchange="recalcularTotaisDevolucao()" style="text-align: right; font-size: 0.85rem; background: #202020; color: #ffffff; border: 1px solid #333333; border-radius: 6px; padding: 6px 8px; width: 100%; box-sizing: border-box;">
                     </td>
-                    <td style="padding: 6px; text-align: right; font-weight: 700; color: #0f172a;">
-                        <span class="item-subtotal" id="subtotal-${idx}">${fmtBRL(qtdDev * vUnit)}</span>
+                    <td style="padding: 8px; text-align: right; font-weight: 800;">
+                        <span class="item-subtotal" id="subtotal-${idx}" style="color: #22c55e; font-weight: 800; font-size: 0.9rem;">${fmtBRL(qtdDev * vUnit)}</span>
                     </td>
                 </tr>
             `;
