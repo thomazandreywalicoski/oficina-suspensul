@@ -191,26 +191,21 @@
             const pill = document.getElementById(`step-indicator-${i}`);
             if (!pill) continue;
             const badge = pill.querySelector('span:first-child');
+            const label = pill.querySelector('span:last-child');
             if (i === step) {
-                pill.style.background = '#222222';
-                pill.style.color = 'var(--primary, #ffe54c)';
-                pill.style.fontWeight = '700';
+                pill.style.background = 'var(--primary, #ffe54c)';
+                pill.style.color = '#000000';
+                pill.style.fontWeight = '800';
+                if (label) label.style.color = '#000000';
                 if (badge) {
-                    badge.style.background = 'var(--primary, #ffe54c)';
-                    badge.style.color = '#000000';
-                }
-            } else if (i < step) {
-                pill.style.background = '#181818';
-                pill.style.color = '#22c55e';
-                pill.style.fontWeight = '600';
-                if (badge) {
-                    badge.style.background = '#22c55e';
-                    badge.style.color = '#ffffff';
+                    badge.style.background = '#000000';
+                    badge.style.color = 'var(--primary, #ffe54c)';
                 }
             } else {
-                pill.style.background = '#161616';
+                pill.style.background = '#222222';
                 pill.style.color = '#888888';
                 pill.style.fontWeight = '600';
+                if (label) label.style.color = '#888888';
                 if (badge) {
                     badge.style.background = '#333333';
                     badge.style.color = '#ffffff';
@@ -410,16 +405,16 @@
                         <input type="checkbox" class="item-select" data-idx="${idx}" onchange="recalcularTotaisDevolucao()" style="accent-color: var(--primary, #ffe54c); width: 18px; height: 18px; cursor: pointer;">
                     </td>
                     <td style="padding: 8px;">
-                        <input type="text" class="form-input item-cprod" data-idx="${idx}" value="${cProd}" style="font-size: 0.85rem; background: #202020; color: #ffffff; border: 1px solid #333333; border-radius: 6px; padding: 6px 8px; width: 100%; box-sizing: border-box;">
+                        <input type="text" class="form-input item-cprod" data-idx="${idx}" value="${cProd}" style="font-size: 0.85rem; background: #202020; color: #ffffff; border: none; border-radius: 6px; padding: 6px 8px; width: 100%; box-sizing: border-box;">
                     </td>
                     <td style="padding: 8px;">
-                        <input type="text" class="form-input item-desc" data-idx="${idx}" value="${desc}" placeholder="Descrição do produto" style="font-size: 0.85rem; background: #202020; color: #ffffff; border: 1px solid #333333; border-radius: 6px; padding: 6px 8px; width: 100%; box-sizing: border-box;">
+                        <input type="text" class="form-input item-desc" data-idx="${idx}" value="${desc}" placeholder="Descrição do produto" style="font-size: 0.85rem; background: #202020; color: #ffffff; border: none; border-radius: 6px; padding: 6px 8px; width: 100%; box-sizing: border-box;">
                     </td>
                     <td style="padding: 8px;">
-                        <input type="text" class="form-input item-ncm" data-idx="${idx}" value="${ncm}" placeholder="NCM" style="font-size: 0.85rem; background: #202020; color: #ffffff; border: 1px solid #333333; border-radius: 6px; padding: 6px 8px; width: 100%; box-sizing: border-box;">
+                        <input type="text" class="form-input item-ncm" data-idx="${idx}" value="${ncm}" placeholder="NCM" style="font-size: 0.85rem; background: #202020; color: #ffffff; border: none; border-radius: 6px; padding: 6px 8px; width: 100%; box-sizing: border-box;">
                     </td>
                     <td style="padding: 8px;">
-                        <input type="text" class="form-input item-cfop" data-idx="${idx}" value="${cfop}" style="font-size: 0.85rem; background: #202020; color: #ffffff; border: 1px solid #333333; border-radius: 6px; padding: 6px 8px; width: 100%; box-sizing: border-box;">
+                        <input type="text" class="form-input item-cfop" data-idx="${idx}" value="${cfop}" style="font-size: 0.85rem; background: #202020; color: #ffffff; border: none; border-radius: 6px; padding: 6px 8px; width: 100%; box-sizing: border-box;">
                     </td>
                     <td style="text-align: center; padding: 8px; font-weight: 700; color: #ffffff;">
                         <span class="item-qtd-orig" data-idx="${idx}">${qtdOrig}</span>
@@ -428,7 +423,7 @@
                         <input type="number" step="0.01" max="${qtdOrig}" class="form-input item-qtd-dev" data-idx="${idx}" value="${qtdDev}" onchange="recalcularTotaisDevolucao()" style="text-align: center; font-weight: 800; font-size: 0.9rem; background: var(--primary, #ffe54c); color: #000000; border: none; border-radius: 6px; padding: 6px 4px; width: 100%; box-sizing: border-box;">
                     </td>
                     <td style="padding: 8px;">
-                        <input type="number" step="0.01" class="form-input item-vunit" data-idx="${idx}" value="${vUnit.toFixed(2)}" onchange="recalcularTotaisDevolucao()" style="text-align: right; font-size: 0.85rem; background: #202020; color: #ffffff; border: 1px solid #333333; border-radius: 6px; padding: 6px 8px; width: 100%; box-sizing: border-box;">
+                        <input type="number" step="0.01" class="form-input item-vunit" data-idx="${idx}" value="${vUnit.toFixed(2)}" onchange="recalcularTotaisDevolucao()" style="text-align: right; font-size: 0.85rem; background: #202020; color: #ffffff; border: none; border-radius: 6px; padding: 6px 8px; width: 100%; box-sizing: border-box;">
                     </td>
                     <td style="padding: 8px; text-align: right; font-weight: 800;">
                         <span class="item-subtotal" id="subtotal-${idx}" style="color: #22c55e; font-weight: 800; font-size: 0.9rem;">${fmtBRL(qtdDev * vUnit)}</span>
