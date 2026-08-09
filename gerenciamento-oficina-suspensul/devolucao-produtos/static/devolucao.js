@@ -65,7 +65,7 @@
         if (!tbody) return;
 
         if (!lista || lista.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 30px; color: #64748b;">Nenhuma devolução encontrada. Clique em "Nova Devolução" para começar.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 30px; color: #888888;">Nenhuma nota encontrada</td></tr>`;
             return;
         }
 
@@ -101,21 +101,21 @@
             }
 
             html += `
-                <tr style="border-bottom: 1px solid #f1f5f9;">
+                <tr style="border-bottom: 1px solid #1f1f1f;">
                     <td style="padding: 12px 16px;">
-                        <strong style="color: #0f172a; font-family: monospace;">${item.ref}</strong>
-                        <div style="font-size: 0.75rem; color: #64748b;">${fmtDataBR(item.criado_em)}</div>
+                        <strong style="color: #ffffff; font-family: monospace;">${item.ref}</strong>
+                        <div style="font-size: 0.75rem; color: #888888;">${fmtDataBR(item.criado_em)}</div>
                     </td>
                     <td style="padding: 12px 16px;">
-                        <div style="font-weight: 600;">${item.nome_fornecedor || 'Não informado'}</div>
-                        <div style="font-size: 0.75rem; color: #64748b;">${item.cnpj_fornecedor || '-'}</div>
+                        <div style="font-weight: 600; color: #ffffff;">${item.nome_fornecedor || 'Não informado'}</div>
+                        <div style="font-size: 0.75rem; color: #888888;">${item.cnpj_fornecedor || '-'}</div>
                     </td>
                     <td style="padding: 12px 16px;">
-                        <div style="font-family: monospace; font-size: 0.8rem; color: #475569;" title="${item.chave_nfe_original}">
+                        <div style="font-family: monospace; font-size: 0.8rem; color: #a1a1aa;" title="${item.chave_nfe_original}">
                             ${item.chave_nfe_original ? item.chave_nfe_original.substring(0, 20) + '...' : '-'}
                         </div>
                     </td>
-                    <td style="padding: 12px 16px; font-weight: 700; color: #0f172a;">
+                    <td style="padding: 12px 16px; font-weight: 700; color: #ffffff;">
                         ${fmtBRL(item.valor_total)}
                     </td>
                     <td style="padding: 12px 16px;">${statusBadge}</td>
@@ -133,8 +133,10 @@
     }
 
     window.filtrarDevolucoes = function() {
-        const busca = (document.getElementById('devolucao-busca').value || '').toLowerCase();
-        const st = document.getElementById('devolucao-filtro-status').value;
+        const buscaEl = document.getElementById('devolucao-busca');
+        const busca = buscaEl ? (buscaEl.value || '').toLowerCase() : '';
+        const filterStEl = document.getElementById('devolucao-filtro-status');
+        const st = filterStEl ? filterStEl.value : '';
 
         const filtrados = devolucoesLista.filter(item => {
             const matchSt = !st || item.status === st;
@@ -148,6 +150,7 @@
 
         renderizarTabelaDevolucoes(filtrados);
     };
+
 
     // Modal Nova Devolução
     window.abrirModalNovaDevolucao = function() {

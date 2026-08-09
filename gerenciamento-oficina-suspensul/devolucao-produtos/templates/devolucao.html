@@ -1,64 +1,42 @@
 <!-- Módulo de Devolução de Produtos / Peças — Focus NFe Integration -->
 <div class="devolucao-container">
     
-    <!-- Header / Ações -->
-    <div class="devolucao-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
-        <div>
-            <h2 style="font-size: 1.4rem; font-weight: 700; color: #ffffff; margin: 0;">Devolução de Produtos (NF-e)</h2>
+    <!-- Top Header: Search & Action Button -->
+    <div class="page-header" style="margin-bottom: 20px;">
+        <div class="search-input-wrap">
+            <input type="text" id="devolucao-busca" placeholder="Buscar por ref, fornecedor, CNPJ ou chave..." onkeyup="filtrarDevolucoes()">
+            <i data-lucide="search" class="input-icon-right"></i>
         </div>
-        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <button class="btn btn-primary" type="button" onclick="openModal('modal-devolucao'); window.abrirModalNovaDevolucao()" style="display: inline-flex; align-items: center; gap: 8px;">
-                <i data-lucide="plus-circle"></i>
-                <span>Nova Devolução</span>
-            </button>
-        </div>
+        <button class="btn btn-primary" type="button" onclick="abrirModalNovaDevolucao()">
+            <i data-lucide="plus"></i> <span>Nova Devolução</span>
+        </button>
     </div>
 
-    <!-- Cards de Resumo -->
+    <!-- Cards de Resumo (Ordem: Processando, Autorizadas, Rejeitadas, Rascunhos) -->
     <div class="devolucao-cards-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
-        <div class="card-kpi" style="background: #161616; padding: 18px; border-radius: 12px; border: 1px solid #222222;">
-            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #888888; letter-spacing: 0.5px;">Autorizadas</div>
-            <div id="kpi-autorizadas" style="font-size: 1.6rem; font-weight: 800; color: #22c55e; margin-top: 6px;">0</div>
-        </div>
-        <div class="card-kpi" style="background: #161616; padding: 18px; border-radius: 12px; border: 1px solid #222222;">
-            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #888888; letter-spacing: 0.5px;">Processando</div>
+        <div class="card-kpi" style="background: #161616; padding: 18px; border-radius: 12px;">
+            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #888888; letter-spacing: 0.5px;">PROCESSANDO</div>
             <div id="kpi-processando" style="font-size: 1.6rem; font-weight: 800; color: #f59e0b; margin-top: 6px;">0</div>
         </div>
-        <div class="card-kpi" style="background: #161616; padding: 18px; border-radius: 12px; border: 1px solid #222222;">
-            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #888888; letter-spacing: 0.5px;">Rejeitadas</div>
+        <div class="card-kpi" style="background: #161616; padding: 18px; border-radius: 12px;">
+            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #888888; letter-spacing: 0.5px;">AUTORIZADAS</div>
+            <div id="kpi-autorizadas" style="font-size: 1.6rem; font-weight: 800; color: #22c55e; margin-top: 6px;">0</div>
+        </div>
+        <div class="card-kpi" style="background: #161616; padding: 18px; border-radius: 12px;">
+            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #888888; letter-spacing: 0.5px;">REJEITADAS</div>
             <div id="kpi-rejeitadas" style="font-size: 1.6rem; font-weight: 800; color: #ef4444; margin-top: 6px;">0</div>
         </div>
-        <div class="card-kpi" style="background: #161616; padding: 18px; border-radius: 12px; border: 1px solid #222222;">
-            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #888888; letter-spacing: 0.5px;">Rascunhos</div>
+        <div class="card-kpi" style="background: #161616; padding: 18px; border-radius: 12px;">
+            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #888888; letter-spacing: 0.5px;">RASCUNHOS</div>
             <div id="kpi-rascunhos" style="font-size: 1.6rem; font-weight: 800; color: #94a3b8; margin-top: 6px;">0</div>
         </div>
     </div>
 
-    <!-- Filtros e Busca -->
-    <div style="background: #161616; padding: 16px; border-radius: 12px; border: 1px solid #222222; margin-bottom: 20px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
-        <div style="flex: 1; min-width: 250px;">
-            <input type="text" id="devolucao-busca" class="form-input" placeholder="Buscar por ref, fornecedor, CNPJ ou chave..." onkeyup="filtrarDevolucoes()" style="background: #1e1e1e; border: 1px solid #2a2a2a; color: #ffffff; width: 100%;">
-        </div>
-        <div style="width: 180px;">
-            <select id="devolucao-filtro-status" class="form-input" onchange="filtrarDevolucoes()" style="background: #1e1e1e; border: 1px solid #2a2a2a; color: #ffffff; width: 100%;">
-                <option value="">Todos os status</option>
-                <option value="AUTORIZADA">Autorizadas</option>
-                <option value="PROCESSANDO">Processando</option>
-                <option value="REJEITADA">Rejeitadas</option>
-                <option value="RASCUNHO">Rascunhos</option>
-                <option value="CANCELADA">Canceladas</option>
-            </select>
-        </div>
-        <button class="btn btn-secondary" onclick="carregarDevolucoes()" type="button" style="background: #222222; border: 1px solid #333333; color: #ffffff;">
-            <i data-lucide="refresh-cw"></i> Atualizar
-        </button>
-    </div>
-
-    <!-- Tabela Principal de Devoluções -->
-    <div style="background: #161616; border-radius: 12px; border: 1px solid #222222; overflow: hidden;">
+    <!-- Tabela Principal de Devoluções (Sem bordas) -->
+    <div style="background: #161616; border-radius: 12px; overflow: hidden;">
         <div style="overflow-x: auto;">
             <table class="table" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
-                <thead style="background: #1a1a1a; border-bottom: 1px solid #262626;">
+                <thead style="background: #1a1a1a;">
                     <tr>
                         <th style="padding: 12px 16px; color: #888888; font-size: 11px; font-weight: 800; text-transform: uppercase;">Ref / Data</th>
                         <th style="padding: 12px 16px; color: #888888; font-size: 11px; font-weight: 800; text-transform: uppercase;">Fornecedor</th>
@@ -70,7 +48,7 @@
                 </thead>
                 <tbody id="devolucao-tabela-body">
                     <tr>
-                        <td colspan="6" style="text-align: center; padding: 30px; color: #888888;">Carregando devoluções...</td>
+                        <td colspan="6" style="text-align: center; padding: 30px; color: #888888;">Nenhuma nota encontrada</td>
                     </tr>
                 </tbody>
             </table>
@@ -80,9 +58,9 @@
 </div>
 
 <!-- Modal: Nova Devolução / Editor -->
-<div id="modal-devolucao" class="modal-overlay" style="display: none;">
-    <div class="modal" style="max-width: 900px; width: 95%; max-height: 90vh; display: flex; flex-direction: column; background: #141414; border: 1px solid #262626; border-radius: 12px; color: #ffffff;">
-        <div class="modal-header" style="padding: 16px 20px; border-bottom: 1px solid #222222; display: flex; justify-content: space-between; align-items: center;">
+<div class="modal-overlay" id="modal-devolucao">
+    <div class="modal" style="max-width: 900px; width: 95%; max-height: 90vh; display: flex; flex-direction: column; background: #141414; border-radius: 12px; color: #ffffff;">
+        <div class="modal-header" style="padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;">
             <h3 id="modal-devolucao-titulo" style="font-weight: 700; margin: 0; font-size: 1.2rem; color: #ffffff;">Nova Devolução de Produtos</h3>
             <button class="modal-close" onclick="closeModal('modal-devolucao')" type="button" style="color: #ffffff; background: transparent; border: none; font-size: 1.4rem; cursor: pointer;">&times;</button>
         </div>
@@ -92,14 +70,14 @@
                 <input type="hidden" id="dev-id" value="">
 
                 <!-- Etapa 1: NF-e Original -->
-                <div style="background: #1a1a1a; padding: 16px; border-radius: 8px; border: 1px solid #262626; margin-bottom: 20px;">
+                <div style="background: #1a1a1a; padding: 16px; border-radius: 8px; margin-bottom: 20px;">
                     <h4 style="margin: 0 0 12px 0; font-size: 0.95rem; font-weight: 700; color: var(--primary, #ffe54c);">1. NF-e Original de Compra (Autopeças)</h4>
                     <div style="display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: flex-end;">
                         <div>
                             <label style="font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px; color: #a1a1aa;">Chave de Acesso da NF-e (44 dígitos):</label>
-                            <input type="text" id="dev-chave-original" class="form-input" maxlength="44" placeholder="Ex: 35260811111111111111550010000000011000000010" style="font-family: monospace; background: #222222; border: 1px solid #333333; color: #ffffff; width: 100%; padding: 8px 12px; border-radius: 6px;">
+                            <input type="text" id="dev-chave-original" class="form-input" maxlength="44" placeholder="Ex: 35260811111111111111550010000000011000000010" style="font-family: monospace; background: #222222; color: #ffffff; width: 100%; padding: 8px 12px; border-radius: 6px;">
                         </div>
-                        <button class="btn btn-secondary" type="button" onclick="consultarNfeOriginal()" id="btn-consultar-nfe" style="background: #2a2a2a; border: 1px solid #3d3d3d; color: #ffffff;">
+                        <button class="btn btn-secondary" type="button" onclick="consultarNfeOriginal()" id="btn-consultar-nfe" style="background: #2a2a2a; color: #ffffff;">
                             <i data-lucide="search"></i> Buscar NF-e
                         </button>
                     </div>
@@ -111,7 +89,7 @@
                 </div>
 
                 <!-- Dados do Fornecedor / Nota Encontrada -->
-                <div id="dev-bloco-fornecedor" style="display: none; background: #1e293b; padding: 14px; border-radius: 8px; border: 1px solid #334155; margin-bottom: 20px;">
+                <div id="dev-bloco-fornecedor" style="display: none; background: #1e293b; padding: 14px; border-radius: 8px; margin-bottom: 20px;">
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; font-size: 0.875rem; color: #e2e8f0;">
                         <div><strong>Fornecedor:</strong> <span id="dev-fornecedor-nome">-</span></div>
                         <div><strong>CNPJ:</strong> <span id="dev-fornecedor-cnpj">-</span></div>
@@ -123,9 +101,9 @@
                 <!-- Etapa 2: Seleção dos Produtos/Peças -->
                 <div style="margin-bottom: 20px;">
                     <h4 style="margin: 0 0 12px 0; font-size: 0.95rem; font-weight: 700; color: var(--primary, #ffe54c);">2. Seleção das Peças a Devolver</h4>
-                    <div style="border: 1px solid #262626; border-radius: 8px; overflow-x: auto; background: #161616;">
+                    <div style="border-radius: 8px; overflow-x: auto; background: #161616;">
                         <table class="table" style="width: 100%; border-collapse: collapse; font-size: 0.85rem; color: #ffffff;">
-                            <thead style="background: #1a1a1a; border-bottom: 1px solid #262626;">
+                            <thead style="background: #1a1a1a;">
                                 <tr>
                                     <th style="padding: 8px; width: 40px; text-align: center; color: #888888;">Sel.</th>
                                     <th style="padding: 8px; color: #888888;">Código / Descrição</th>
@@ -144,26 +122,26 @@
                             </tbody>
                         </table>
                     </div>
-                    <button class="btn btn-secondary btn-sm" type="button" onclick="adicionarItemManual()" style="margin-top: 10px; background: #262626; border: 1px solid #333333; color: #ffffff;">
+                    <button class="btn btn-secondary btn-sm" type="button" onclick="adicionarItemManual()" style="margin-top: 10px; background: #262626; color: #ffffff;">
                         <i data-lucide="plus"></i> Adicionar Item Manualmente
                     </button>
                 </div>
 
                 <!-- Etapa 3: Dados Fiscais da Devolução -->
-                <div style="background: #1a1a1a; padding: 16px; border-radius: 8px; border: 1px solid #262626; margin-bottom: 20px;">
+                <div style="background: #1a1a1a; padding: 16px; border-radius: 8px; margin-bottom: 20px;">
                     <h4 style="margin: 0 0 12px 0; font-size: 0.95rem; font-weight: 700; color: var(--primary, #ffe54c);">3. Configurações Fiscais</h4>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
                         <div>
                             <label style="font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px; color: #a1a1aa;">Natureza da Operação:</label>
-                            <input type="text" id="dev-natureza-operacao" class="form-input" value="DEVOLUCAO DE MERCADORIA" style="background: #222222; border: 1px solid #333333; color: #ffffff; width: 100%; padding: 6px 10px; border-radius: 6px;">
+                            <input type="text" id="dev-natureza-operacao" class="form-input" value="DEVOLUCAO DE MERCADORIA" style="background: #222222; color: #ffffff; width: 100%; padding: 6px 10px; border-radius: 6px;">
                         </div>
                         <div>
                             <label style="font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px; color: #a1a1aa;">CFOP Padrão:</label>
-                            <input type="text" id="dev-cfop-padrao" class="form-input" value="5202" style="background: #222222; border: 1px solid #333333; color: #ffffff; width: 100%; padding: 6px 10px; border-radius: 6px;">
+                            <input type="text" id="dev-cfop-padrao" class="form-input" value="5202" style="background: #222222; color: #ffffff; width: 100%; padding: 6px 10px; border-radius: 6px;">
                         </div>
                         <div>
                             <label style="font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px; color: #a1a1aa;">Modalidade de Frete:</label>
-                            <select id="dev-modalidade-frete" class="form-input" style="background: #222222; border: 1px solid #333333; color: #ffffff; width: 100%; padding: 6px 10px; border-radius: 6px;">
+                            <select id="dev-modalidade-frete" class="form-input" style="background: #222222; color: #ffffff; width: 100%; padding: 6px 10px; border-radius: 6px;">
                                 <option value="9" selected>9 - Sem Transporte / Frete</option>
                                 <option value="0">0 - Por conta do Emitente</option>
                                 <option value="1">1 - Por conta do Destinatário</option>
@@ -174,12 +152,12 @@
 
                     <div style="margin-top: 12px;">
                         <label style="font-size: 0.8rem; font-weight: 600; display: block; margin-bottom: 4px; color: #a1a1aa;">Observações Fiscais / Informações Adicionais:</label>
-                        <textarea id="dev-observacoes" class="form-input" rows="2" placeholder="Ex: Devolução referente à NF-e de compra nº..." style="background: #222222; border: 1px solid #333333; color: #ffffff; width: 100%; padding: 8px; border-radius: 6px;"></textarea>
+                        <textarea id="dev-observacoes" class="form-input" rows="2" placeholder="Ex: Devolução referente à NF-e de compra nº..." style="background: #222222; color: #ffffff; width: 100%; padding: 8px; border-radius: 6px;"></textarea>
                     </div>
                 </div>
 
                 <!-- Etapa 4: Totais e Valores -->
-                <div style="background: #1a1a1a; padding: 16px; border-radius: 8px; border: 1px solid #333333; margin-bottom: 20px;">
+                <div style="background: #1a1a1a; padding: 16px; border-radius: 8px; margin-bottom: 20px;">
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; text-align: right;">
                         <div>
                             <div style="font-size: 0.75rem; color: #888888;">Val. Produtos</div>
@@ -187,17 +165,17 @@
                         </div>
                         <div>
                             <label style="font-size: 0.75rem; color: #888888; display: block;">Frete (R$):</label>
-                            <input type="number" step="0.01" id="dev-val-frete" class="form-input" value="0.00" style="text-align: right; padding: 4px 8px; background: #222222; border: 1px solid #333333; color: #ffffff;" onchange="recalcularTotaisDevolucao()">
+                            <input type="number" step="0.01" id="dev-val-frete" class="form-input" value="0.00" style="text-align: right; padding: 4px 8px; background: #222222; color: #ffffff;" onchange="recalcularTotaisDevolucao()">
                         </div>
                         <div>
                             <label style="font-size: 0.75rem; color: #888888; display: block;">Desconto (R$):</label>
-                            <input type="number" step="0.01" id="dev-val-desconto" class="form-input" value="0.00" style="text-align: right; padding: 4px 8px; background: #222222; border: 1px solid #333333; color: #ffffff;" onchange="recalcularTotaisDevolucao()">
+                            <input type="number" step="0.01" id="dev-val-desconto" class="form-input" value="0.00" style="text-align: right; padding: 4px 8px; background: #222222; color: #ffffff;" onchange="recalcularTotaisDevolucao()">
                         </div>
                         <div>
                             <label style="font-size: 0.75rem; color: #888888; display: block;">Outras Desp. (R$):</label>
-                            <input type="number" step="0.01" id="dev-val-outras" class="form-input" value="0.00" style="text-align: right; padding: 4px 8px; background: #222222; border: 1px solid #333333; color: #ffffff;" onchange="recalcularTotaisDevolucao()">
+                            <input type="number" step="0.01" id="dev-val-outras" class="form-input" value="0.00" style="text-align: right; padding: 4px 8px; background: #222222; color: #ffffff;" onchange="recalcularTotaisDevolucao()">
                         </div>
-                        <div style="background: #222222; padding: 8px; border-radius: 6px; border: 1px solid #333333;">
+                        <div style="background: #222222; padding: 8px; border-radius: 6px;">
                             <div style="font-size: 0.75rem; color: var(--primary, #ffe54c); font-weight: 700;">TOTAL DA NF-E</div>
                             <div id="res-val-total" style="font-weight: 800; font-size: 1.2rem; color: #ffffff;">R$ 0,00</div>
                         </div>
@@ -207,10 +185,10 @@
             </form>
         </div>
 
-        <div class="modal-footer" style="padding: 16px 20px; border-top: 1px solid #222222; display: flex; justify-content: space-between; align-items: center; background: #161616;">
-            <button class="btn btn-secondary" onclick="closeModal('modal-devolucao')" type="button" style="background: #262626; border: 1px solid #333333; color: #ffffff;">Cancelar</button>
+        <div class="modal-footer" style="padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; background: #161616;">
+            <button class="btn btn-secondary" onclick="closeModal('modal-devolucao')" type="button" style="background: #262626; color: #ffffff;">Cancelar</button>
             <div style="display: flex; gap: 10px;">
-                <button class="btn btn-secondary" type="button" onclick="salvarRascunhoDevolucao()" id="btn-salvar-rascunho" style="background: #262626; border: 1px solid #333333; color: #ffffff;">
+                <button class="btn btn-secondary" type="button" onclick="salvarRascunhoDevolucao()" id="btn-salvar-rascunho" style="background: #262626; color: #ffffff;">
                     <i data-lucide="save"></i> Salvar Rascunho
                 </button>
                 <button class="btn btn-primary" type="button" onclick="emitirNfeDevolucao()" id="btn-emitir-nfe">
@@ -222,19 +200,19 @@
 </div>
 
 <!-- Modal: Cancelamento -->
-<div id="modal-cancelamento-devolucao" class="modal-overlay" style="display: none;">
-    <div class="modal" style="max-width: 500px; width: 90%; background: #141414; border: 1px solid #262626; border-radius: 12px; color: #ffffff;">
-        <div class="modal-header" style="padding: 16px 20px; border-bottom: 1px solid #222222; display: flex; justify-content: space-between; align-items: center;">
+<div class="modal-overlay" id="modal-cancelamento-devolucao">
+    <div class="modal" style="max-width: 500px; width: 90%; background: #141414; border-radius: 12px; color: #ffffff;">
+        <div class="modal-header" style="padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;">
             <h3 style="margin: 0; font-size: 1.1rem; color: #ffffff;">Cancelar NF-e de Devolução</h3>
             <button class="modal-close" onclick="closeModal('modal-cancelamento-devolucao')" type="button" style="color: #ffffff; background: transparent; border: none; font-size: 1.4rem; cursor: pointer;">&times;</button>
         </div>
         <div class="modal-body" style="padding: 20px;">
             <input type="hidden" id="cancelar-dev-id">
             <p style="font-size: 0.875rem; color: #a1a1aa; margin-bottom: 12px;">Informe a justificativa do cancelamento perante a SEFAZ (mínimo de 15 caracteres):</p>
-            <textarea id="cancelar-justificativa" class="form-input" rows="4" placeholder="Ex: Emissão cancelada devido a erro no preenchimento do valor do item." style="background: #222222; border: 1px solid #333333; color: #ffffff; width: 100%; padding: 8px; border-radius: 6px;"></textarea>
+            <textarea id="cancelar-justificativa" class="form-input" rows="4" placeholder="Ex: Emissão cancelada devido a erro no preenchimento do valor do item." style="background: #222222; color: #ffffff; width: 100%; padding: 8px; border-radius: 6px;"></textarea>
         </div>
-        <div class="modal-footer" style="padding: 16px 20px; border-top: 1px solid #222222; display: flex; justify-content: flex-end; gap: 10px; background: #161616;">
-            <button class="btn btn-secondary" onclick="closeModal('modal-cancelamento-devolucao')" type="button" style="background: #262626; border: 1px solid #333333; color: #ffffff;">Voltar</button>
+        <div class="modal-footer" style="padding: 16px 20px; display: flex; justify-content: flex-end; gap: 10px; background: #161616;">
+            <button class="btn btn-secondary" onclick="closeModal('modal-cancelamento-devolucao')" type="button" style="background: #262626; color: #ffffff;">Voltar</button>
             <button class="btn btn-danger" onclick="confirmarCancelamentoDevolucao()" type="button" id="btn-confirmar-cancelamento" style="background: #dc2626; color: white;">
                 Confirmar Cancelamento
             </button>
