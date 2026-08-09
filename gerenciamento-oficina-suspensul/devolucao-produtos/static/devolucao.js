@@ -7,6 +7,7 @@
 
     let devolucoesLista = [];
     let itensNotaOriginal = [];
+    let dadosNotaOriginal = {};
 
     // Helper de Formatação de Moeda
     function fmtBRL(v) {
@@ -285,6 +286,7 @@
         document.getElementById('dev-val-outras').value = '0.00';
         
         itensNotaOriginal = [];
+        dadosNotaOriginal = {};
         renderizarTabelaItens([]);
 
         document.getElementById('modal-devolucao-titulo').innerText = 'Nova Devolução de Produtos';
@@ -395,6 +397,7 @@
     };
 
     function preencherDadosNotaOriginal(dados) {
+        dadosNotaOriginal = dados || {};
         if (dados.chave_acesso) {
             document.getElementById('dev-chave-original').value = dados.chave_acesso;
         }
