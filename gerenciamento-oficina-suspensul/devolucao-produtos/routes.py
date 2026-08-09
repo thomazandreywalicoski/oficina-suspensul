@@ -24,9 +24,18 @@ devolucao_bp = Blueprint(
 
 def _get_db():
     from app import get_db
-    return get_db()
+    conn = get_db()
+    _ensure_tables_exist(conn)
+    return conn
+
+def _ensure_tables_exist(conn):
+    try:
+        init_devolucao_tables(conn)
+    except Exception as _e:
+        pass
 
 def _serialize(obj):
+
     if isinstance(obj, (datetime, datetime.date)):
         return obj.isoformat()
     if isinstance(obj, Decimal):

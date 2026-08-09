@@ -167,7 +167,8 @@
         renderizarTabelaItens([]);
 
         document.getElementById('modal-devolucao-titulo').innerText = 'Nova Devolução de Produtos';
-        abrirModal('modal-devolucao');
+        if (typeof openModal === 'function') openModal('modal-devolucao');
+        else if (window.openModal) window.openModal('modal-devolucao');
     };
 
     window.editarDevolucao = async function(id) {
@@ -197,11 +198,12 @@
 
             renderizarTabelaItens(dev.items || []);
             document.getElementById('modal-devolucao-titulo').innerText = `Editar Devolução (${dev.ref})`;
-            abrirModal('modal-devolucao');
+            if (typeof openModal === 'function') openModal('modal-devolucao');
         } catch (err) {
             alert('Erro ao carregar devolução: ' + err.message);
         }
     };
+
 
     window.consultarNfeOriginal = async function() {
         const chave = (document.getElementById('dev-chave-original').value || '').trim();
@@ -500,7 +502,7 @@
 
             if (data.sucesso) {
                 alert(`NF-e enviada com sucesso! Status: ${data.status}`);
-                fecharModal('modal-devolucao');
+                if (typeof closeModal === 'function') closeModal('modal-devolucao');
                 window.carregarDevolucoes();
             } else {
                 alert(`Erro na emissão: ${data.erro || 'Rejeitada pela SEFAZ'}`);
@@ -531,7 +533,7 @@
     window.abrirModalCancelamentoDevolucao = function(id) {
         document.getElementById('cancelar-dev-id').value = id;
         document.getElementById('cancelar-justificativa').value = '';
-        abrirModal('modal-cancelamento-devolucao');
+        if (typeof openModal === 'function') openModal('modal-cancelamento-devolucao');
     };
 
     window.confirmarCancelamentoDevolucao = async function() {
@@ -556,7 +558,7 @@
             if (!data.sucesso) throw new Error(data.erro);
 
             alert('NF-e de devolução cancelada com sucesso!');
-            fecharModal('modal-cancelamento-devolucao');
+            if (typeof closeModal === 'function') closeModal('modal-cancelamento-devolucao');
             window.carregarDevolucoes();
         } catch (err) {
             alert('Erro ao cancelar: ' + err.message);
