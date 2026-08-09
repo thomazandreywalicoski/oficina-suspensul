@@ -2,7 +2,7 @@
 <div class="devolucao-container">
     
     <!-- Top Header: Search & Action Button -->
-    <div class="page-header" style="margin-bottom: 20px;">
+    <div class="page-header" style="margin-bottom: 25px;">
         <div class="search-input-wrap">
             <input type="text" id="devolucao-busca" placeholder="Buscar por ref, fornecedor, CNPJ ou chave..." onkeyup="filtrarDevolucoes()">
             <i data-lucide="search" class="input-icon-right"></i>
@@ -14,63 +14,63 @@
 
     <!-- Cards de Resumo (Cores vivas iguais ao financeiro) -->
     <div class="devolucao-cards-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
-        <div class="card-kpi" style="background: #d97706; padding: 18px; border-radius: 12px; border: none; color: #ffffff;">
-            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: rgba(255, 255, 255, 0.9); letter-spacing: 0.5px;">PROCESSANDO</div>
-            <div id="kpi-processando" style="font-size: 1.8rem; font-weight: 900; color: #ffffff; margin-top: 4px;">0</div>
+        <div class="card-kpi" style="background: #d97706; padding: 18px; border-radius: var(--border-radius, 8px); color: #ffffff;">
+            <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: rgba(255, 255, 255, 0.9); letter-spacing: 0.5px;">PROCESSANDO</div>
+            <div id="kpi-processando" style="font-size: 1.8rem; font-weight: 700; color: #ffffff; margin-top: 4px;">0</div>
         </div>
-        <div class="card-kpi" style="background: #22c55e; padding: 18px; border-radius: 12px; border: none; color: #ffffff;">
-            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: rgba(255, 255, 255, 0.9); letter-spacing: 0.5px;">AUTORIZADAS</div>
-            <div id="kpi-autorizadas" style="font-size: 1.8rem; font-weight: 900; color: #ffffff; margin-top: 4px;">0</div>
+        <div class="card-kpi" style="background: #22c55e; padding: 18px; border-radius: var(--border-radius, 8px); color: #ffffff;">
+            <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: rgba(255, 255, 255, 0.9); letter-spacing: 0.5px;">AUTORIZADAS</div>
+            <div id="kpi-autorizadas" style="font-size: 1.8rem; font-weight: 700; color: #ffffff; margin-top: 4px;">0</div>
         </div>
-        <div class="card-kpi" style="background: #ef4444; padding: 18px; border-radius: 12px; border: none; color: #ffffff;">
-            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: rgba(255, 255, 255, 0.9); letter-spacing: 0.5px;">REJEITADAS</div>
-            <div id="kpi-rejeitadas" style="font-size: 1.8rem; font-weight: 900; color: #ffffff; margin-top: 4px;">0</div>
+        <div class="card-kpi" style="background: #ef4444; padding: 18px; border-radius: var(--border-radius, 8px); color: #ffffff;">
+            <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: rgba(255, 255, 255, 0.9); letter-spacing: 0.5px;">REJEITADAS</div>
+            <div id="kpi-rejeitadas" style="font-size: 1.8rem; font-weight: 700; color: #ffffff; margin-top: 4px;">0</div>
         </div>
-        <div class="card-kpi" style="background: #64748b; padding: 18px; border-radius: 12px; border: none; color: #ffffff;">
-            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: rgba(255, 255, 255, 0.9); letter-spacing: 0.5px;">RASCUNHOS</div>
-            <div id="kpi-rascunhos" style="font-size: 1.8rem; font-weight: 900; color: #ffffff; margin-top: 4px;">0</div>
+        <div class="card-kpi" style="background: #64748b; padding: 18px; border-radius: var(--border-radius, 8px); color: #ffffff;">
+            <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: rgba(255, 255, 255, 0.9); letter-spacing: 0.5px;">RASCUNHOS</div>
+            <div id="kpi-rascunhos" style="font-size: 1.8rem; font-weight: 700; color: #ffffff; margin-top: 4px;">0</div>
         </div>
     </div>
 
     <!-- Tabela Principal de Devoluções (Cabeçalho Amarelo com Ícones) -->
-    <div style="background: #161616; border-radius: 12px; overflow: hidden; border: none;">
+    <div style="background: var(--bg-card, #161616); border-radius: var(--border-radius, 8px); overflow: hidden;">
         <div style="overflow-x: auto;">
-            <table class="table" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; border: none;">
-                <thead style="background: var(--primary, #ffe54c); border: none;">
-                    <tr style="border: none;">
-                        <th style="padding: 16px; color: #000000; font-size: 11px; font-weight: 800; text-transform: uppercase; white-space: nowrap; border: none;">
+            <table class="table" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+                <thead style="background: var(--primary, #ffe54c);">
+                    <tr>
+                        <th style="padding: 15px 20px; color: #000000; font-size: 12px; font-weight: 600; text-transform: uppercase; white-space: nowrap;">
                             <div style="display: inline-flex; align-items: center; gap: 6px;">
-                                <i data-lucide="calendar" style="width: 15px; height: 15px; stroke-width: 2.5;"></i>
+                                <i data-lucide="calendar" style="width: 15px; height: 15px; stroke-width: 2;"></i>
                                 <span>REF / DATA</span>
                             </div>
                         </th>
-                        <th style="padding: 16px; color: #000000; font-size: 11px; font-weight: 800; text-transform: uppercase; white-space: nowrap; border: none;">
+                        <th style="padding: 15px 20px; color: #000000; font-size: 12px; font-weight: 600; text-transform: uppercase; white-space: nowrap;">
                             <div style="display: inline-flex; align-items: center; gap: 6px;">
-                                <i data-lucide="truck" style="width: 15px; height: 15px; stroke-width: 2.5;"></i>
+                                <i data-lucide="truck" style="width: 15px; height: 15px; stroke-width: 2;"></i>
                                 <span>FORNECEDOR</span>
                             </div>
                         </th>
-                        <th style="padding: 16px; color: #000000; font-size: 11px; font-weight: 800; text-transform: uppercase; white-space: nowrap; border: none;">
+                        <th style="padding: 15px 20px; color: #000000; font-size: 12px; font-weight: 600; text-transform: uppercase; white-space: nowrap;">
                             <div style="display: inline-flex; align-items: center; gap: 6px;">
-                                <i data-lucide="file-text" style="width: 15px; height: 15px; stroke-width: 2.5;"></i>
+                                <i data-lucide="file-text" style="width: 15px; height: 15px; stroke-width: 2;"></i>
                                 <span>NF-E ORIGINAL</span>
                             </div>
                         </th>
-                        <th style="padding: 16px; color: #000000; font-size: 11px; font-weight: 800; text-transform: uppercase; white-space: nowrap; border: none;">
+                        <th style="padding: 15px 20px; color: #000000; font-size: 12px; font-weight: 600; text-transform: uppercase; white-space: nowrap;">
                             <div style="display: inline-flex; align-items: center; gap: 6px;">
-                                <i data-lucide="dollar-sign" style="width: 15px; height: 15px; stroke-width: 2.5;"></i>
+                                <i data-lucide="dollar-sign" style="width: 15px; height: 15px; stroke-width: 2;"></i>
                                 <span>TOTAL</span>
                             </div>
                         </th>
-                        <th style="padding: 16px; color: #000000; font-size: 11px; font-weight: 800; text-transform: uppercase; white-space: nowrap; border: none;">
+                        <th style="padding: 15px 20px; color: #000000; font-size: 12px; font-weight: 600; text-transform: uppercase; white-space: nowrap;">
                             <div style="display: inline-flex; align-items: center; gap: 6px;">
-                                <i data-lucide="activity" style="width: 15px; height: 15px; stroke-width: 2.5;"></i>
+                                <i data-lucide="activity" style="width: 15px; height: 15px; stroke-width: 2;"></i>
                                 <span>STATUS</span>
                             </div>
                         </th>
-                        <th style="padding: 16px; color: #000000; font-size: 11px; font-weight: 800; text-transform: uppercase; white-space: nowrap; text-align: right; border: none;">
+                        <th style="padding: 15px 20px; color: #000000; font-size: 12px; font-weight: 600; text-transform: uppercase; white-space: nowrap; text-align: right;">
                             <div style="display: inline-flex; align-items: center; gap: 6px; justify-content: flex-end;">
-                                <i data-lucide="settings" style="width: 15px; height: 15px; stroke-width: 2.5;"></i>
+                                <i data-lucide="settings" style="width: 15px; height: 15px; stroke-width: 2;"></i>
                                 <span>AÇÕES</span>
                             </div>
                         </th>
@@ -78,7 +78,7 @@
                 </thead>
                 <tbody id="devolucao-tabela-body">
                     <tr>
-                        <td colspan="6" style="text-align: center; padding: 30px; color: #888888; border: none;">Nenhuma nota encontrada</td>
+                        <td colspan="6" style="text-align: center; padding: 30px; color: var(--text-muted, #888888);">Nenhuma nota encontrada</td>
                     </tr>
                 </tbody>
             </table>
@@ -87,30 +87,30 @@
 
 </div>
 
-<!-- Modal Multi-Passos: Nova Devolução de Produtos -->
+<!-- Modal Multi-Passos: Nova Devolução de Produtos (Sem altura fixa, linha abaixo do título) -->
 <div class="modal-overlay" id="modal-devolucao">
-    <div class="modal" style="max-width: 1100px; width: 95%; min-height: 540px; display: flex; flex-direction: column; background: #141414; border-radius: 12px; color: #ffffff; border: none;">
+    <div class="modal modal-lg" style="max-width: 1000px; width: 90%;">
         
-        <!-- Header do Modal (Com botão btn-icon padrão de fechar X) -->
-        <div class="modal-header" style="padding: 20px 28px; display: flex; justify-content: space-between; align-items: center; border: none;">
-            <h3 class="modal-title" id="modal-devolucao-titulo" style="font-weight: 700; margin: 0; font-size: 1.25rem; color: #ffffff;">Nova Devolução de Produtos</h3>
+        <!-- Header do Modal (Linha de separação padrão dos modais) -->
+        <div class="modal-header" style="border-bottom: 1px solid #1a1a1a;">
+            <h3 class="modal-title" id="modal-devolucao-titulo">Nova Devolução de Produtos</h3>
             <button class="btn-icon" onclick="closeModal('modal-devolucao')"><i data-lucide="x"></i></button>
         </div>
         
-        <div class="modal-body" style="padding: 24px 28px; overflow-y: auto; flex: 1;">
+        <div class="modal-body">
             
-            <!-- Indicador dos Passos (Stepper) -->
-            <div class="devolucao-stepper" style="display: flex; gap: 12px; margin-bottom: 28px; justify-content: space-between; border: none;">
-                <div id="step-indicator-1" class="step-pill" onclick="irParaPassoDevolucao(1)" style="flex: 1; text-align: center; padding: 12px; border-radius: 8px; background: var(--primary, #ffe54c); color: #000000; font-weight: 800; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; border: none;">
-                    <span style="background: #000000; color: var(--primary, #ffe54c); width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800;">1</span>
+            <!-- Indicador dos Passos (Stepper com fontes padrão) -->
+            <div class="devolucao-stepper" style="display: flex; gap: 12px; margin-bottom: 24px; justify-content: space-between;">
+                <div id="step-indicator-1" class="step-pill" onclick="irParaPassoDevolucao(1)" style="flex: 1; text-align: center; padding: 10px 12px; border-radius: 8px; background: var(--primary, #ffe54c); color: #000000; font-weight: 600; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <span style="background: #000000; color: var(--primary, #ffe54c); width: 20px; height: 20px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">1</span>
                     <span>NF-e Original</span>
                 </div>
-                <div id="step-indicator-2" class="step-pill" onclick="irParaPassoDevolucao(2)" style="flex: 1; text-align: center; padding: 12px; border-radius: 8px; background: #222222; color: #888888; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; border: none;">
-                    <span style="background: #333333; color: #ffffff; width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800;">2</span>
+                <div id="step-indicator-2" class="step-pill" onclick="irParaPassoDevolucao(2)" style="flex: 1; text-align: center; padding: 10px 12px; border-radius: 8px; background: var(--bg-input, #202020); color: var(--text-muted, #888888); font-weight: 400; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <span style="background: #333333; color: #ffffff; width: 20px; height: 20px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">2</span>
                     <span>Peças a Devolver</span>
                 </div>
-                <div id="step-indicator-3" class="step-pill" onclick="irParaPassoDevolucao(3)" style="flex: 1; text-align: center; padding: 12px; border-radius: 8px; background: #222222; color: #888888; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; border: none;">
-                    <span style="background: #333333; color: #ffffff; width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800;">3</span>
+                <div id="step-indicator-3" class="step-pill" onclick="irParaPassoDevolucao(3)" style="flex: 1; text-align: center; padding: 10px 12px; border-radius: 8px; background: var(--bg-input, #202020); color: var(--text-muted, #888888); font-weight: 400; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <span style="background: #333333; color: #ffffff; width: 20px; height: 20px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">3</span>
                     <span>Dados Fiscais & Emissão</span>
                 </div>
             </div>
@@ -118,16 +118,16 @@
             <form id="form-devolucao">
                 <input type="hidden" id="dev-id" value="">
 
-                <!-- PASSO 1: Buscar / Importar NF-e Original (Sem placeholder) -->
+                <!-- PASSO 1: Buscar / Importar NF-e Original -->
                 <div id="dev-step-1" class="step-content">
-                    <div style="background: #181818; padding: 24px; border-radius: 12px; margin-bottom: 20px; border: none; display: flex; flex-direction: column; gap: 24px;">
+                    <div style="background: var(--bg-input, #181818); padding: 20px; border-radius: 8px; display: flex; flex-direction: column; gap: 20px;">
                         
                         <!-- Chave de Acesso -->
-                        <div>
-                            <label style="font-size: 0.875rem; font-weight: 600; display: block; margin-bottom: 10px; color: #a1a1aa; white-space: nowrap;">Chave de Acesso da NF-e (44 dígitos):</label>
-                            <div style="display: flex; gap: 12px; align-items: center;">
-                                <input type="text" id="dev-chave-original" class="form-input" maxlength="44" style="background: #202020; color: #ffffff; border: none; flex: 1; height: 48px; padding: 0 16px; border-radius: 8px; font-size: 0.9rem; box-sizing: border-box;">
-                                <button class="btn btn-primary" type="button" onclick="consultarNfeOriginal()" id="btn-consultar-nfe" style="background: var(--primary, #ffe54c); color: #000000; height: 48px; padding: 0 24px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 8px; white-space: nowrap; font-weight: 700; border: none;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="display: block; color: var(--text-muted, #888888); margin-bottom: 8px; font-size: 13px; font-weight: 400;">Chave de Acesso da NF-e (44 dígitos):</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <input type="text" id="dev-chave-original" class="form-input" maxlength="44" style="flex: 1; height: 44px; padding: 0 14px; font-size: 14px; font-weight: 400;">
+                                <button class="btn btn-primary" type="button" onclick="consultarNfeOriginal()" id="btn-consultar-nfe" style="height: 44px; padding: 0 20px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600;">
                                     <i data-lucide="search" style="width: 16px; height: 16px;"></i>
                                     <span>Buscar NF-e</span>
                                 </button>
@@ -135,10 +135,10 @@
                         </div>
 
                         <!-- Upload do Arquivo XML -->
-                        <div>
-                            <label style="font-size: 0.875rem; font-weight: 600; display: block; margin-bottom: 10px; color: #a1a1aa; white-space: nowrap;">Ou importar arquivo XML original:</label>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="display: block; color: var(--text-muted, #888888); margin-bottom: 8px; font-size: 13px; font-weight: 400;">Ou importar arquivo XML original:</label>
                             <input type="file" id="dev-xml-file" accept=".xml" style="display: none;" onchange="importarXmlOriginal(this)">
-                            <button type="button" class="btn btn-secondary" onclick="document.getElementById('dev-xml-file').click()" style="width: 100%; height: 48px; display: flex; align-items: center; justify-content: center; gap: 8px; background: #202020; color: #ffffff; border: none; border-radius: 8px; font-weight: 600; font-size: 0.9rem;">
+                            <button type="button" class="btn btn-secondary" onclick="document.getElementById('dev-xml-file').click()" style="width: 100%; height: 44px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 400; font-size: 14px;">
                                 <i data-lucide="upload" style="width: 16px; height: 16px;"></i>
                                 <span id="label-xml-file">Fazer upload do arquivo</span>
                             </button>
@@ -147,62 +147,62 @@
                     </div>
                 </div>
 
-                <!-- PASSO 2: Seleção de Peças (Título da descrição centralizado) -->
+                <!-- PASSO 2: Seleção de Peças (Máximo de 4 produtos com rolagem vertical) -->
                 <div id="dev-step-2" class="step-content" style="display: none;">
-                    <div style="border-radius: 12px; overflow-x: auto; background: #181818; margin-bottom: 20px; border: none;">
-                        <table class="table" style="width: 100%; border-collapse: collapse; font-size: 0.85rem; color: #ffffff; border: none;">
-                            <thead style="background: var(--primary, #ffe54c); border: none;">
-                                <tr style="border: none;">
-                                    <th style="padding: 16px 10px; width: 40px; text-align: center; color: #000000; font-size: 11px; font-weight: 800; white-space: nowrap; border: none;">
+                    <div style="border-radius: 8px; overflow-x: auto; max-height: 250px; overflow-y: auto; background: var(--bg-input, #181818);">
+                        <table class="table" style="width: 100%; border-collapse: collapse; font-size: 13px; color: #ffffff;">
+                            <thead style="background: var(--primary, #ffe54c); position: sticky; top: 0; z-index: 2;">
+                                <tr>
+                                    <th style="padding: 12px 10px; width: 40px; text-align: center; color: #000000; font-size: 12px; font-weight: 600; white-space: nowrap;">
                                         <div style="display: inline-flex; align-items: center; justify-content: center;">
-                                            <i data-lucide="check-square" style="width: 15px; height: 15px; stroke-width: 2.5;"></i>
+                                            <i data-lucide="check-square" style="width: 15px; height: 15px; stroke-width: 2;"></i>
                                         </div>
                                     </th>
-                                    <th style="padding: 16px 10px; width: 95px; text-align: center; color: #000000; font-size: 11px; font-weight: 800; white-space: nowrap; border: none;">
+                                    <th style="padding: 12px 10px; width: 95px; text-align: center; color: #000000; font-size: 12px; font-weight: 600; white-space: nowrap;">
                                         <div style="display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
-                                            <i data-lucide="hash" style="width: 15px; height: 15px; stroke-width: 2.5;"></i>
+                                            <i data-lucide="hash" style="width: 15px; height: 15px; stroke-width: 2;"></i>
                                             <span>CÓDIGO</span>
                                         </div>
                                     </th>
-                                    <th style="padding: 16px 10px; text-align: center; color: #000000; font-size: 11px; font-weight: 800; white-space: nowrap; border: none;">
+                                    <th style="padding: 12px 10px; text-align: center; color: #000000; font-size: 12px; font-weight: 600; white-space: nowrap;">
                                         <div style="display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
-                                            <i data-lucide="package" style="width: 15px; height: 15px; stroke-width: 2.5;"></i>
+                                            <i data-lucide="package" style="width: 15px; height: 15px; stroke-width: 2;"></i>
                                             <span>DESCRIÇÃO</span>
                                         </div>
                                     </th>
-                                    <th style="padding: 16px 10px; width: 95px; text-align: center; color: #000000; font-size: 11px; font-weight: 800; white-space: nowrap; border: none;">
+                                    <th style="padding: 12px 10px; width: 95px; text-align: center; color: #000000; font-size: 12px; font-weight: 600; white-space: nowrap;">
                                         <div style="display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
-                                            <i data-lucide="tag" style="width: 15px; height: 15px; stroke-width: 2.5;"></i>
+                                            <i data-lucide="tag" style="width: 15px; height: 15px; stroke-width: 2;"></i>
                                             <span>NCM</span>
                                         </div>
                                     </th>
-                                    <th style="padding: 16px 10px; width: 75px; text-align: center; color: #000000; font-size: 11px; font-weight: 800; white-space: nowrap; border: none;">
+                                    <th style="padding: 12px 10px; width: 75px; text-align: center; color: #000000; font-size: 12px; font-weight: 600; white-space: nowrap;">
                                         <div style="display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
-                                            <i data-lucide="file-code" style="width: 15px; height: 15px; stroke-width: 2.5;"></i>
+                                            <i data-lucide="file-code" style="width: 15px; height: 15px; stroke-width: 2;"></i>
                                             <span>CFOP</span>
                                         </div>
                                     </th>
-                                    <th style="padding: 16px 10px; width: 80px; text-align: center; color: #000000; font-size: 11px; font-weight: 800; white-space: nowrap; border: none;">
+                                    <th style="padding: 12px 10px; width: 80px; text-align: center; color: #000000; font-size: 12px; font-weight: 600; white-space: nowrap;">
                                         <div style="display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
-                                            <i data-lucide="layers" style="width: 15px; height: 15px; stroke-width: 2.5;"></i>
+                                            <i data-lucide="layers" style="width: 15px; height: 15px; stroke-width: 2;"></i>
                                             <span>QTD ORIG.</span>
                                         </div>
                                     </th>
-                                    <th style="padding: 16px 10px; width: 90px; text-align: center; color: #000000; font-size: 11px; font-weight: 800; white-space: nowrap; border: none;">
+                                    <th style="padding: 12px 10px; width: 90px; text-align: center; color: #000000; font-size: 12px; font-weight: 600; white-space: nowrap;">
                                         <div style="display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
-                                            <i data-lucide="rotate-ccw" style="width: 15px; height: 15px; stroke-width: 2.5;"></i>
+                                            <i data-lucide="rotate-ccw" style="width: 15px; height: 15px; stroke-width: 2;"></i>
                                             <span>QTD DEV.</span>
                                         </div>
                                     </th>
-                                    <th style="padding: 16px 10px; width: 100px; text-align: center; color: #000000; font-size: 11px; font-weight: 800; white-space: nowrap; border: none;">
+                                    <th style="padding: 12px 10px; width: 100px; text-align: center; color: #000000; font-size: 12px; font-weight: 600; white-space: nowrap;">
                                         <div style="display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
-                                            <i data-lucide="dollar-sign" style="width: 15px; height: 15px; stroke-width: 2.5;"></i>
+                                            <i data-lucide="dollar-sign" style="width: 15px; height: 15px; stroke-width: 2;"></i>
                                             <span>VAL. UNIT.</span>
                                         </div>
                                     </th>
-                                    <th style="padding: 16px 10px; width: 110px; text-align: center; color: #000000; font-size: 11px; font-weight: 800; white-space: nowrap; border: none;">
+                                    <th style="padding: 12px 10px; width: 110px; text-align: center; color: #000000; font-size: 12px; font-weight: 600; white-space: nowrap;">
                                         <div style="display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
-                                            <i data-lucide="credit-card" style="width: 15px; height: 15px; stroke-width: 2.5;"></i>
+                                            <i data-lucide="credit-card" style="width: 15px; height: 15px; stroke-width: 2;"></i>
                                             <span>SUBTOTAL</span>
                                         </div>
                                     </th>
@@ -210,28 +210,28 @@
                             </thead>
                             <tbody id="dev-itens-body">
                                 <tr>
-                                    <td colspan="9" style="text-align: center; padding: 25px; color: #888888; border: none;">Consulte a NF-e original para carregar as peças.</td>
+                                    <td colspan="9" style="text-align: center; padding: 25px; color: var(--text-muted, #888888);">Consulte a NF-e original para carregar as peças.</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
 
-                <!-- PASSO 3: Dados Fiscais & Totais (Preenchimento automático e Title Case) -->
+                <!-- PASSO 3: Dados Fiscais & Totais -->
                 <div id="dev-step-3" class="step-content" style="display: none;">
-                    <div style="background: #181818; padding: 24px; border-radius: 12px; margin-bottom: 20px; border: none; display: flex; flex-direction: column; gap: 20px;">
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px;">
-                            <div>
-                                <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 8px; color: #a1a1aa;">Natureza da Operação:</label>
-                                <input type="text" id="dev-natureza-operacao" class="form-input" value="Devolução de Mercadoria" style="background: #202020; color: #ffffff; border: none; width: 100%; height: 48px; padding: 0 16px; border-radius: 8px; box-sizing: border-box;">
+                    <div style="background: var(--bg-input, #181818); padding: 20px; border-radius: 8px; margin-bottom: 18px; display: flex; flex-direction: column; gap: 16px;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label style="display: block; color: var(--text-muted, #888888); margin-bottom: 8px; font-size: 13px; font-weight: 400;">Natureza da Operação:</label>
+                                <input type="text" id="dev-natureza-operacao" class="form-input" value="Devolução de Mercadoria" style="width: 100%; height: 44px; padding: 0 14px; font-size: 14px;">
                             </div>
-                            <div>
-                                <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 8px; color: #a1a1aa;">CFOP Padrão:</label>
-                                <input type="text" id="dev-cfop-padrao" class="form-input" value="5202" style="background: #202020; color: #ffffff; border: none; width: 100%; height: 48px; padding: 0 16px; border-radius: 8px; box-sizing: border-box;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label style="display: block; color: var(--text-muted, #888888); margin-bottom: 8px; font-size: 13px; font-weight: 400;">CFOP Padrão:</label>
+                                <input type="text" id="dev-cfop-padrao" class="form-input" value="5202" style="width: 100%; height: 44px; padding: 0 14px; font-size: 14px;">
                             </div>
-                            <div>
-                                <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 8px; color: #a1a1aa;">Modalidade de Frete:</label>
-                                <select id="dev-modalidade-frete" class="form-input" style="background: #202020; color: #ffffff; border: none; width: 100%; height: 48px; padding: 0 16px; border-radius: 8px; box-sizing: border-box;">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label style="display: block; color: var(--text-muted, #888888); margin-bottom: 8px; font-size: 13px; font-weight: 400;">Modalidade de Frete:</label>
+                                <select id="dev-modalidade-frete" class="form-input" style="width: 100%; height: 44px; padding: 0 14px; font-size: 14px;">
                                     <option value="9" selected>9 - Sem Transporte / Frete</option>
                                     <option value="0">0 - Por conta do Emitente</option>
                                     <option value="1">1 - Por conta do Destinatário</option>
@@ -240,35 +240,35 @@
                             </div>
                         </div>
 
-                        <div>
-                            <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 8px; color: #a1a1aa;">Observações Fiscais / Informações Adicionais:</label>
-                            <textarea id="dev-observacoes" class="form-input" rows="2" style="background: #202020; color: #ffffff; border: none; width: 100%; padding: 12px 16px; border-radius: 8px; box-sizing: border-box;"></textarea>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label style="display: block; color: var(--text-muted, #888888); margin-bottom: 8px; font-size: 13px; font-weight: 400;">Observações Fiscais / Informações Adicionais:</label>
+                            <textarea id="dev-observacoes" class="form-input" rows="2" style="width: 100%; padding: 10px 14px; font-size: 14px;"></textarea>
                         </div>
                     </div>
 
-                    <!-- Resumo dos Totais (Títulos em Title Case, sem ALL-CAPS) -->
-                    <div style="background: #181818; padding: 24px; border-radius: 12px; border: none;">
-                        <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; align-items: flex-end;">
+                    <!-- Resumo dos Totais (Fontes padrão) -->
+                    <div style="background: var(--bg-input, #181818); padding: 20px; border-radius: 8px;">
+                        <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; align-items: flex-end;">
                             <div>
-                                <label style="font-size: 0.8rem; font-weight: 600; color: #888888; display: block; margin-bottom: 8px;">Val. Produtos</label>
-                                <div id="res-val-produtos" style="background: #202020; color: #ffffff; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-weight: 700; font-size: 1rem; box-sizing: border-box;">R$ 0,00</div>
+                                <label style="display: block; color: var(--text-muted, #888888); margin-bottom: 8px; font-size: 13px; font-weight: 400;">Val. Produtos</label>
+                                <div id="res-val-produtos" style="background: #202020; color: #ffffff; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 6px; font-weight: 600; font-size: 14px;">R$ 0,00</div>
                             </div>
                             <div>
-                                <label style="font-size: 0.8rem; font-weight: 600; color: #888888; display: block; margin-bottom: 8px;">Frete (R$)</label>
-                                <input type="number" step="0.01" id="dev-val-frete" class="form-input" value="0.00" style="text-align: center; height: 48px; background: #202020; color: #ffffff; border: none; border-radius: 8px; font-weight: 600; font-size: 0.95rem; width: 100%; box-sizing: border-box;" onchange="recalcularTotaisDevolucao()">
+                                <label style="display: block; color: var(--text-muted, #888888); margin-bottom: 8px; font-size: 13px; font-weight: 400;">Frete (R$)</label>
+                                <input type="number" step="0.01" id="dev-val-frete" class="form-input" value="0.00" style="text-align: center; height: 44px; font-weight: 500; font-size: 14px; width: 100%; box-sizing: border-box;" onchange="recalcularTotaisDevolucao()">
                             </div>
                             <div>
-                                <label style="font-size: 0.8rem; font-weight: 600; color: #888888; display: block; margin-bottom: 8px;">Desconto (R$)</label>
-                                <input type="number" step="0.01" id="dev-val-desconto" class="form-input" value="0.00" style="text-align: center; height: 48px; background: #202020; color: #ffffff; border: none; border-radius: 8px; font-weight: 600; font-size: 0.95rem; width: 100%; box-sizing: border-box;" onchange="recalcularTotaisDevolucao()">
+                                <label style="display: block; color: var(--text-muted, #888888); margin-bottom: 8px; font-size: 13px; font-weight: 400;">Desconto (R$)</label>
+                                <input type="number" step="0.01" id="dev-val-desconto" class="form-input" value="0.00" style="text-align: center; height: 44px; font-weight: 500; font-size: 14px; width: 100%; box-sizing: border-box;" onchange="recalcularTotaisDevolucao()">
                             </div>
                             <div>
-                                <label style="font-size: 0.8rem; font-weight: 600; color: #888888; display: block; margin-bottom: 8px;">Outras Desp. (R$)</label>
-                                <input type="number" step="0.01" id="dev-val-outras" class="form-input" value="0.00" style="text-align: center; height: 48px; background: #202020; color: #ffffff; border: none; border-radius: 8px; font-weight: 600; font-size: 0.95rem; width: 100%; box-sizing: border-box;" onchange="recalcularTotaisDevolucao()">
+                                <label style="display: block; color: var(--text-muted, #888888); margin-bottom: 8px; font-size: 13px; font-weight: 400;">Outras Desp. (R$)</label>
+                                <input type="number" step="0.01" id="dev-val-outras" class="form-input" value="0.00" style="text-align: center; height: 44px; font-weight: 500; font-size: 14px; width: 100%; box-sizing: border-box;" onchange="recalcularTotaisDevolucao()">
                             </div>
                             <div>
-                                <label style="font-size: 0.8rem; font-weight: 600; color: #888888; display: block; margin-bottom: 8px;">Total da NF-e</label>
-                                <div style="background: #202020; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 8px; box-sizing: border-box;">
-                                    <span id="res-val-total" style="font-weight: 900; font-size: 1.2rem; color: #22c55e;">R$ 0,00</span>
+                                <label style="display: block; color: var(--text-muted, #888888); margin-bottom: 8px; font-size: 13px; font-weight: 400;">Total da NF-e</label>
+                                <div style="background: #202020; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 6px; box-sizing: border-box;">
+                                    <span id="res-val-total" style="font-weight: 700; font-size: 15px; color: #22c55e;">R$ 0,00</span>
                                 </div>
                             </div>
                         </div>
@@ -278,25 +278,25 @@
             </form>
         </div>
 
-        <!-- Footer do Modal (Navegação com botão no canto esquerdo e ações no canto direito) -->
-        <div class="modal-footer" id="dev-modal-footer" style="padding: 20px 28px; display: flex; justify-content: space-between; align-items: center; background: #161616; border: none;">
+        <!-- Footer do Modal (Linha de separação superior padrão) -->
+        <div class="modal-footer" id="dev-modal-footer" style="border-top: 1px solid #1a1a1a; display: flex; justify-content: space-between; align-items: center;">
             <div id="dev-footer-left" style="min-width: 150px; display: flex; justify-content: flex-start;">
-                <button id="btn-step-prev" class="btn btn-secondary" onclick="stepAnteriorDevolucao()" type="button" style="width: 44px; height: 44px; padding: 0; background: #262626; color: #ffffff; border: none; border-radius: 8px; display: none; align-items: center; justify-content: center;" title="Voltar">
+                <button id="btn-step-prev" class="btn btn-secondary" onclick="stepAnteriorDevolucao()" type="button" style="width: 44px; height: 44px; padding: 0; display: none; align-items: center; justify-content: center;" title="Voltar">
                     <i data-lucide="chevron-left" style="width: 20px; height: 20px;"></i>
                 </button>
             </div>
             
             <div id="dev-footer-center" style="display: flex; justify-content: center; align-items: center; gap: 12px; flex: 1;">
-                <button id="btn-step-next" class="btn btn-primary" onclick="stepProximoDevolucao()" type="button" style="width: 44px; height: 44px; padding: 0; background: var(--primary, #ffe54c); color: #000000; border: none; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center;" title="Avançar">
+                <button id="btn-step-next" class="btn btn-primary" onclick="stepProximoDevolucao()" type="button" style="width: 44px; height: 44px; padding: 0; display: inline-flex; align-items: center; justify-content: center;" title="Avançar">
                     <i data-lucide="chevron-right" style="width: 20px; height: 20px;"></i>
                 </button>
             </div>
             
             <div id="dev-footer-right" style="display: flex; gap: 10px; min-width: 150px; justify-content: flex-end;">
-                <button id="btn-salvar-rascunho" class="btn btn-secondary" type="button" onclick="salvarRascunhoDevolucao()" style="background: #262626; color: #ffffff; border: none; display: none;">
+                <button id="btn-salvar-rascunho" class="btn btn-secondary" type="button" onclick="salvarRascunhoDevolucao()" style="display: none;">
                     <i data-lucide="save"></i> Salvar Rascunho
                 </button>
-                <button id="btn-emitir-nfe" class="btn btn-primary" type="button" onclick="emitirNfeDevolucao()" style="display: none; border: none;">
+                <button id="btn-emitir-nfe" class="btn btn-primary" type="button" onclick="emitirNfeDevolucao()" style="display: none;">
                     <i data-lucide="send"></i> Emitir NF-e de Devolução
                 </button>
             </div>
@@ -309,28 +309,28 @@
     <style>
         @keyframes spinDevolucao { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
-    <div class="modal" style="max-width: 420px; width: 90%; background: #141414; border-radius: 16px; color: #ffffff; border: none; padding: 36px 24px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;">
-        <div style="width: 52px; height: 52px; border: 4px solid #262626; border-top: 4px solid var(--primary, #ffe54c); border-radius: 50%; animation: spinDevolucao 0.9s linear infinite;"></div>
-        <h4 style="margin: 0; font-size: 1.2rem; font-weight: 700; color: #ffffff;">Buscando dados da nota</h4>
-        <p style="margin: 0; font-size: 0.85rem; color: #888888; line-height: 1.4;">Por favor, aguarde enquanto consultamos a NF-e...</p>
+    <div class="modal" style="max-width: 400px; width: 90%; background: var(--bg-card, #141414); border-radius: var(--border-radius, 8px); padding: 30px 20px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;">
+        <div style="width: 48px; height: 48px; border: 4px solid #262626; border-top: 4px solid var(--primary, #ffe54c); border-radius: 50%; animation: spinDevolucao 0.9s linear infinite;"></div>
+        <h4 style="margin: 0; font-size: 1.1rem; font-weight: 600; color: #ffffff;">Buscando dados da nota</h4>
+        <p style="margin: 0; font-size: 13px; color: var(--text-muted, #888888); line-height: 1.4;">Por favor, aguarde enquanto consultamos a NF-e...</p>
     </div>
 </div>
 
 <!-- Modal: Cancelamento -->
 <div class="modal-overlay" id="modal-cancelamento-devolucao">
-    <div class="modal" style="max-width: 500px; width: 90%; background: #141414; border-radius: 12px; color: #ffffff; border: none;">
-        <div class="modal-header" style="padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; border: none;">
-            <h3 class="modal-title" style="margin: 0; font-size: 1.1rem; color: #ffffff;">Cancelar NF-e de Devolução</h3>
+    <div class="modal" style="max-width: 500px; width: 90%;">
+        <div class="modal-header" style="border-bottom: 1px solid #1a1a1a;">
+            <h3 class="modal-title">Cancelar NF-e de Devolução</h3>
             <button class="btn-icon" onclick="closeModal('modal-cancelamento-devolucao')"><i data-lucide="x"></i></button>
         </div>
-        <div class="modal-body" style="padding: 20px;">
+        <div class="modal-body">
             <input type="hidden" id="cancelar-dev-id">
-            <p style="font-size: 0.875rem; color: #a1a1aa; margin-bottom: 12px;">Informe a justificativa do cancelamento perante a SEFAZ (mínimo de 15 caracteres):</p>
-            <textarea id="cancelar-justificativa" class="form-input" rows="4" placeholder="Ex: Emissão cancelada devido a erro no preenchimento do valor do item." style="background: #202020; color: #ffffff; border: none; width: 100%; padding: 10px; border-radius: 6px;"></textarea>
+            <p style="font-size: 13px; color: var(--text-muted, #888888); margin-bottom: 12px;">Informe a justificativa do cancelamento perante a SEFAZ (mínimo de 15 caracteres):</p>
+            <textarea id="cancelar-justificativa" class="form-input" rows="4" placeholder="Ex: Emissão cancelada devido a erro no preenchimento do valor do item." style="width: 100%; padding: 10px;"></textarea>
         </div>
-        <div class="modal-footer" style="padding: 16px 20px; display: flex; justify-content: flex-end; gap: 10px; background: #161616; border: none;">
-            <button class="btn btn-secondary" onclick="closeModal('modal-cancelamento-devolucao')" type="button" style="background: #262626; color: #ffffff; border: none;">Voltar</button>
-            <button class="btn btn-danger" onclick="confirmarCancelamentoDevolucao()" type="button" id="btn-confirmar-cancelamento" style="background: #dc2626; color: white; border: none;">
+        <div class="modal-footer" style="border-top: 1px solid #1a1a1a;">
+            <button class="btn btn-secondary" onclick="closeModal('modal-cancelamento-devolucao')" type="button">Voltar</button>
+            <button class="btn btn-danger" onclick="confirmarCancelamentoDevolucao()" type="button" id="btn-confirmar-cancelamento" style="background: #dc2626; color: white;">
                 Confirmar Cancelamento
             </button>
         </div>
