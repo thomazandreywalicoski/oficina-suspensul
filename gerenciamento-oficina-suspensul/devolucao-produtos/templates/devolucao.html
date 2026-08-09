@@ -4,7 +4,7 @@
     <!-- Top Header: Search & Action Button -->
     <div class="page-header" style="margin-bottom: 25px;">
         <div class="search-input-wrap">
-            <input type="text" id="devolucao-busca" placeholder="Buscar por ref, fornecedor, CNPJ ou chave..." onkeyup="filtrarDevolucoes()">
+            <input type="text" id="devolucao-busca" placeholder="Buscar por ref, fornecedor, CNPJ ou chave..." onkeyup="filtrarDevolucoes()" style="background: #202020; color: #ffffff; border: none;">
             <i data-lucide="search" class="input-icon-right"></i>
         </div>
         <button class="btn btn-primary" type="button" onclick="abrirModalNovaDevolucao()">
@@ -87,7 +87,7 @@
 
 </div>
 
-<!-- Modal Multi-Passos: Nova Devolução de Produtos (Sem altura fixa, linha abaixo do título) -->
+<!-- Modal Multi-Passos: Nova Devolução de Produtos -->
 <div class="modal-overlay" id="modal-devolucao">
     <div class="modal modal-lg" style="max-width: 1000px; width: 90%;">
         
@@ -99,17 +99,17 @@
         
         <div class="modal-body">
             
-            <!-- Indicador dos Passos (Stepper com fontes padrão) -->
+            <!-- Indicador dos Passos (Stepper) -->
             <div class="devolucao-stepper" style="display: flex; gap: 12px; margin-bottom: 24px; justify-content: space-between;">
                 <div id="step-indicator-1" class="step-pill" onclick="irParaPassoDevolucao(1)" style="flex: 1; text-align: center; padding: 10px 12px; border-radius: 8px; background: var(--primary, #ffe54c); color: #000000; font-weight: 600; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
                     <span style="background: #000000; color: var(--primary, #ffe54c); width: 20px; height: 20px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">1</span>
                     <span>NF-e Original</span>
                 </div>
-                <div id="step-indicator-2" class="step-pill" onclick="irParaPassoDevolucao(2)" style="flex: 1; text-align: center; padding: 10px 12px; border-radius: 8px; background: var(--bg-input, #202020); color: var(--text-muted, #888888); font-weight: 400; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <div id="step-indicator-2" class="step-pill" onclick="irParaPassoDevolucao(2)" style="flex: 1; text-align: center; padding: 10px 12px; border-radius: 8px; background: #202020; color: var(--text-muted, #888888); font-weight: 400; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
                     <span style="background: #333333; color: #ffffff; width: 20px; height: 20px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">2</span>
                     <span>Peças a Devolver</span>
                 </div>
-                <div id="step-indicator-3" class="step-pill" onclick="irParaPassoDevolucao(3)" style="flex: 1; text-align: center; padding: 10px 12px; border-radius: 8px; background: var(--bg-input, #202020); color: var(--text-muted, #888888); font-weight: 400; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <div id="step-indicator-3" class="step-pill" onclick="irParaPassoDevolucao(3)" style="flex: 1; text-align: center; padding: 10px 12px; border-radius: 8px; background: #202020; color: var(--text-muted, #888888); font-weight: 400; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
                     <span style="background: #333333; color: #ffffff; width: 20px; height: 20px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;">3</span>
                     <span>Dados Fiscais & Emissão</span>
                 </div>
@@ -120,14 +120,14 @@
 
                 <!-- PASSO 1: Buscar / Importar NF-e Original -->
                 <div id="dev-step-1" class="step-content">
-                    <div style="background: var(--bg-input, #181818); padding: 20px; border-radius: 8px; display: flex; flex-direction: column; gap: 20px;">
+                    <div style="background: #181818; padding: 20px; border-radius: 8px; display: flex; flex-direction: column; gap: 20px;">
                         
                         <!-- Chave de Acesso -->
                         <div class="form-group" style="margin-bottom: 0;">
                             <label style="display: block; color: var(--text-muted, #888888); margin-bottom: 8px; font-size: 13px; font-weight: 400;">Chave de Acesso da NF-e (44 dígitos):</label>
                             <div style="display: flex; gap: 10px; align-items: center;">
-                                <input type="text" id="dev-chave-original" class="form-input" maxlength="44" style="flex: 1; height: 44px; padding: 0 14px; font-size: 14px; font-weight: 400;">
-                                <button class="btn btn-primary" type="button" onclick="consultarNfeOriginal()" id="btn-consultar-nfe" style="height: 44px; padding: 0 20px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600;">
+                                <input type="text" id="dev-chave-original" class="form-input" maxlength="44" style="flex: 1; height: 44px; padding: 0 14px; font-size: 14px; font-weight: 400; background: #202020; color: #ffffff; border: none; border-radius: 8px; box-sizing: border-box;">
+                                <button class="btn btn-primary" type="button" onclick="consultarNfeOriginal()" id="btn-consultar-nfe" style="height: 44px; padding: 0 20px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; border-radius: 8px;">
                                     <i data-lucide="search" style="width: 16px; height: 16px;"></i>
                                     <span>Buscar NF-e</span>
                                 </button>
@@ -138,7 +138,7 @@
                         <div class="form-group" style="margin-bottom: 0;">
                             <label style="display: block; color: var(--text-muted, #888888); margin-bottom: 8px; font-size: 13px; font-weight: 400;">Ou importar arquivo XML original:</label>
                             <input type="file" id="dev-xml-file" accept=".xml" style="display: none;" onchange="importarXmlOriginal(this)">
-                            <button type="button" class="btn btn-secondary" onclick="document.getElementById('dev-xml-file').click()" style="width: 100%; height: 44px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 400; font-size: 14px;">
+                            <button type="button" class="btn btn-secondary" onclick="document.getElementById('dev-xml-file').click()" style="width: 100%; height: 44px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 400; font-size: 14px; background: #202020; color: #ffffff; border: none; border-radius: 8px;">
                                 <i data-lucide="upload" style="width: 16px; height: 16px;"></i>
                                 <span id="label-xml-file">Fazer upload do arquivo</span>
                             </button>
@@ -147,9 +147,9 @@
                     </div>
                 </div>
 
-                <!-- PASSO 2: Seleção de Peças (Máximo de 4 produtos com rolagem vertical) -->
+                <!-- PASSO 2: Seleção de Peças -->
                 <div id="dev-step-2" class="step-content" style="display: none;">
-                    <div style="border-radius: 8px; overflow-x: auto; max-height: 250px; overflow-y: auto; background: var(--bg-input, #181818);">
+                    <div style="border-radius: 8px; overflow-x: auto; max-height: 250px; overflow-y: auto; background: #181818;">
                         <table class="table" style="width: 100%; border-collapse: collapse; font-size: 13px; color: #ffffff;">
                             <thead style="background: var(--primary, #ffe54c); position: sticky; top: 0; z-index: 2;">
                                 <tr>
@@ -217,21 +217,21 @@
                     </div>
                 </div>
 
-                <!-- PASSO 3: Dados Fiscais & Totais -->
+                <!-- PASSO 3: Dados Fiscais & Totais (Observações Fiscais agora é input normal de 44px) -->
                 <div id="dev-step-3" class="step-content" style="display: none;">
-                    <div style="background: var(--bg-input, #181818); padding: 20px; border-radius: 8px; margin-bottom: 18px; display: flex; flex-direction: column; gap: 16px;">
+                    <div style="background: #181818; padding: 20px; border-radius: 8px; margin-bottom: 18px; display: flex; flex-direction: column; gap: 16px;">
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
                             <div class="form-group" style="margin-bottom: 0;">
                                 <label style="display: block; color: var(--text-muted, #888888); margin-bottom: 8px; font-size: 13px; font-weight: 400;">Natureza da Operação:</label>
-                                <input type="text" id="dev-natureza-operacao" class="form-input" value="Devolução de Mercadoria" style="width: 100%; height: 44px; padding: 0 14px; font-size: 14px;">
+                                <input type="text" id="dev-natureza-operacao" class="form-input" value="Devolução de Mercadoria" style="width: 100%; height: 44px; padding: 0 14px; font-size: 14px; background: #202020; color: #ffffff; border: none; border-radius: 8px; box-sizing: border-box;">
                             </div>
                             <div class="form-group" style="margin-bottom: 0;">
                                 <label style="display: block; color: var(--text-muted, #888888); margin-bottom: 8px; font-size: 13px; font-weight: 400;">CFOP Padrão:</label>
-                                <input type="text" id="dev-cfop-padrao" class="form-input" value="5202" style="width: 100%; height: 44px; padding: 0 14px; font-size: 14px;">
+                                <input type="text" id="dev-cfop-padrao" class="form-input" value="5202" style="width: 100%; height: 44px; padding: 0 14px; font-size: 14px; background: #202020; color: #ffffff; border: none; border-radius: 8px; box-sizing: border-box;">
                             </div>
                             <div class="form-group" style="margin-bottom: 0;">
                                 <label style="display: block; color: var(--text-muted, #888888); margin-bottom: 8px; font-size: 13px; font-weight: 400;">Modalidade de Frete:</label>
-                                <select id="dev-modalidade-frete" class="form-input" style="width: 100%; height: 44px; padding: 0 14px; font-size: 14px;">
+                                <select id="dev-modalidade-frete" class="form-input" style="width: 100%; height: 44px; padding: 0 14px; font-size: 14px; background: #202020; color: #ffffff; border: none; border-radius: 8px; box-sizing: border-box;">
                                     <option value="9" selected>9 - Sem Transporte / Frete</option>
                                     <option value="0">0 - Por conta do Emitente</option>
                                     <option value="1">1 - Por conta do Destinatário</option>
@@ -240,34 +240,35 @@
                             </div>
                         </div>
 
+                        <!-- Input normal de 44px de altura com background #202020 -->
                         <div class="form-group" style="margin-bottom: 0;">
                             <label style="display: block; color: var(--text-muted, #888888); margin-bottom: 8px; font-size: 13px; font-weight: 400;">Observações Fiscais / Informações Adicionais:</label>
-                            <textarea id="dev-observacoes" class="form-input" rows="2" style="width: 100%; padding: 10px 14px; font-size: 14px;"></textarea>
+                            <input type="text" id="dev-observacoes" class="form-input" style="width: 100%; height: 44px; padding: 0 14px; font-size: 14px; background: #202020; color: #ffffff; border: none; border-radius: 8px; box-sizing: border-box;">
                         </div>
                     </div>
 
-                    <!-- Resumo dos Totais (Fontes padrão) -->
-                    <div style="background: var(--bg-input, #181818); padding: 20px; border-radius: 8px;">
+                    <!-- Resumo dos Totais (Todos com background #202020) -->
+                    <div style="background: #181818; padding: 20px; border-radius: 8px;">
                         <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; align-items: flex-end;">
                             <div>
                                 <label style="display: block; color: var(--text-muted, #888888); margin-bottom: 8px; font-size: 13px; font-weight: 400;">Val. Produtos</label>
-                                <div id="res-val-produtos" style="background: #202020; color: #ffffff; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 6px; font-weight: 600; font-size: 14px;">R$ 0,00</div>
+                                <div id="res-val-produtos" style="background: #202020; color: #ffffff; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-weight: 600; font-size: 14px;">R$ 0,00</div>
                             </div>
                             <div>
                                 <label style="display: block; color: var(--text-muted, #888888); margin-bottom: 8px; font-size: 13px; font-weight: 400;">Frete (R$)</label>
-                                <input type="number" step="0.01" id="dev-val-frete" class="form-input" value="0.00" style="text-align: center; height: 44px; font-weight: 500; font-size: 14px; width: 100%; box-sizing: border-box;" onchange="recalcularTotaisDevolucao()">
+                                <input type="number" step="0.01" id="dev-val-frete" class="form-input" value="0.00" style="text-align: center; height: 44px; font-weight: 500; font-size: 14px; width: 100%; background: #202020; color: #ffffff; border: none; border-radius: 8px; box-sizing: border-box;" onchange="recalcularTotaisDevolucao()">
                             </div>
                             <div>
                                 <label style="display: block; color: var(--text-muted, #888888); margin-bottom: 8px; font-size: 13px; font-weight: 400;">Desconto (R$)</label>
-                                <input type="number" step="0.01" id="dev-val-desconto" class="form-input" value="0.00" style="text-align: center; height: 44px; font-weight: 500; font-size: 14px; width: 100%; box-sizing: border-box;" onchange="recalcularTotaisDevolucao()">
+                                <input type="number" step="0.01" id="dev-val-desconto" class="form-input" value="0.00" style="text-align: center; height: 44px; font-weight: 500; font-size: 14px; width: 100%; background: #202020; color: #ffffff; border: none; border-radius: 8px; box-sizing: border-box;" onchange="recalcularTotaisDevolucao()">
                             </div>
                             <div>
                                 <label style="display: block; color: var(--text-muted, #888888); margin-bottom: 8px; font-size: 13px; font-weight: 400;">Outras Desp. (R$)</label>
-                                <input type="number" step="0.01" id="dev-val-outras" class="form-input" value="0.00" style="text-align: center; height: 44px; font-weight: 500; font-size: 14px; width: 100%; box-sizing: border-box;" onchange="recalcularTotaisDevolucao()">
+                                <input type="number" step="0.01" id="dev-val-outras" class="form-input" value="0.00" style="text-align: center; height: 44px; font-weight: 500; font-size: 14px; width: 100%; background: #202020; color: #ffffff; border: none; border-radius: 8px; box-sizing: border-box;" onchange="recalcularTotaisDevolucao()">
                             </div>
                             <div>
                                 <label style="display: block; color: var(--text-muted, #888888); margin-bottom: 8px; font-size: 13px; font-weight: 400;">Total da NF-e</label>
-                                <div style="background: #202020; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 6px; box-sizing: border-box;">
+                                <div style="background: #202020; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 8px; box-sizing: border-box;">
                                     <span id="res-val-total" style="font-weight: 700; font-size: 15px; color: #22c55e;">R$ 0,00</span>
                                 </div>
                             </div>
@@ -326,7 +327,7 @@
         <div class="modal-body">
             <input type="hidden" id="cancelar-dev-id">
             <p style="font-size: 13px; color: var(--text-muted, #888888); margin-bottom: 12px;">Informe a justificativa do cancelamento perante a SEFAZ (mínimo de 15 caracteres):</p>
-            <textarea id="cancelar-justificativa" class="form-input" rows="4" placeholder="Ex: Emissão cancelada devido a erro no preenchimento do valor do item." style="width: 100%; padding: 10px;"></textarea>
+            <input type="text" id="cancelar-justificativa" class="form-input" placeholder="Ex: Emissão cancelada devido a erro no preenchimento do valor do item." style="width: 100%; height: 44px; padding: 0 14px; background: #202020; color: #ffffff; border: none; border-radius: 8px;">
         </div>
         <div class="modal-footer" style="border-top: 1px solid #1a1a1a;">
             <button class="btn btn-secondary" onclick="closeModal('modal-cancelamento-devolucao')" type="button">Voltar</button>

@@ -2,7 +2,7 @@ import os
 import re
 import json
 import xml.etree.ElementTree as ET
-from datetime import datetime
+from datetime import datetime, date
 from decimal import Decimal
 from flask import Blueprint, request, jsonify, render_template
 
@@ -36,7 +36,7 @@ def _ensure_tables_exist(conn):
 
 def _serialize(obj):
 
-    if isinstance(obj, (datetime, datetime.date)):
+    if isinstance(obj, (datetime, date)):
         return obj.isoformat()
     if isinstance(obj, Decimal):
         return float(obj)
