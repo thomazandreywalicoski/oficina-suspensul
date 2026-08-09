@@ -1686,6 +1686,8 @@
                 <li><a onclick="showPage('orcamento')" class="nav-link" id="link-orcamento"><i data-lucide="clipboard-list"></i> <span>Cotação Autopeças</span></a></li>
                 <li><a onclick="showPage('mandar-orcamento')" class="nav-link" id="link-mandar-orcamento"><i data-lucide="file-check-2"></i> <span>Mandar Orçamento</span></a></li>
                 <li><a onclick="showPage('os')" class="nav-link" id="link-os"><i data-lucide="file-text"></i> <span>Comprovantes</span></a></li>
+                <li><a onclick="showPage('devolucao')" class="nav-link" id="link-devolucao"><i data-lucide="rotate-ccw"></i> <span>Devolução</span></a></li>
+
                 <li class="nav-section"><span>Cadastro</span></li>
                 <li><a onclick="showPage('clientes')" class="nav-link" id="link-clientes"><i data-lucide="users"></i> <span>Clientes</span></a></li>
                 <li><a onclick="showPage('fornecedores')" class="nav-link" id="link-fornecedores"><i data-lucide="building-2"></i> <span>Fornecedores</span></a></li>
@@ -1912,7 +1914,12 @@
             </div>
         </div>
 
+        <div id="page-devolucao" class="main-content">
+            {% include 'devolucao.html' %}
+        </div>
+
         <div id="page-orcamento" class="main-content">
+
             <div class="page-header">
                 <div class="search-input-wrap">
                     <input type="text" id="cotacao-search" placeholder="Buscar" oninput="filtrarCotacoes()">
@@ -3845,6 +3852,8 @@
                 'agendamentos': 'Agendamentos',
                 'mandar-orcamento': 'Orçamentos',
                 'os': 'Comprovantes',
+                'devolucao': 'Devolução de Peças (NF-e)',
+
                 'orcamento': 'Cotação Autopeças',
                 'clientes': 'Clientes',
                 'fornecedores': 'Fornecedores',
@@ -4138,6 +4147,8 @@
     </script>
     <script>window.PUBLIC_BASE_URL = "{{ PUBLIC_BASE_URL }}";</script>
     <script src="/static/js/app.js"></script>
+    <script src="/devolucao-produtos/static/devolucao.js"></script>
+
 
     <!-- ===== MODAL: Nova / Editar Cotação ===== -->
     <div class="modal-overlay" id="modal-nova-cotacao">

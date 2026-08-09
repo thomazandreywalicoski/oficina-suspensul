@@ -13,6 +13,19 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 import mysql.connector
 from mysql.connector import pooling
 
+import sys
+devolucao_dir = os.path.join(os.path.dirname(__file__), 'devolucao-produtos')
+if devolucao_dir not in sys.path:
+    sys.path.insert(0, devolucao_dir)
+try:
+    from routes import devolucao_bp
+    from db_service import init_devolucao_tables
+    app.register_blueprint(devolucao_bp)
+except Exception as _e:
+    print(f"Aviso ao carregar módulo devolucao-produtos: {_e}")
+    init_devolucao_tables = None
+
+
 load_dotenv()
 
 app = Flask(__name__)
@@ -610,9 +623,14 @@ def run_migrations():
         if not tem_trouxe_prop_peca:
             cur.execute("ALTER TABLE orcamentos_propostas_pecas ADD COLUMN cliente_trouxe TINYINT(1) NOT NULL DEFAULT 0")
             conn.commit()
-            print("Migração: coluna cliente_trouxe adicionada em orcamentos_propostas_pecas")
+        if init_devolucao_tables:
+            try:
+                init_devolucao_tables(conn)
+            except Exception as _de:
+                print(f"Erro ao inicializar tabelas de devolução: {_de}")
 
         _migrations_done = True
+
     except Exception as e:
         print(f"Erro em run_migrations: {e}")
     finally:
@@ -712,8 +730,9 @@ def exigir_login():
     else:
         app.permanent_session_lifetime = timedelta(hours=24)
     rotas_livres = {'login', 'static', 'visualizar_solicitacao_orcamento', 'visualizar_orcamento_proposta', 'visualizar_comprovante'}
-    if request.endpoint in rotas_livres or request.path.startswith('/uploads/'):
+    if request.endpoint in rotas_livres or request.path.startswith('/uploads/') or request.path == '/api/webhooks/focusnfe':
         return None
+
     if session.get('admin_logged_in'):
         return None
     if request.path.startswith('/api/'):
