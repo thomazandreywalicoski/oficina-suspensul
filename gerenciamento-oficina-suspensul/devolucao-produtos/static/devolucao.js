@@ -66,7 +66,7 @@
         if (!tbody) return;
 
         if (!lista || lista.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 30px; color: #888888;">Nenhuma nota encontrada</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 30px; color: var(--text-muted, #888888);">Nenhuma nota encontrada</td></tr>`;
             return;
         }
 
@@ -85,45 +85,54 @@
                 statusBadge = `<span class="badge" style="background: #e2e8f0; color: #334155; padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">RASCUNHO</span>`;
             }
 
-            // Ações disponíveis
-            let acoes = [];
+            // Botões de Ações (Somente Ícones em containers separados)
+            let acoesHtml = '';
             if (item.status === 'AUTORIZADA') {
-                if (item.danfe_url) {
-                    acoes.push(`<a href="${item.danfe_url}" target="_blank" class="btn btn-secondary btn-sm" title="Visualizar DANFE"><i data-lucide="file-text"></i> DANFE</a>`);
-                }
-                if (item.xml_url) {
-                    acoes.push(`<a href="${item.xml_url}" target="_blank" class="btn btn-secondary btn-sm" title="Baixar XML"><i data-lucide="download"></i> XML</a>`);
-                }
-                acoes.push(`<button class="btn btn-danger btn-sm" onclick="abrirModalCancelamentoDevolucao(${item.id})" title="Cancelar NF-e"><i data-lucide="x-circle"></i> Cancelar</button>`);
+                acoesHtml = `
+                    <div style="display: flex; gap: 8px; justify-content: center; align-items: center;" class="actions-cell">
+                        ${item.danfe_url ? `<a href="${item.danfe_url}" target="_blank" class="btn-icon btn-action-blue" title="DANFE"><i data-lucide="file-text"></i></a>` : ''}
+                        ${item.xml_url ? `<a href="${item.xml_url}" target="_blank" class="btn-icon btn-action-purple" title="XML"><i data-lucide="download"></i></a>` : ''}
+                        <button class="btn-icon btn-action-red" onclick="abrirModalCancelamentoDevolucao(${item.id})" title="Cancelar NF-e"><i data-lucide="x-circle"></i></button>
+                    </div>
+                `;
             } else if (item.status === 'PROCESSANDO' || item.status === 'ENVIANDO') {
-                acoes.push(`<button class="btn btn-secondary btn-sm" onclick="consultarStatusDevolucao(${item.id})"><i data-lucide="refresh-cw"></i> Atualizar Status</button>`);
-            } else if (item.status === 'REJEITADA' || item.status === 'RASCUNHO' || item.status === 'ERRO') {
-                acoes.push(`<button class="btn btn-primary btn-sm" onclick="editarDevolucao(${item.id})"><i data-lucide="edit"></i> Editar / Emitir</button>`);
+                acoesHtml = `
+                    <div style="display: flex; gap: 8px; justify-content: center; align-items: center;" class="actions-cell">
+                        <button class="btn-icon btn-action-blue" onclick="consultarStatusDevolucao(${item.id})" title="Atualizar Status"><i data-lucide="refresh-cw"></i></button>
+                    </div>
+                `;
+            } else {
+                // Rascunho / Rejeitada / Erro: Botão de Editar (amarelo), Emitir (verde), Excluir (vermelho)
+                acoesHtml = `
+                    <div style="display: flex; gap: 8px; justify-content: center; align-items: center;" class="actions-cell">
+                        <button class="btn-icon btn-action-yellow" onclick="editarDevolucao(${item.id})" title="Editar Devolução"><i data-lucide="edit-3"></i></button>
+                        <button class="btn-icon btn-action-green" onclick="emitirDevolucaoDireta(${item.id})" title="Emitir NF-e"><i data-lucide="send"></i></button>
+                        <button class="btn-icon btn-action-red" onclick="excluirDevolucao(${item.id})" title="Excluir Rascunho"><i data-lucide="trash-2"></i></button>
+                    </div>
+                `;
             }
 
             html += `
                 <tr style="border-bottom: 1px solid #1f1f1f;">
-                    <td style="padding: 12px 16px;">
-                        <strong style="color: #ffffff; font-family: monospace;">${item.ref}</strong>
-                        <div style="font-size: 0.75rem; color: #888888;">${fmtDataBR(item.criado_em)}</div>
+                    <td style="padding: 12px 16px; text-align: center;">
+                        <div style="font-weight: 600; color: var(--text-muted, #888888); font-size: 13px;">${item.ref}</div>
+                        <div style="font-size: 11px; color: var(--text-muted, #888888);">${fmtDataBR(item.criado_em)}</div>
                     </td>
-                    <td style="padding: 12px 16px;">
-                        <div style="font-weight: 600; color: #ffffff;">${item.nome_fornecedor || 'Não informado'}</div>
-                        <div style="font-size: 0.75rem; color: #888888;">${item.cnpj_fornecedor || '-'}</div>
+                    <td style="padding: 12px 16px; text-align: center;">
+                        <div style="font-weight: 600; color: var(--text-muted, #888888); font-size: 13px;">${item.nome_fornecedor || 'Não informado'}</div>
+                        <div style="font-size: 11px; color: var(--text-muted, #888888);">${item.cnpj_fornecedor || '-'}</div>
                     </td>
-                    <td style="padding: 12px 16px;">
-                        <div style="font-family: monospace; font-size: 0.8rem; color: #a1a1aa;" title="${item.chave_nfe_original}">
+                    <td style="padding: 12px 16px; text-align: center;">
+                        <div style="font-size: 12px; color: var(--text-muted, #888888);" title="${item.chave_nfe_original || ''}">
                             ${item.chave_nfe_original ? item.chave_nfe_original.substring(0, 20) + '...' : '-'}
                         </div>
                     </td>
-                    <td style="padding: 12px 16px; font-weight: 700; color: #ffffff;">
-                        ${fmtBRL(item.valor_total)}
+                    <td style="padding: 12px 16px; text-align: center;">
+                        <span style="font-weight: 700; color: #22c55e; font-size: 14px;">${fmtBRL(item.valor_total)}</span>
                     </td>
-                    <td style="padding: 12px 16px;">${statusBadge}</td>
-                    <td style="padding: 12px 16px; text-align: right;">
-                        <div style="display: flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap;">
-                            ${acoes.join('')}
-                        </div>
+                    <td style="padding: 12px 16px; text-align: center;">${statusBadge}</td>
+                    <td style="padding: 12px 16px; text-align: center;">
+                        ${acoesHtml}
                     </td>
                 </tr>
             `;
@@ -305,16 +314,22 @@
             const dev = data.devolucao;
             document.getElementById('dev-id').value = dev.id;
             document.getElementById('dev-chave-original').value = dev.chave_nfe_original || '';
-            document.getElementById('dev-natureza-operacao').value = dev.natureza_operacao || 'DEVOLUCAO DE MERCADORIA';
+            document.getElementById('dev-natureza-operacao').value = dev.natureza_operacao || 'Devolução de Mercadoria';
             document.getElementById('dev-cfop-padrao').value = dev.cfop_padrao || '5202';
             document.getElementById('dev-modalidade-frete').value = dev.modalidade_frete || '9';
-            document.getElementById('dev-observacoes').value = dev.observacoes || '';
+            document.getElementById('dev-observacoes').value = dev.observacoes || `Devolução referente à NF-e de compra nº ${dev.numero_nfe_original || ''}`;
             document.getElementById('dev-val-frete').value = dev.valor_frete || '0.00';
             document.getElementById('dev-val-desconto').value = dev.valor_desconto || '0.00';
             document.getElementById('dev-val-outras').value = dev.valor_outras_despesas || '0.00';
 
-            renderizarTabelaItens(dev.items || []);
-            document.getElementById('modal-devolucao-titulo').innerText = `Editar Devolução (${dev.ref})`;
+            const savedItems = dev.items || [];
+            let allItems = savedItems;
+            if (dev.dados_original && (dev.dados_original.items || dev.dados_original.produtos)) {
+                allItems = dev.dados_original.items || dev.dados_original.produtos;
+            }
+
+            renderizarTabelaItens(allItems, savedItems);
+            document.getElementById('modal-devolucao-titulo').innerText = `Editar Devolução (${dev.ref || 'Ref ' + dev.id})`;
             window.irParaPassoDevolucao(1);
             if (typeof openModal === 'function') openModal('modal-devolucao');
         } catch (err) {
@@ -416,7 +431,7 @@
     }
 
 
-    function renderizarTabelaItens(itens) {
+    function renderizarTabelaItens(itens, savedItems = null) {
         const tbody = document.getElementById('dev-itens-body');
         if (!tbody) return;
 
@@ -429,17 +444,31 @@
         let html = '';
         itens.forEach((it, idx) => {
             const qtdOrig = Number(it.quantidade_original || it.qCom || 1);
-            const qtdDev = Number(it.quantidade_devolvida || qtdOrig);
             const vUnit = Number(it.valor_unitario || it.vUnCom || 0);
             const cfop = it.cfop || (document.getElementById('dev-cfop-padrao') ? document.getElementById('dev-cfop-padrao').value : '5202') || '5202';
             const ncm = it.ncm || it.codigo_ncm || '';
             const desc = it.descricao || it.xProd || '';
             const cProd = it.codigo_produto || it.cProd || `ITEM${idx+1}`;
 
+            let isChecked = false;
+            let qtdDev = qtdOrig;
+
+            if (savedItems && savedItems.length > 0) {
+                const match = savedItems.find(s => 
+                    (s.codigo_produto && s.codigo_produto === cProd) || 
+                    (s.cProd && s.cProd === cProd) || 
+                    (s.descricao && s.descricao === desc)
+                );
+                if (match) {
+                    isChecked = true;
+                    qtdDev = Number(match.quantidade_devolvida || match.qtdDev || qtdOrig);
+                }
+            }
+
             html += `
                 <tr id="row-item-${idx}" style="border-bottom: 1px solid #262626;">
                     <td style="text-align: center; padding: 8px;">
-                        <input type="checkbox" class="item-select" data-idx="${idx}" onchange="recalcularTotaisDevolucao()" style="accent-color: var(--primary, #ffe54c); width: 18px; height: 18px; cursor: pointer;">
+                        <input type="checkbox" class="item-select" data-idx="${idx}" ${isChecked ? 'checked' : ''} onchange="recalcularTotaisDevolucao()" style="accent-color: var(--primary, #ffe54c); width: 18px; height: 18px; cursor: pointer;">
                     </td>
                     <td style="padding: 8px;">
                         <input type="text" class="form-input item-cprod" data-idx="${idx}" value="${cProd}" style="font-size: 0.85rem; text-align: center; background: #202020; color: #ffffff; border: none; border-radius: 6px; padding: 6px 8px; width: 100%; box-sizing: border-box;">
@@ -453,21 +482,25 @@
                     <td style="padding: 8px;">
                         <input type="text" class="form-input item-cfop" data-idx="${idx}" value="${cfop}" style="font-size: 0.85rem; text-align: center; background: #202020; color: #ffffff; border: none; border-radius: 6px; padding: 6px 8px; width: 100%; box-sizing: border-box;">
                     </td>
-                    <td style="text-align: center; padding: 8px; font-weight: 700; color: #ffffff;">
+                    <td style="text-align: center; padding: 8px; font-weight: 600; color: #ffffff;">
                         <span class="item-qtd-orig" data-idx="${idx}">${qtdOrig}</span>
                     </td>
                     <td style="padding: 8px;">
-                        <input type="number" step="0.01" max="${qtdOrig}" class="form-input item-qtd-dev" data-idx="${idx}" value="${qtdDev}" onchange="recalcularTotaisDevolucao()" style="text-align: center; font-weight: 800; font-size: 0.9rem; background: var(--primary, #ffe54c); color: #000000; border: none; border-radius: 6px; padding: 6px 4px; width: 100%; box-sizing: border-box;">
+                        <input type="number" step="0.01" max="${qtdOrig}" class="form-input item-qtd-dev" data-idx="${idx}" value="${qtdDev}" onchange="recalcularTotaisDevolucao()" style="text-align: center; font-weight: 700; font-size: 0.9rem; background: var(--primary, #ffe54c); color: #000000; border: none; border-radius: 6px; padding: 6px 4px; width: 100%; box-sizing: border-box;">
                     </td>
                     <td style="padding: 8px;">
                         <input type="number" step="0.01" class="form-input item-vunit" data-idx="${idx}" value="${vUnit.toFixed(2)}" onchange="recalcularTotaisDevolucao()" style="text-align: center; font-size: 0.85rem; background: #202020; color: #ffffff; border: none; border-radius: 6px; padding: 6px 8px; width: 100%; box-sizing: border-box;">
                     </td>
-                    <td style="padding: 8px; text-align: center; font-weight: 800;">
-                        <span class="item-subtotal" id="subtotal-${idx}" style="color: #22c55e; font-weight: 800; font-size: 0.9rem;">${fmtBRL(qtdDev * vUnit)}</span>
+                    <td style="padding: 8px; text-align: center; font-weight: 700;">
+                        <span class="item-subtotal" id="subtotal-${idx}" style="color: #22c55e; font-weight: 700; font-size: 0.9rem;">${fmtBRL((isChecked ? qtdDev : 0) * vUnit)}</span>
                     </td>
                 </tr>
             `;
         });
+
+        tbody.innerHTML = html;
+        recalcularTotaisDevolucao();
+    }
 
         tbody.innerHTML = html;
         recalcularTotaisDevolucao();
@@ -517,11 +550,11 @@
 
         rows.forEach(tr => {
             const chk = tr.querySelector('.item-select');
+            const idx = chk ? chk.getAttribute('data-idx') : null;
+            const subtotalSpan = document.getElementById(`subtotal-${idx}`);
             if (chk && chk.checked) {
-                const idx = chk.getAttribute('data-idx');
                 const qtdInput = tr.querySelector('.item-qtd-dev');
                 const vunitInput = tr.querySelector('.item-vunit');
-                const subtotalSpan = document.getElementById(`subtotal-${idx}`);
 
                 const qtd = Number(qtdInput ? qtdInput.value : 0);
                 const vunit = Number(vunitInput ? vunitInput.value : 0);
@@ -529,6 +562,8 @@
 
                 if (subtotalSpan) subtotalSpan.innerText = fmtBRL(subtotal);
                 totalProd += subtotal;
+            } else if (subtotalSpan) {
+                subtotalSpan.innerText = fmtBRL(0);
             }
         });
 
@@ -710,6 +745,43 @@
             alert('Erro ao cancelar: ' + err.message);
         } finally {
             btn.disabled = false;
+        }
+    };
+
+    window.emitirDevolucaoDireta = async function(id) {
+        if (!confirm('Deseja realmente transmitir esta NF-e de devolução para a Focus NFe / SEFAZ?')) {
+            return;
+        }
+        if (typeof openModal === 'function') openModal('modal-loading-devolucao');
+        try {
+            const res = await fetch(`/api/devolucao/${id}/emitir`, { method: 'POST' });
+            const data = await res.json();
+            if (typeof closeModal === 'function') closeModal('modal-loading-devolucao');
+
+            if (data.sucesso) {
+                alert(`NF-e enviada com sucesso! Status: ${data.status}`);
+            } else {
+                alert(`Erro na emissão: ${data.erro || 'Rejeitada pela SEFAZ'}`);
+            }
+            window.carregarDevolucoes();
+        } catch (err) {
+            if (typeof closeModal === 'function') closeModal('modal-loading-devolucao');
+            alert('Erro ao emitir NF-e: ' + err.message);
+        }
+    };
+
+    window.excluirDevolucao = async function(id) {
+        if (!confirm('Deseja realmente excluir este rascunho de devolução?')) {
+            return;
+        }
+        try {
+            const res = await fetch(`/api/devolucao/${id}`, { method: 'DELETE' });
+            const data = await res.json();
+            if (!data.sucesso) throw new Error(data.erro);
+
+            window.carregarDevolucoes();
+        } catch (err) {
+            alert('Erro ao excluir devolução: ' + err.message);
         }
     };
 

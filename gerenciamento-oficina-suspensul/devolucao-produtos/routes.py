@@ -175,11 +175,50 @@ def obter_devolucao(devolucao_id):
 
         cur.execute("SELECT * FROM devolucao_notas_itens WHERE devolucao_id = %s ORDER BY numero_item ASC", (devolucao_id,))
         itens_rows = cur.fetchall()
-        nota['items'] = _rows_to_dict_list(itens_rows, cur.description)
+        saved_items = _rows_to_dict_list(itens_rows, cur.description)
+        nota['items'] = saved_items
+
+        # Tentar carregar os itens originais da NF-e original do cache
+        if nota.get('chave_nfe_original'):
+            cur.execute("SELECT dados_json FROM devolucao_notas_originais WHERE chave_acesso = %s", (nota['chave_nfe_original'],))
+            orig_row = cur.fetchone()
+            if orig_row and orig_row[0]:
+                try:
+                    dados_orig = json.loads(orig_row[0])
+                    nota['dados_original'] = dados_orig
+                except Exception:
+                    pass
 
         return jsonify({'sucesso': True, 'devolucao': nota})
     except Exception as e:
         return jsonify({'erro': f"Erro ao obter devolução: {str(e)}"}), 500
+    finally:
+        cur.close()
+        conn.close()
+
+
+@devolucao_bp.route('/api/devolucao/<int:devolucao_id>', methods=['DELETE'])
+def excluir_devolucao(devolucao_id):
+    conn = _get_db()
+    cur = conn.cursor()
+    try:
+        cur.execute("SELECT status FROM devolucao_notas_fiscais WHERE id = %s", (devolucao_id,))
+        row = cur.fetchone()
+        if not row:
+            return jsonify({'erro': 'Devolução não encontrada'}), 404
+        
+        status = row[0]
+        if status not in ('RASCUNHO', 'REJEITADA', 'ERRO'):
+            return jsonify({'erro': f'Não é possível excluir uma nota com status "{status}". Apenas rascunhos ou notas rejeitadas podem ser excluídas.'}), 400
+
+        cur.execute("DELETE FROM devolucao_notas_itens WHERE devolucao_id = %s", (devolucao_id,))
+        cur.execute("DELETE FROM devolucao_notas_fiscais WHERE id = %s", (devolucao_id,))
+        conn.commit()
+
+        return jsonify({'sucesso': True, 'mensagem': 'Devolução excluída com sucesso.'})
+    except Exception as e:
+        conn.rollback()
+        return jsonify({'erro': f"Erro ao excluir devolução: {str(e)}"}), 500
     finally:
         cur.close()
         conn.close()
