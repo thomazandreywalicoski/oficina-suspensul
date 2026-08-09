@@ -12,38 +12,68 @@
         </button>
     </div>
 
-    <!-- Cards de Resumo (Ordem: Processando, Autorizadas, Rejeitadas, Rascunhos) -->
+    <!-- Cards de Resumo (Cores correspondentes ao status no fundo do card) -->
     <div class="devolucao-cards-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
-        <div class="card-kpi" style="background: #161616; padding: 18px; border-radius: 12px; border: none;">
-            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #888888; letter-spacing: 0.5px;">PROCESSANDO</div>
-            <div id="kpi-processando" style="font-size: 1.6rem; font-weight: 800; color: #f59e0b; margin-top: 6px;">0</div>
+        <div class="card-kpi" style="background: #b45309; padding: 18px; border-radius: 12px; border: none; color: #ffffff;">
+            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: rgba(255, 255, 255, 0.85); letter-spacing: 0.5px;">PROCESSANDO</div>
+            <div id="kpi-processando" style="font-size: 1.8rem; font-weight: 900; color: #ffffff; margin-top: 4px;">0</div>
         </div>
-        <div class="card-kpi" style="background: #161616; padding: 18px; border-radius: 12px; border: none;">
-            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #888888; letter-spacing: 0.5px;">AUTORIZADAS</div>
-            <div id="kpi-autorizadas" style="font-size: 1.6rem; font-weight: 800; color: #22c55e; margin-top: 6px;">0</div>
+        <div class="card-kpi" style="background: #15803d; padding: 18px; border-radius: 12px; border: none; color: #ffffff;">
+            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: rgba(255, 255, 255, 0.85); letter-spacing: 0.5px;">AUTORIZADAS</div>
+            <div id="kpi-autorizadas" style="font-size: 1.8rem; font-weight: 900; color: #ffffff; margin-top: 4px;">0</div>
         </div>
-        <div class="card-kpi" style="background: #161616; padding: 18px; border-radius: 12px; border: none;">
-            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #888888; letter-spacing: 0.5px;">REJEITADAS</div>
-            <div id="kpi-rejeitadas" style="font-size: 1.6rem; font-weight: 800; color: #ef4444; margin-top: 6px;">0</div>
+        <div class="card-kpi" style="background: #b91c1c; padding: 18px; border-radius: 12px; border: none; color: #ffffff;">
+            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: rgba(255, 255, 255, 0.85); letter-spacing: 0.5px;">REJEITADAS</div>
+            <div id="kpi-rejeitadas" style="font-size: 1.8rem; font-weight: 900; color: #ffffff; margin-top: 4px;">0</div>
         </div>
-        <div class="card-kpi" style="background: #161616; padding: 18px; border-radius: 12px; border: none;">
-            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #888888; letter-spacing: 0.5px;">RASCUNHOS</div>
-            <div id="kpi-rascunhos" style="font-size: 1.6rem; font-weight: 800; color: #94a3b8; margin-top: 6px;">0</div>
+        <div class="card-kpi" style="background: #475569; padding: 18px; border-radius: 12px; border: none; color: #ffffff;">
+            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: rgba(255, 255, 255, 0.85); letter-spacing: 0.5px;">RASCUNHOS</div>
+            <div id="kpi-rascunhos" style="font-size: 1.8rem; font-weight: 900; color: #ffffff; margin-top: 4px;">0</div>
         </div>
     </div>
 
-    <!-- Tabela Principal de Devoluções (Sem bordas) -->
+    <!-- Tabela Principal de Devoluções (Cabeçalho Amarelo com Ícones) -->
     <div style="background: #161616; border-radius: 12px; overflow: hidden; border: none;">
         <div style="overflow-x: auto;">
             <table class="table" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; border: none;">
-                <thead style="background: #1a1a1a; border: none;">
+                <thead style="background: var(--primary, #ffe54c); border: none;">
                     <tr style="border: none;">
-                        <th style="padding: 12px 16px; color: #888888; font-size: 11px; font-weight: 800; text-transform: uppercase; border: none;">Ref / Data</th>
-                        <th style="padding: 12px 16px; color: #888888; font-size: 11px; font-weight: 800; text-transform: uppercase; border: none;">Fornecedor</th>
-                        <th style="padding: 12px 16px; color: #888888; font-size: 11px; font-weight: 800; text-transform: uppercase; border: none;">NF-e Original</th>
-                        <th style="padding: 12px 16px; color: #888888; font-size: 11px; font-weight: 800; text-transform: uppercase; border: none;">Total</th>
-                        <th style="padding: 12px 16px; color: #888888; font-size: 11px; font-weight: 800; text-transform: uppercase; border: none;">Status</th>
-                        <th style="padding: 12px 16px; color: #888888; font-size: 11px; font-weight: 800; text-transform: uppercase; text-align: right; border: none;">Ações</th>
+                        <th style="padding: 16px; color: #000000; font-size: 11px; font-weight: 800; text-transform: uppercase; white-space: nowrap; border: none;">
+                            <div style="display: inline-flex; align-items: center; gap: 6px;">
+                                <i data-lucide="calendar" style="width: 15px; height: 15px; stroke-width: 2.5;"></i>
+                                <span>REF / DATA</span>
+                            </div>
+                        </th>
+                        <th style="padding: 16px; color: #000000; font-size: 11px; font-weight: 800; text-transform: uppercase; white-space: nowrap; border: none;">
+                            <div style="display: inline-flex; align-items: center; gap: 6px;">
+                                <i data-lucide="truck" style="width: 15px; height: 15px; stroke-width: 2.5;"></i>
+                                <span>FORNECEDOR</span>
+                            </div>
+                        </th>
+                        <th style="padding: 16px; color: #000000; font-size: 11px; font-weight: 800; text-transform: uppercase; white-space: nowrap; border: none;">
+                            <div style="display: inline-flex; align-items: center; gap: 6px;">
+                                <i data-lucide="file-text" style="width: 15px; height: 15px; stroke-width: 2.5;"></i>
+                                <span>NF-E ORIGINAL</span>
+                            </div>
+                        </th>
+                        <th style="padding: 16px; color: #000000; font-size: 11px; font-weight: 800; text-transform: uppercase; white-space: nowrap; border: none;">
+                            <div style="display: inline-flex; align-items: center; gap: 6px;">
+                                <i data-lucide="dollar-sign" style="width: 15px; height: 15px; stroke-width: 2.5;"></i>
+                                <span>TOTAL</span>
+                            </div>
+                        </th>
+                        <th style="padding: 16px; color: #000000; font-size: 11px; font-weight: 800; text-transform: uppercase; white-space: nowrap; border: none;">
+                            <div style="display: inline-flex; align-items: center; gap: 6px;">
+                                <i data-lucide="activity" style="width: 15px; height: 15px; stroke-width: 2.5;"></i>
+                                <span>STATUS</span>
+                            </div>
+                        </th>
+                        <th style="padding: 16px; color: #000000; font-size: 11px; font-weight: 800; text-transform: uppercase; white-space: nowrap; text-align: right; border: none;">
+                            <div style="display: inline-flex; align-items: center; gap: 6px; justify-content: flex-end;">
+                                <i data-lucide="settings" style="width: 15px; height: 15px; stroke-width: 2.5;"></i>
+                                <span>AÇÕES</span>
+                            </div>
+                        </th>
                     </tr>
                 </thead>
                 <tbody id="devolucao-tabela-body">
@@ -127,15 +157,59 @@
                         <table class="table" style="width: 100%; border-collapse: collapse; font-size: 0.85rem; color: #ffffff; border: none;">
                             <thead style="background: var(--primary, #ffe54c); border: none;">
                                 <tr style="border: none;">
-                                    <th style="padding: 10px; width: 40px; text-align: center; color: #000000; font-size: 11px; font-weight: 800; white-space: nowrap; border: none;">SEL.</th>
-                                    <th style="padding: 10px; width: 95px; color: #000000; font-size: 11px; font-weight: 800; white-space: nowrap; border: none;">CÓDIGO</th>
-                                    <th style="padding: 10px; color: #000000; font-size: 11px; font-weight: 800; white-space: nowrap; border: none;">DESCRIÇÃO</th>
-                                    <th style="padding: 10px; width: 95px; color: #000000; font-size: 11px; font-weight: 800; white-space: nowrap; border: none;">NCM</th>
-                                    <th style="padding: 10px; width: 75px; color: #000000; font-size: 11px; font-weight: 800; white-space: nowrap; border: none;">CFOP</th>
-                                    <th style="padding: 10px; width: 80px; text-align: center; color: #000000; font-size: 11px; font-weight: 800; white-space: nowrap; border: none;">QTD ORIG.</th>
-                                    <th style="padding: 10px; width: 90px; text-align: center; color: #000000; font-size: 11px; font-weight: 800; white-space: nowrap; border: none;">QTD DEV.</th>
-                                    <th style="padding: 10px; width: 100px; text-align: right; color: #000000; font-size: 11px; font-weight: 800; white-space: nowrap; border: none;">VAL. UNIT.</th>
-                                    <th style="padding: 10px; width: 110px; text-align: right; color: #000000; font-size: 11px; font-weight: 800; white-space: nowrap; border: none;">SUBTOTAL</th>
+                                    <th style="padding: 14px 10px; width: 40px; text-align: center; color: #000000; font-size: 11px; font-weight: 800; white-space: nowrap; border: none;">
+                                        <div style="display: inline-flex; align-items: center; justify-content: center;">
+                                            <i data-lucide="check-square" style="width: 15px; height: 15px; stroke-width: 2.5;"></i>
+                                        </div>
+                                    </th>
+                                    <th style="padding: 14px 10px; width: 95px; color: #000000; font-size: 11px; font-weight: 800; white-space: nowrap; border: none;">
+                                        <div style="display: inline-flex; align-items: center; gap: 6px;">
+                                            <i data-lucide="hash" style="width: 15px; height: 15px; stroke-width: 2.5;"></i>
+                                            <span>CÓDIGO</span>
+                                        </div>
+                                    </th>
+                                    <th style="padding: 14px 10px; color: #000000; font-size: 11px; font-weight: 800; white-space: nowrap; border: none;">
+                                        <div style="display: inline-flex; align-items: center; gap: 6px;">
+                                            <i data-lucide="package" style="width: 15px; height: 15px; stroke-width: 2.5;"></i>
+                                            <span>DESCRIÇÃO</span>
+                                        </div>
+                                    </th>
+                                    <th style="padding: 14px 10px; width: 95px; color: #000000; font-size: 11px; font-weight: 800; white-space: nowrap; border: none;">
+                                        <div style="display: inline-flex; align-items: center; gap: 6px;">
+                                            <i data-lucide="tag" style="width: 15px; height: 15px; stroke-width: 2.5;"></i>
+                                            <span>NCM</span>
+                                        </div>
+                                    </th>
+                                    <th style="padding: 14px 10px; width: 75px; color: #000000; font-size: 11px; font-weight: 800; white-space: nowrap; border: none;">
+                                        <div style="display: inline-flex; align-items: center; gap: 6px;">
+                                            <i data-lucide="file-code" style="width: 15px; height: 15px; stroke-width: 2.5;"></i>
+                                            <span>CFOP</span>
+                                        </div>
+                                    </th>
+                                    <th style="padding: 14px 10px; width: 80px; text-align: center; color: #000000; font-size: 11px; font-weight: 800; white-space: nowrap; border: none;">
+                                        <div style="display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+                                            <i data-lucide="layers" style="width: 15px; height: 15px; stroke-width: 2.5;"></i>
+                                            <span>QTD ORIG.</span>
+                                        </div>
+                                    </th>
+                                    <th style="padding: 14px 10px; width: 90px; text-align: center; color: #000000; font-size: 11px; font-weight: 800; white-space: nowrap; border: none;">
+                                        <div style="display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
+                                            <i data-lucide="rotate-ccw" style="width: 15px; height: 15px; stroke-width: 2.5;"></i>
+                                            <span>QTD DEV.</span>
+                                        </div>
+                                    </th>
+                                    <th style="padding: 14px 10px; width: 100px; text-align: right; color: #000000; font-size: 11px; font-weight: 800; white-space: nowrap; border: none;">
+                                        <div style="display: inline-flex; align-items: center; justify-content: flex-end; gap: 6px;">
+                                            <i data-lucide="dollar-sign" style="width: 15px; height: 15px; stroke-width: 2.5;"></i>
+                                            <span>VAL. UNIT.</span>
+                                        </div>
+                                    </th>
+                                    <th style="padding: 14px 10px; width: 110px; text-align: right; color: #000000; font-size: 11px; font-weight: 800; white-space: nowrap; border: none;">
+                                        <div style="display: inline-flex; align-items: center; justify-content: flex-end; gap: 6px;">
+                                            <i data-lucide="credit-card" style="width: 15px; height: 15px; stroke-width: 2.5;"></i>
+                                            <span>SUBTOTAL</span>
+                                        </div>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody id="dev-itens-body">
