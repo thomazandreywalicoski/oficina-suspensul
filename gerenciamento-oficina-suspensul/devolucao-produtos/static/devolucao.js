@@ -74,15 +74,15 @@
         lista.forEach(item => {
             let statusBadge = '';
             if (item.status === 'AUTORIZADA') {
-                statusBadge = `<span class="badge" style="background: #dcfce7; color: #15803d; padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">AUTORIZADA</span>`;
+                statusBadge = `<span class="badge" style="background: #2ecc71; color: #ffffff; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.75rem; display: inline-block;">AUTORIZADA</span>`;
             } else if (item.status === 'PROCESSANDO' || item.status === 'ENVIANDO') {
-                statusBadge = `<span class="badge" style="background: #fef3c7; color: #b45309; padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">PROCESSANDO</span>`;
+                statusBadge = `<span class="badge" style="background: #f39c12; color: #ffffff; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.75rem; display: inline-block;">PROCESSANDO</span>`;
             } else if (item.status === 'REJEITADA' || item.status === 'ERRO') {
-                statusBadge = `<span class="badge" style="background: #fee2e2; color: #b91c1c; padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">REJEITADA</span>`;
+                statusBadge = `<span class="badge" style="background: #e74c3c; color: #ffffff; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.75rem; display: inline-block;">REJEITADA</span>`;
             } else if (item.status === 'CANCELADA') {
-                statusBadge = `<span class="badge" style="background: #f1f5f9; color: #475569; padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">CANCELADA</span>`;
+                statusBadge = `<span class="badge" style="background: #64748b; color: #ffffff; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.75rem; display: inline-block;">CANCELADA</span>`;
             } else {
-                statusBadge = `<span class="badge" style="background: #e2e8f0; color: #334155; padding: 4px 8px; border-radius: 6px; font-weight: 600; font-size: 0.75rem;">RASCUNHO</span>`;
+                statusBadge = `<span class="badge" style="background: #7f8c8d; color: #ffffff; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 0.75rem; display: inline-block;">RASCUNHO</span>`;
             }
 
             // Botões de Ações (Somente Ícones em containers separados)
