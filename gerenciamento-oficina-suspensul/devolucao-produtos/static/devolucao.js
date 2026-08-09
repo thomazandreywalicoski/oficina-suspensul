@@ -152,6 +152,113 @@
     };
 
 
+    // --- Navegação Multi-Passos (Wizard) ---
+    let currentStep = 1;
+
+    window.irParaPassoDevolucao = function(step) {
+        // Validação ao avançar do passo 1
+        if (step >= 2) {
+            const chave = (document.getElementById('dev-chave-original').value || '').trim();
+            const temItens = document.querySelectorAll('#dev-itens-body tr input.item-cprod').length > 0;
+            if ((!chave || chave.length !== 44) && !temItens) {
+                alert('Por favor, informe uma chave de acesso válida (44 dígitos) ou busque a NF-e original antes de avançar.');
+                return;
+            }
+        }
+
+        // Validação ao avançar do passo 2
+        if (step >= 3) {
+            const checked = document.querySelectorAll('#dev-itens-body tr input.item-select:checked');
+            if (checked.length === 0) {
+                alert('Selecione pelo menos um item para devolução antes de avançar.');
+                return;
+            }
+        }
+
+        currentStep = step;
+
+        // Ocultar/Exibir conteúdos dos passos
+        const step1 = document.getElementById('dev-step-1');
+        const step2 = document.getElementById('dev-step-2');
+        const step3 = document.getElementById('dev-step-3');
+
+        if (step1) step1.style.display = (step === 1) ? 'block' : 'none';
+        if (step2) step2.style.display = (step === 2) ? 'block' : 'none';
+        if (step3) step3.style.display = (step === 3) ? 'block' : 'none';
+
+        // Atualizar Stepper Pills Header
+        for (let i = 1; i <= 3; i++) {
+            const pill = document.getElementById(`step-indicator-${i}`);
+            if (!pill) continue;
+            const badge = pill.querySelector('span:first-child');
+            if (i === step) {
+                pill.style.background = '#222222';
+                pill.style.color = 'var(--primary, #ffe54c)';
+                pill.style.fontWeight = '700';
+                if (badge) {
+                    badge.style.background = 'var(--primary, #ffe54c)';
+                    badge.style.color = '#000000';
+                }
+            } else if (i < step) {
+                pill.style.background = '#181818';
+                pill.style.color = '#22c55e';
+                pill.style.fontWeight = '600';
+                if (badge) {
+                    badge.style.background = '#22c55e';
+                    badge.style.color = '#ffffff';
+                }
+            } else {
+                pill.style.background = '#161616';
+                pill.style.color = '#888888';
+                pill.style.fontWeight = '600';
+                if (badge) {
+                    badge.style.background = '#333333';
+                    badge.style.color = '#ffffff';
+                }
+            }
+        }
+
+        // Botões no Footer
+        const btnPrev = document.getElementById('btn-step-prev');
+        const btnNext = document.getElementById('btn-step-next');
+        const btnRascunho = document.getElementById('btn-salvar-rascunho');
+        const btnEmitir = document.getElementById('btn-emitir-nfe');
+
+        if (btnPrev) btnPrev.style.display = (step > 1) ? 'inline-flex' : 'none';
+
+        if (step === 1) {
+            if (btnNext) {
+                btnNext.style.display = 'inline-flex';
+                btnNext.innerHTML = 'Avançar para Peças &rarr;';
+            }
+            if (btnRascunho) btnRascunho.style.display = 'none';
+            if (btnEmitir) btnEmitir.style.display = 'none';
+        } else if (step === 2) {
+            if (btnNext) {
+                btnNext.style.display = 'inline-flex';
+                btnNext.innerHTML = 'Avançar para Dados Fiscais &rarr;';
+            }
+            if (btnRascunho) btnRascunho.style.display = 'none';
+            if (btnEmitir) btnEmitir.style.display = 'none';
+        } else if (step === 3) {
+            if (btnNext) btnNext.style.display = 'none';
+            if (btnRascunho) btnRascunho.style.display = 'inline-flex';
+            if (btnEmitir) btnEmitir.style.display = 'inline-flex';
+        }
+    };
+
+    window.stepProximoDevolucao = function() {
+        if (currentStep < 3) {
+            window.irParaPassoDevolucao(currentStep + 1);
+        }
+    };
+
+    window.stepAnteriorDevolucao = function() {
+        if (currentStep > 1) {
+            window.irParaPassoDevolucao(currentStep - 1);
+        }
+    };
+
     // Modal Nova Devolução
     window.abrirModalNovaDevolucao = function() {
         document.getElementById('dev-id').value = '';
@@ -170,6 +277,8 @@
         renderizarTabelaItens([]);
 
         document.getElementById('modal-devolucao-titulo').innerText = 'Nova Devolução de Produtos';
+        window.irParaPassoDevolucao(1);
+
         if (typeof openModal === 'function') openModal('modal-devolucao');
         else if (window.openModal) window.openModal('modal-devolucao');
     };
@@ -201,6 +310,7 @@
 
             renderizarTabelaItens(dev.items || []);
             document.getElementById('modal-devolucao-titulo').innerText = `Editar Devolução (${dev.ref})`;
+            window.irParaPassoDevolucao(1);
             if (typeof openModal === 'function') openModal('modal-devolucao');
         } catch (err) {
             alert('Erro ao carregar devolução: ' + err.message);
