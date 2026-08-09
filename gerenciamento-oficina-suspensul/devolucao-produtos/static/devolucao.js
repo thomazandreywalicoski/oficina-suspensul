@@ -123,8 +123,8 @@
                         <div style="font-size: 11px; color: var(--text-muted, #888888);">${item.cnpj_fornecedor || '-'}</div>
                     </td>
                     <td style="padding: 12px 16px; text-align: center;">
-                        <div style="font-size: 12px; color: var(--text-muted, #888888);" title="${item.chave_nfe_original || ''}">
-                            ${item.chave_nfe_original ? item.chave_nfe_original.substring(0, 20) + '...' : '-'}
+                        <div style="font-weight: 600; color: var(--text-muted, #888888); font-size: 13px; word-break: break-all;" title="${item.chave_nfe_original || ''}">
+                            ${item.chave_nfe_original || '-'}
                         </div>
                     </td>
                     <td style="padding: 12px 16px; text-align: center;">
@@ -350,15 +350,20 @@
 
         if (typeof openModal === 'function') openModal('modal-loading-devolucao');
 
-        const delayPromise = new Promise(resolve => setTimeout(resolve, 5000));
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 60000); // Máximo 1 minuto (60s)
+        const delayPromise = new Promise(resolve => setTimeout(resolve, 5000)); // Mínimo 5s
+
         const fetchPromise = fetch('/api/devolucao/consultar-original', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chave })
+            body: JSON.stringify({ chave }),
+            signal: controller.signal
         }).then(r => r.json());
 
         try {
             const [_, data] = await Promise.all([delayPromise, fetchPromise]);
+            clearTimeout(timeoutId);
             if (typeof closeModal === 'function') closeModal('modal-loading-devolucao');
 
             if (!data || !data.sucesso) {
@@ -368,8 +373,13 @@
 
             preencherDadosNotaOriginal(data.dados);
         } catch (err) {
+            clearTimeout(timeoutId);
             if (typeof closeModal === 'function') closeModal('modal-loading-devolucao');
-            alert('Não foi possível consultar a NF-e. Nota não encontrada.');
+            if (err.name === 'AbortError') {
+                alert('Tempo limite de consulta excedido (1 minuto). Tente novamente ou faça o upload do XML.');
+            } else {
+                alert('Não foi possível consultar a NF-e. Nota não encontrada.');
+            }
         } finally {
             if (btn) btn.disabled = false;
             if (window.lucide) lucide.createIcons();
@@ -386,17 +396,22 @@
 
         if (typeof openModal === 'function') openModal('modal-loading-devolucao');
 
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 60000); // Máximo 1 minuto (60s)
+        const delayPromise = new Promise(resolve => setTimeout(resolve, 5000)); // Mínimo 5s
+
         const formData = new FormData();
         formData.append('xml_file', file);
 
-        const delayPromise = new Promise(resolve => setTimeout(resolve, 5000));
         const fetchPromise = fetch('/api/devolucao/importar-xml', {
             method: 'POST',
-            body: formData
+            body: formData,
+            signal: controller.signal
         }).then(r => r.json());
 
         try {
             const [_, data] = await Promise.all([delayPromise, fetchPromise]);
+            clearTimeout(timeoutId);
             if (typeof closeModal === 'function') closeModal('modal-loading-devolucao');
 
             if (!data || !data.sucesso) {
@@ -406,8 +421,13 @@
 
             preencherDadosNotaOriginal(data.dados);
         } catch (err) {
+            clearTimeout(timeoutId);
             if (typeof closeModal === 'function') closeModal('modal-loading-devolucao');
-            alert('Erro ao importar XML: Nota não encontrada.');
+            if (err.name === 'AbortError') {
+                alert('Tempo limite de importação excedido (1 minuto). Tente novamente.');
+            } else {
+                alert('Erro ao importar XML: Nota não encontrada.');
+            }
         }
     };
 

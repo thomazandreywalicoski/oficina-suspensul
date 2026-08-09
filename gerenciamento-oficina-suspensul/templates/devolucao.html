@@ -305,15 +305,14 @@
     </div>
 </div>
 
-<!-- Modal: Loading Consulta NF-e (Mínimo 5 Segundos) -->
-<div class="modal-overlay" id="modal-loading-devolucao" style="display: none; align-items: center; justify-content: center;">
+<!-- Modal: Loading Consulta NF-e (Mínimo 5s, Máximo 1 min, Fundo Escuro) -->
+<div class="modal-overlay" id="modal-loading-devolucao" style="display: none; align-items: center; justify-content: center; background: rgba(0, 0, 0, 0.85); z-index: 99999;">
     <style>
         @keyframes spinDevolucao { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
-    <div class="modal" style="max-width: 400px; width: 90%; background: var(--bg-card, #141414); border-radius: var(--border-radius, 8px); padding: 30px 20px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;">
+    <div class="modal" style="max-width: 400px; width: 90%; background: #141414; border-radius: var(--border-radius, 8px); padding: 35px 25px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; border: 1px solid #262626; box-shadow: 0 10px 30px rgba(0,0,0,0.6);">
         <div style="width: 48px; height: 48px; border: 4px solid #262626; border-top: 4px solid var(--primary, #ffe54c); border-radius: 50%; animation: spinDevolucao 0.9s linear infinite;"></div>
-        <h4 style="margin: 0; font-size: 1.1rem; font-weight: 600; color: #ffffff;">Buscando dados da nota</h4>
-        <p style="margin: 0; font-size: 13px; color: var(--text-muted, #888888); line-height: 1.4;">Por favor, aguarde enquanto consultamos a NF-e...</p>
+        <h4 style="margin: 0; font-size: 1.1rem; font-weight: 600; color: #ffffff;">Buscando dados da NF-e</h4>
     </div>
 </div>
 
