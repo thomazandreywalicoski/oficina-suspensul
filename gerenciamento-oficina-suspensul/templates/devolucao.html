@@ -12,22 +12,22 @@
         </button>
     </div>
 
-    <!-- Cards de Resumo (Cores correspondentes ao status no fundo do card) -->
+    <!-- Cards de Resumo (Cores vivas iguais ao financeiro) -->
     <div class="devolucao-cards-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;">
-        <div class="card-kpi" style="background: #b45309; padding: 18px; border-radius: 12px; border: none; color: #ffffff;">
-            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: rgba(255, 255, 255, 0.85); letter-spacing: 0.5px;">PROCESSANDO</div>
+        <div class="card-kpi" style="background: #d97706; padding: 18px; border-radius: 12px; border: none; color: #ffffff;">
+            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: rgba(255, 255, 255, 0.9); letter-spacing: 0.5px;">PROCESSANDO</div>
             <div id="kpi-processando" style="font-size: 1.8rem; font-weight: 900; color: #ffffff; margin-top: 4px;">0</div>
         </div>
-        <div class="card-kpi" style="background: #15803d; padding: 18px; border-radius: 12px; border: none; color: #ffffff;">
-            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: rgba(255, 255, 255, 0.85); letter-spacing: 0.5px;">AUTORIZADAS</div>
+        <div class="card-kpi" style="background: #22c55e; padding: 18px; border-radius: 12px; border: none; color: #ffffff;">
+            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: rgba(255, 255, 255, 0.9); letter-spacing: 0.5px;">AUTORIZADAS</div>
             <div id="kpi-autorizadas" style="font-size: 1.8rem; font-weight: 900; color: #ffffff; margin-top: 4px;">0</div>
         </div>
-        <div class="card-kpi" style="background: #b91c1c; padding: 18px; border-radius: 12px; border: none; color: #ffffff;">
-            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: rgba(255, 255, 255, 0.85); letter-spacing: 0.5px;">REJEITADAS</div>
+        <div class="card-kpi" style="background: #ef4444; padding: 18px; border-radius: 12px; border: none; color: #ffffff;">
+            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: rgba(255, 255, 255, 0.9); letter-spacing: 0.5px;">REJEITADAS</div>
             <div id="kpi-rejeitadas" style="font-size: 1.8rem; font-weight: 900; color: #ffffff; margin-top: 4px;">0</div>
         </div>
-        <div class="card-kpi" style="background: #475569; padding: 18px; border-radius: 12px; border: none; color: #ffffff;">
-            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: rgba(255, 255, 255, 0.85); letter-spacing: 0.5px;">RASCUNHOS</div>
+        <div class="card-kpi" style="background: #64748b; padding: 18px; border-radius: 12px; border: none; color: #ffffff;">
+            <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: rgba(255, 255, 255, 0.9); letter-spacing: 0.5px;">RASCUNHOS</div>
             <div id="kpi-rascunhos" style="font-size: 1.8rem; font-weight: 900; color: #ffffff; margin-top: 4px;">0</div>
         </div>
     </div>
@@ -118,7 +118,7 @@
             <form id="form-devolucao">
                 <input type="hidden" id="dev-id" value="">
 
-                <!-- PASSO 1: Buscar / Importar NF-e Original (Sem subtítulo interno) -->
+                <!-- PASSO 1: Buscar / Importar NF-e Original (Sem placeholder) -->
                 <div id="dev-step-1" class="step-content">
                     <div style="background: #181818; padding: 24px; border-radius: 12px; margin-bottom: 20px; border: none; display: flex; flex-direction: column; gap: 24px;">
                         
@@ -126,7 +126,7 @@
                         <div>
                             <label style="font-size: 0.875rem; font-weight: 600; display: block; margin-bottom: 10px; color: #a1a1aa; white-space: nowrap;">Chave de Acesso da NF-e (44 dígitos):</label>
                             <div style="display: flex; gap: 12px; align-items: center;">
-                                <input type="text" id="dev-chave-original" class="form-input" maxlength="44" placeholder="Ex: 35260811111111111111550010000000011000000010" style="background: #202020; color: #ffffff; border: none; flex: 1; height: 48px; padding: 0 16px; border-radius: 8px; font-size: 0.9rem; box-sizing: border-box;">
+                                <input type="text" id="dev-chave-original" class="form-input" maxlength="44" style="background: #202020; color: #ffffff; border: none; flex: 1; height: 48px; padding: 0 16px; border-radius: 8px; font-size: 0.9rem; box-sizing: border-box;">
                                 <button class="btn btn-primary" type="button" onclick="consultarNfeOriginal()" id="btn-consultar-nfe" style="background: var(--primary, #ffe54c); color: #000000; height: 48px; padding: 0 24px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 8px; white-space: nowrap; font-weight: 700; border: none;">
                                     <i data-lucide="search" style="width: 16px; height: 16px;"></i>
                                     <span>Buscar NF-e</span>
@@ -147,7 +147,7 @@
                     </div>
                 </div>
 
-                <!-- PASSO 2: Seleção de Peças (Sem subtítulo interno) -->
+                <!-- PASSO 2: Seleção de Peças (Título da descrição centralizado) -->
                 <div id="dev-step-2" class="step-content" style="display: none;">
                     <div style="border-radius: 12px; overflow-x: auto; background: #181818; margin-bottom: 20px; border: none;">
                         <table class="table" style="width: 100%; border-collapse: collapse; font-size: 0.85rem; color: #ffffff; border: none;">
@@ -164,8 +164,8 @@
                                             <span>CÓDIGO</span>
                                         </div>
                                     </th>
-                                    <th style="padding: 16px 10px; text-align: left; color: #000000; font-size: 11px; font-weight: 800; white-space: nowrap; border: none;">
-                                        <div style="display: inline-flex; align-items: center; justify-content: flex-start; gap: 6px;">
+                                    <th style="padding: 16px 10px; text-align: center; color: #000000; font-size: 11px; font-weight: 800; white-space: nowrap; border: none;">
+                                        <div style="display: inline-flex; align-items: center; justify-content: center; gap: 6px;">
                                             <i data-lucide="package" style="width: 15px; height: 15px; stroke-width: 2.5;"></i>
                                             <span>DESCRIÇÃO</span>
                                         </div>
@@ -217,13 +217,13 @@
                     </div>
                 </div>
 
-                <!-- PASSO 3: Dados Fiscais & Totais (Sem subtítulo interno) -->
+                <!-- PASSO 3: Dados Fiscais & Totais (Preenchimento automático e Title Case) -->
                 <div id="dev-step-3" class="step-content" style="display: none;">
                     <div style="background: #181818; padding: 24px; border-radius: 12px; margin-bottom: 20px; border: none; display: flex; flex-direction: column; gap: 20px;">
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px;">
                             <div>
                                 <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 8px; color: #a1a1aa;">Natureza da Operação:</label>
-                                <input type="text" id="dev-natureza-operacao" class="form-input" value="DEVOLUCAO DE MERCADORIA" style="background: #202020; color: #ffffff; border: none; width: 100%; height: 48px; padding: 0 16px; border-radius: 8px; box-sizing: border-box;">
+                                <input type="text" id="dev-natureza-operacao" class="form-input" value="Devolução de Mercadoria" style="background: #202020; color: #ffffff; border: none; width: 100%; height: 48px; padding: 0 16px; border-radius: 8px; box-sizing: border-box;">
                             </div>
                             <div>
                                 <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 8px; color: #a1a1aa;">CFOP Padrão:</label>
@@ -242,31 +242,31 @@
 
                         <div>
                             <label style="font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 8px; color: #a1a1aa;">Observações Fiscais / Informações Adicionais:</label>
-                            <textarea id="dev-observacoes" class="form-input" rows="2" placeholder="Ex: Devolução referente à NF-e de compra nº..." style="background: #202020; color: #ffffff; border: none; width: 100%; padding: 12px 16px; border-radius: 8px; box-sizing: border-box;"></textarea>
+                            <textarea id="dev-observacoes" class="form-input" rows="2" style="background: #202020; color: #ffffff; border: none; width: 100%; padding: 12px 16px; border-radius: 8px; box-sizing: border-box;"></textarea>
                         </div>
                     </div>
 
-                    <!-- Resumo dos Totais (Grade de 5 colunas perfeitamente alinhada) -->
+                    <!-- Resumo dos Totais (Títulos em Title Case, sem ALL-CAPS) -->
                     <div style="background: #181818; padding: 24px; border-radius: 12px; border: none;">
                         <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; align-items: flex-end;">
                             <div>
-                                <label style="font-size: 0.8rem; font-weight: 600; color: #888888; display: block; margin-bottom: 8px; text-transform: uppercase;">Val. Produtos</label>
+                                <label style="font-size: 0.8rem; font-weight: 600; color: #888888; display: block; margin-bottom: 8px;">Val. Produtos</label>
                                 <div id="res-val-produtos" style="background: #202020; color: #ffffff; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-weight: 700; font-size: 1rem; box-sizing: border-box;">R$ 0,00</div>
                             </div>
                             <div>
-                                <label style="font-size: 0.8rem; font-weight: 600; color: #888888; display: block; margin-bottom: 8px; text-transform: uppercase;">Frete (R$)</label>
+                                <label style="font-size: 0.8rem; font-weight: 600; color: #888888; display: block; margin-bottom: 8px;">Frete (R$)</label>
                                 <input type="number" step="0.01" id="dev-val-frete" class="form-input" value="0.00" style="text-align: center; height: 48px; background: #202020; color: #ffffff; border: none; border-radius: 8px; font-weight: 600; font-size: 0.95rem; width: 100%; box-sizing: border-box;" onchange="recalcularTotaisDevolucao()">
                             </div>
                             <div>
-                                <label style="font-size: 0.8rem; font-weight: 600; color: #888888; display: block; margin-bottom: 8px; text-transform: uppercase;">Desconto (R$)</label>
+                                <label style="font-size: 0.8rem; font-weight: 600; color: #888888; display: block; margin-bottom: 8px;">Desconto (R$)</label>
                                 <input type="number" step="0.01" id="dev-val-desconto" class="form-input" value="0.00" style="text-align: center; height: 48px; background: #202020; color: #ffffff; border: none; border-radius: 8px; font-weight: 600; font-size: 0.95rem; width: 100%; box-sizing: border-box;" onchange="recalcularTotaisDevolucao()">
                             </div>
                             <div>
-                                <label style="font-size: 0.8rem; font-weight: 600; color: #888888; display: block; margin-bottom: 8px; text-transform: uppercase;">Outras Desp. (R$)</label>
+                                <label style="font-size: 0.8rem; font-weight: 600; color: #888888; display: block; margin-bottom: 8px;">Outras Desp. (R$)</label>
                                 <input type="number" step="0.01" id="dev-val-outras" class="form-input" value="0.00" style="text-align: center; height: 48px; background: #202020; color: #ffffff; border: none; border-radius: 8px; font-weight: 600; font-size: 0.95rem; width: 100%; box-sizing: border-box;" onchange="recalcularTotaisDevolucao()">
                             </div>
                             <div>
-                                <label style="font-size: 0.8rem; font-weight: 600; color: #888888; display: block; margin-bottom: 8px; text-transform: uppercase;">TOTAL DA NF-E</label>
+                                <label style="font-size: 0.8rem; font-weight: 600; color: #888888; display: block; margin-bottom: 8px;">Total da NF-e</label>
                                 <div style="background: #202020; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 8px; box-sizing: border-box;">
                                     <span id="res-val-total" style="font-weight: 900; font-size: 1.2rem; color: #22c55e;">R$ 0,00</span>
                                 </div>

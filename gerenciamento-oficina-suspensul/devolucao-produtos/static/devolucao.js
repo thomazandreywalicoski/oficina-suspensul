@@ -276,10 +276,10 @@
         const blocoF = document.getElementById('dev-bloco-fornecedor');
         if (blocoF) blocoF.style.display = 'none';
 
-        document.getElementById('dev-natureza-operacao').value = 'DEVOLUCAO DE MERCADORIA';
+        document.getElementById('dev-natureza-operacao').value = 'Devolução de Mercadoria';
         document.getElementById('dev-cfop-padrao').value = '5202';
         document.getElementById('dev-modalidade-frete').value = '9';
-        document.getElementById('dev-observacoes').value = '';
+        document.getElementById('dev-observacoes').value = 'Devolução referente à NF-e de compra';
         document.getElementById('dev-val-frete').value = '0.00';
         document.getElementById('dev-val-desconto').value = '0.00';
         document.getElementById('dev-val-outras').value = '0.00';
@@ -379,6 +379,12 @@
     function preencherDadosNotaOriginal(dados) {
         if (dados.chave_acesso) {
             document.getElementById('dev-chave-original').value = dados.chave_acesso;
+        }
+
+        const numNota = dados.numero_nota || dados.nNF || dados.numero || '';
+        const obsEl = document.getElementById('dev-observacoes');
+        if (obsEl) {
+            obsEl.value = numNota ? `Devolução referente à NF-e de compra nº ${numNota}` : `Devolução referente à NF-e de compra`;
         }
 
         const itens = dados.items || dados.produtos || [];
