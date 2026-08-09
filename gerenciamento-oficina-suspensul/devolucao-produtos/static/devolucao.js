@@ -387,16 +387,6 @@
         if (!tbody) return;
 
         if (!itens || itens.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 20px; color: #64748b;">Nenhum item na nota.</td></tr>`;
-            recalcularTotaisDevolucao();
-            return;
-        }
-
-    function renderizarTabelaItens(itens) {
-        const tbody = document.getElementById('dev-itens-body');
-        if (!tbody) return;
-
-        if (!itens || itens.length === 0) {
             tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; padding: 25px; color: #888888;">Nenhum item na nota.</td></tr>`;
             recalcularTotaisDevolucao();
             return;
